@@ -20,14 +20,14 @@
 char * rf_string_copy(const char *str)
 {
 	char *new_string;
-	
+
 	if(!str)
 		return 0;
-	
+
 	new_string = malloc((strlen(str) + 1) * sizeof(char));
 	if(!new_string)
 		return 0;
-	
+
 	strcpy(new_string, str);
 	return new_string;
 }
@@ -50,8 +50,8 @@ char * rf_string_combine(int argc, ...)
 	/* prepare for reading variable list */
 	va_list list;
 	va_start(list, argc);
-		
-		
+
+
 	/* read the variable list and create new string*/
 	for(i = 0; i < argc; i++)
 	{
@@ -72,7 +72,7 @@ char * rf_string_combine(int argc, ...)
 			result[part_1] = 0;
 		}
 	}
-	
+
 	return result;
 }
 

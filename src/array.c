@@ -43,12 +43,12 @@ RF_ARRAY * rf_array_create()
  @relates RF_ARRAY
  @param[in] array The array that should be destroyed.
  @param[in] destroy A function that takes a void pointer as an argument. Every element in the
- 			array will be passed to that function before the array is be freed.
+            array will be passed to that function before the array is be freed.
  */
 void rf_array_destroy(RF_ARRAY *array, void (*destroy)(void *))
 {
 	unsigned int i;
-	
+
 	if(!array)
 		return;
 
@@ -79,7 +79,7 @@ void rf_array_destroy(RF_ARRAY *array, void (*destroy)(void *))
 int rf_array_append(RF_ARRAY *array, void * element)
 {
 	void *memory;
-	
+
 	if(!array)
 		return 1;
 
@@ -169,10 +169,10 @@ void * rf_array_delete(RF_ARRAY *array, unsigned int pos)
 int rf_array_merge(RF_ARRAY *array_1, RF_ARRAY *array_2)
 {
 	int i, count;
-	
+
 	if(!array_1 || !array_2)
 		return 1;
-	
+
 	/* Append all the items of the second array to the first one */
 	for(i = 0, count = rf_array_size(array_2); i < count; i++)
 		rf_array_append(array_1, rf_array_delete(array_2, i));

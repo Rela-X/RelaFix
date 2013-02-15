@@ -25,20 +25,20 @@ RF_TABLE * rf_table_copy(RF_TABLE *table)
 {
 	RF_TABLE *copy;
 	int one_more, size;
-	
+
 	if(!table)
 		return 0;
-	
+
 	/* get memory for new table */
 	copy = malloc(sizeof(RF_TABLE));
 	if(!copy)
 		return 0;
-	
+
 	/* copy the properties */
 	copy->type = table->type;
 	copy->width = table->width;
 	copy->height = table->height;
-	
+
 	/* copy the stored data based on the type */
 	if(table->type == RF_TT_BINARY) /* copy every bit */
 	{
@@ -58,7 +58,7 @@ RF_TABLE * rf_table_copy(RF_TABLE *table)
 		free(copy);
 		return 0;
 	}
-	
+
 	return copy;
 }
 
@@ -80,7 +80,7 @@ RF_TABLE * rf_table_create(unsigned int width, unsigned int height, int type)
 
 	if(width == 0 || height == 0)
 		return 0;
-	
+
 	if(type != RF_TT_BINARY && type != RF_TT_STRING)
 		return 0;
 
@@ -92,7 +92,7 @@ RF_TABLE * rf_table_create(unsigned int width, unsigned int height, int type)
 	table->type = type;
 	table->width = width;
 	table->height = height;
-	
+
 	/* if needed in future we can save the space with RLE compression algorithms ! */
 	/* get the memory for the table */
 	if(type == RF_TT_BINARY)
@@ -176,7 +176,7 @@ int rf_table_get_bit(RF_TABLE *table, unsigned int x, unsigned int y)
 		return -4;
 	if(table->type != RF_TT_BINARY)
 		return -5;
-	
+
 	pos = (y * table->width) + x;
 	block_pos = pos / sizeof(char);
 	bit_pos = pos - (block_pos * sizeof(char));
@@ -215,11 +215,11 @@ int rf_table_get_string(RF_TABLE *table, unsigned int x, unsigned int y, char **
 		return 4;
 	if(table->type != RF_TT_STRING)
 		return 5;
-	
+
 	pos = (y * table->width) + x;
 	strings = table->data;
 	*string_out = strings[pos];
-	
+
 	return 0;
 }
 
@@ -235,7 +235,7 @@ int rf_table_get_type(RF_TABLE *table)
 {
 	if(!table)
 		return -1;
-	
+
 	return table->type;
 }
 
@@ -322,10 +322,10 @@ int rf_table_set_string(RF_TABLE *table, unsigned int x, unsigned int y, char *s
 	if(table->type != RF_TT_STRING)
 		return 5;
 
-	
+
 	pos = (y * table->width) + x;
 	strings = table->data;
 	strings[pos] = string;
-	
+
 	return 0;
 }

@@ -60,14 +60,14 @@ Copys the iterator.
 RF_LIST_ITERATOR * rf_list_copy_iterator(RF_LIST_ITERATOR *iterator)
 {
 	RF_LIST_ITERATOR *iterator_new = 0;
-	
+
 	if(!iterator)
 		return 0;
-	
+
 	iterator_new = malloc(sizeof(RF_LIST_ITERATOR));
 	if(!iterator_new)
 		return 0;
-	
+
 	*iterator_new = *iterator;
 	return iterator_new;
 }
@@ -400,10 +400,10 @@ int rf_list_set_by_position(RF_LIST *list, int position, void *data)
 {
 	int i;
 	RF_LIST_ITEM *tmp_item;
-	
+
 	if(!list)
 		return 1;
-	
+
 	if(position < 0 || position >= list->count)
 		return 2;
 

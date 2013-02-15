@@ -73,18 +73,18 @@ int yylex(void)
 	static char *id_buffer = 0;
 	static int length = 0;
 	RF_BOOL skip_test = RF_FALSE;
-	
+
 	if(length == 0)
 	{
 		length = 40;
 		id_buffer = malloc(length + 1);
 	}
-	
+
 	if(is_first_run == RF_TRUE)
 	{
 		is_first_run = RF_FALSE;
 		rf_parser_register_system_functions();
-		
+
 		/* load system.rfc */
 		file = rf_string_copy("system.rfc");
 		rf_lexer_need_load_file(file, (RF_LOCATION *)&yylloc);
@@ -95,7 +95,7 @@ int yylex(void)
 		while((c = rf_lexer_need_char()) == ' ' || c == '\t')
 		{
 			yylloc.last_column++;
-			
+
 			if(rf_parser_record == RF_TRUE)
 				rf_parser_record_append(c);
 		}
@@ -132,7 +132,7 @@ int yylex(void)
 			while(1)
 			{
 				c = rf_lexer_need_char();
-				
+
 				if(c == '\r' || c == '\n' || c == EOF)
 					break;
 			}
@@ -180,13 +180,13 @@ int yylex(void)
 			i++;
 
 			c = rf_lexer_need_char();
-			
+
 			if(c == '\\')
 			{
 				c = rf_lexer_need_char();
 				if(c == EOF)
 					break;
-				
+
 				skip_test = RF_TRUE;
 				yylloc.last_column += 1;
 			}
@@ -197,7 +197,7 @@ int yylex(void)
 			yylloc.last_column += 1;
 		else
 			rf_lexer_need_ungetc(c);
-		
+
 		id_buffer[i] = '\0';
 		yylval.id = rf_string_copy(id_buffer);
 		return STRING;
@@ -215,7 +215,7 @@ int yylex(void)
 			{
 				if(rf_parser_record == RF_TRUE)
 					rf_parser_record_append(c);
-				
+
 				if(c == '.')
 					has_dot = RF_TRUE;
 
@@ -257,7 +257,7 @@ int yylex(void)
 			return type;
 		}
 	}
-	
+
 	else if(rf_lexer_mode == RF_LEXER_FILE)
 	{
 		if(c == '_' || c == '.' || c == '/' || c == '\\' || isdigit(c) || isalpha(c))

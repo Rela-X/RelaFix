@@ -24,7 +24,7 @@
  @param[in] element_1 The left argument.
  @param[in] element_2 The right argument.
  @param[out] element_out If the function succeeds, it contains the resulting element.
- 			Then the string must not be changed or freed by the user!
+             Then the string must not be changed or freed by the user!
  @result 0 on success. The result of the operation is stored in element_out.
  @result 1 on error. An description is written to element_out. This description must be freed by the user!
  */

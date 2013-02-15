@@ -27,13 +27,13 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 	RF_LIST_ITERATOR *main, *sub;
 	RF_ELEMENT *main_element, *sub_element;
 	char *main_name, *sub_name;
-	
+
 	if(!elements)
 	{
 		error->string = rf_string_copy("program error - list is zero");
 		return 1;
 	}
-	
+
 	/* get iterator over elements */
 	main = rf_list_get_begin(elements);
 	if(!main)
@@ -41,7 +41,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 		error->string = rf_string_copy("program error - last call: rf_list_get_begin()");
 		return 1;
 	}
-	
+
 	/* check every element with the others if it is double */
 	while(rf_list_has_next(main))
 	{
@@ -50,24 +50,24 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 		if(!main_element)
 		{
 			rf_list_delete_iterator(main);
-			
+
 			error->string = rf_string_copy("Found an zero element in elementlist");
 			return 1;
 		}
-		
+
 		/* get the name of the element */
 		main_name = rf_element_get_name(main_element);
 		if(!main_name)
 		{
 			rf_list_delete_iterator(main);
-			
+
 			error->string = rf_string_copy("Found an element that has no name in the elementlist");
 			return 1;
 		}
-		
+
 		/* copy of the main iterator. We only need to check against the rest in the list */
 		sub = rf_list_copy_iterator(main);
-		
+
 		while(rf_list_has_next(sub))
 		{
 			/* get element */
@@ -76,28 +76,28 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 			{
 				rf_list_delete_iterator(main);
 				rf_list_delete_iterator(sub);
-				
+
 				error->string = rf_string_copy("Found an zero element in elementlist");
 				return 1;
 			}
-			
+
 			/* get the name of the element */
 			sub_name = rf_element_get_name(sub_element);
 			if(!sub_name)
 			{
 				rf_list_delete_iterator(main);
 				rf_list_delete_iterator(sub);
-				
+
 				error->string = rf_string_copy("Found an element that has no name in the elementlist");
 				return 1;
 			}
-			
+
 			/* check if both names match. If so return error */
 			if(strcmp(main_name, sub_name) == 0)
 			{
 				rf_list_delete_iterator(main);
 				rf_list_delete_iterator(sub);
-				
+
 				error->string = rf_string_combine(3, "Found '", main_name, "' more then one time in the element list");
 				return 1;
 			}
@@ -105,7 +105,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 		rf_list_delete_iterator(sub);
 	}
 	rf_list_delete_iterator(main);
-	
+
 	return 0;
 }
 
@@ -121,17 +121,17 @@ RF_DOMAIN * rf_domain_copy(RF_DOMAIN *domain)
 	RF_DOMAIN *new_domain = 0;
 	RF_LIST_ITERATOR *elements;
 	RF_ELEMENT *element;
-	
+
 	if(!domain)
 		return 0;
-	
+
 	new_domain = rf_domain_create(0);
 	if(!new_domain)
 		return 0;
-	
+
 	/*copy properties */
 	new_domain->name = rf_string_copy(domain->name);
-	
+
 	if(domain->elements)
 	{
 		new_domain->elements = rf_list_create();
@@ -140,7 +140,7 @@ RF_DOMAIN * rf_domain_copy(RF_DOMAIN *domain)
 			rf_domain_destroy(new_domain);
 			return 0;
 		}
-		
+
 		/* copy every element */
 		elements = rf_list_get_begin(domain->elements);
 		while(rf_list_has_next(elements))
@@ -148,7 +148,7 @@ RF_DOMAIN * rf_domain_copy(RF_DOMAIN *domain)
 			element = rf_list_next(elements);
 			if(!element)
 				continue;
-			
+
 			element = rf_element_copy(element);
 			if(!element)
 			{
@@ -156,14 +156,14 @@ RF_DOMAIN * rf_domain_copy(RF_DOMAIN *domain)
 				rf_domain_destroy(new_domain);
 				return 0;
 			}
-			
+
 			rf_list_append(new_domain->elements, element);
 		}
 		rf_list_delete_iterator(elements);
 	}
 	else
 		domain->elements = 0;
-	
+
 	return new_domain;
 }
 
@@ -202,17 +202,17 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 	RF_LIST *tmp_elements = 0;
 	int scount, element_count, run;
 	char *subset, *name, *tmp_name;
-	
+
 	if(!domain)
 	{
 		error->string = rf_string_copy("program error - argument domain is zero");
 		return 0;
 	}
-	
-	
+
+
 	/* put every element from domain as subdomain into the new domain */
 	elements = rf_list_create();
-	element_count = rf_domain_get_element_count(domain);	
+	element_count = rf_domain_get_element_count(domain);
 	subset = calloc(element_count, sizeof(char));
 	for(run = 1; run;)
 	{
@@ -238,7 +238,7 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 				sub_element = 0;
 			}
 		}
-		
+
 		/* add new element to new domain */
 		if(!name)
 			name = rf_string_copy("_");
@@ -248,14 +248,14 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 		new_element = rf_element_create(RF_ET_DOMAIN, tmp_domain);
 		rf_list_append(elements, new_element);
 		new_element = 0;
-		
+
 		/* set subset to next subset (bit addierer)*/
 		for(scount = 0; scount < element_count; scount++)
 		{
 			if(subset[scount] == 1)
 			{
 				subset[scount] = 0;
-				
+
 				if(scount == element_count - 1)
 					run = 0;
 			}
@@ -266,19 +266,19 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 			}
 		}
 	}
-	
+
 	/* Create the new domain */
 	new_domain = rf_domain_create(0);
 	if(!new_domain)
 	{
 		rf_list_destroy(elements, (void (*)(void *))rf_element_destroy);
-		
+
 		error->string = rf_string_copy("program error - no memory");
 		return 0;
 	}
 	rf_domain_set_list(new_domain, elements);
 	elements = 0;
-	
+
 	return new_domain;
 }
 
@@ -329,10 +329,10 @@ RF_ELEMENT * rf_domain_get_element(RF_DOMAIN *domain, char *name)
 	/* move through list */
 	while(rf_list_has_next(pos))
 	{
-		
+
 		/* get next element */
 		element = rf_list_next(pos);
-		
+
 		/* check type of element and name. if name matches, return the element */
 		if(element)
 		{
@@ -376,11 +376,11 @@ RF_ELEMENT * rf_domain_get_element_by_position(RF_DOMAIN *domain, int pos)
 {
 	if(!domain || pos < 0)
 		return 0;
-	
+
 	/* check if outofbounds */
 	if(pos >= rf_list_get_count(domain->elements))
 		return 0;
-	
+
 	/* find the element */
 	return rf_list_get_by_position(domain->elements, pos);
 }
@@ -396,10 +396,10 @@ int rf_domain_get_element_count(RF_DOMAIN *domain)
 {
 	if(!domain)
 		return -1;
-	
+
 	if(!domain->elements)
 		return -1;
-	
+
 	return rf_list_get_count(domain->elements);
 }
 
@@ -468,10 +468,10 @@ int rf_domain_get_element_position(RF_DOMAIN *domain, char *name)
 	RF_LIST_ITERATOR *iterator = 0;
 	RF_ELEMENT *element = 0;
 	int i;
-	
+
 	if(!domain || !name)
 		return -1;
-	
+
 	iterator = rf_list_get_begin(domain->elements);
 	for(i = 0; rf_list_has_next(iterator); i++)
 	{
@@ -495,7 +495,7 @@ int rf_domain_get_element_position(RF_DOMAIN *domain, char *name)
 			}
 		}
 	}
-	
+
 	rf_list_delete_iterator(iterator);
 	return -2;
 }
@@ -547,15 +547,15 @@ RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
 {
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element;
-	
+
 	if(!domain || !name)
 		return RF_FALSE;
-	
+
 	/* get list with names from domain */
 	names = rf_domain_get_element_names(domain);
 	if(!names)
 		return RF_FALSE;
-	
+
 	/* get iterator over names */
 	element = rf_list_get_begin(names);
 	if(!element)
@@ -563,7 +563,7 @@ RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
 		rf_list_destroy(names, 0);
 		return RF_FALSE;
 	}
-	
+
 	/* check if given name is in list */
 	while(rf_list_has_next(element))
 		if(strcmp(name, rf_list_next(element)) == 0)
@@ -572,7 +572,7 @@ RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
 			rf_list_destroy(names, 0);
 			return RF_TRUE;
 		}
-		
+
 	rf_list_delete_iterator(element);
 	rf_list_destroy(names, 0);
 	return RF_FALSE;
@@ -614,12 +614,12 @@ RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element;
 	char *name;
-	
+
 	if(!domain1 || !domain2)
 	{
 		return RF_FALSE;
 	}
-	
+
 	/* get names in question */
 	names = rf_domain_get_element_names(domain1);
 	element = rf_list_get_begin(names);
@@ -630,11 +630,11 @@ RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
 		{
 			rf_list_delete_iterator(element);
 			rf_list_destroy(names, 0);
-			
+
 			return RF_FALSE;
 		}
 	}
-	
+
 	/* if we arrive here, domain1 is in domain2 */
 	rf_list_delete_iterator(element);
 	rf_list_destroy(names, 0);
@@ -645,7 +645,7 @@ RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
  @relates RF_DOMAIN
  @param domain The domain to work on.
  @param list A list with elements (RF_ELEMENT *) inside. The list and its contained data is not
- 		valid for the user anymore after the function returned!
+        valid for the user anymore after the function returned!
  */
 void rf_domain_set_list(RF_DOMAIN *domain, RF_LIST *list)
 {
@@ -685,17 +685,17 @@ void rf_domain_set_name(RF_DOMAIN *domain, char *name)
 RF_ELEMENT * rf_element_copy(RF_ELEMENT *element)
 {
 	RF_ELEMENT *new_element;
-	
+
 	if(!element)
 		return 0;
-	
+
 	new_element = calloc(1, sizeof(RF_ELEMENT));
 	if(!new_element)
 		return 0;
-	
+
 	/* copy properties */
 	new_element->type = element->type;
-	
+
 	if(element->type == RF_ET_DOMAIN)
 	{
 		new_element->data = rf_domain_copy(element->data);
@@ -718,7 +718,7 @@ RF_ELEMENT * rf_element_copy(RF_ELEMENT *element)
 		free(new_element);
 		return 0;
 	}
-	
+
 	return new_element;
 }
 
@@ -727,9 +727,9 @@ RF_ELEMENT * rf_element_copy(RF_ELEMENT *element)
  @relates RF_ELEMENT
  @param type The type of the new element. Must be a value from ::rf_enum_et.
  @param data Depends on the value of type:
- 			- RF_ET_DOMAIN: pointer to domain (RF_DOMAIN *)
- 			- RF_ET_GLOBAL_DOMAIN: pointer to domain (RF_DOMAIN *). This domain will not be destroyed by a call to rf_element_destroy().
- 			- RF_ET_NAME: pointer to name (char *)
+            - RF_ET_DOMAIN: pointer to domain (RF_DOMAIN *)
+            - RF_ET_GLOBAL_DOMAIN: pointer to domain (RF_DOMAIN *). This domain will not be destroyed by a call to rf_element_destroy().
+            - RF_ET_NAME: pointer to name (char *)
  @return New element. The user must destroy it with rf_element_destroy() if it is not needed anymore!
  */
 RF_ELEMENT * rf_element_create(int type, void *data)
@@ -772,10 +772,10 @@ void rf_element_destroy(RF_ELEMENT *element)
  @relates RF_ELEMENT
  @param element The element containing the data.
  @return Depends on the type (::rf_enum_et) of the given element. The data should not be
- 		changed or deleted by the user! For
- 	- RF_ET_DOMAIN: pointer to domain (RF_DOMAIN *)
- 	- RF_ET_GLOBAL_DOMAIN: pointer to global domain (RF_DOMAIN *)
- 	- RF_ET_NAME: pointer to name (char *)
+         changed or deleted by the user! For
+     - RF_ET_DOMAIN: pointer to domain (RF_DOMAIN *)
+     - RF_ET_GLOBAL_DOMAIN: pointer to global domain (RF_DOMAIN *)
+     - RF_ET_NAME: pointer to name (char *)
  @return 0 on error.
  */
 void * rf_element_get_data(RF_ELEMENT *element)
@@ -797,7 +797,7 @@ char * rf_element_get_name(RF_ELEMENT *element)
 {
 	if(!element)
 		return 0;
-	
+
 	if(element->type == RF_ET_NAME)
 		return element->data;
 	else

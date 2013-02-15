@@ -12,7 +12,7 @@
 /*!
  @relates RF_FUNCTION
  @param name Name of the new function. Pointer to heap. The name gets invalid for the user! If 0
- 			the new function wont have a name.
+        the new function wont have a name.
  @param fpointer Pointer to a function. Should be the function that represents the equivalent Relafix language function.
  @param argc The number of arguments the function takes in the Relafix language.
  @return New function. Must be destroyed with rf_function_destroy() if not needed anymore.
@@ -23,18 +23,18 @@ RF_FUNCTION * rf_function_create(char *name, void *fpointer, int argc)
 	RF_FUNCTION *function = malloc(sizeof(RF_FUNCTION));
 	if(!function)
 		return 0;
-	
+
 	function->name = name;
 	function->argument_count = argc;
 	function->function = fpointer;
 	function->description = 0;
-	
+
 	return function;
 }
 
 
 /*! \brief Frees all included data except the description!
- 
+
  @relates RF_FUNCTION
  @param function The function to be destroyed.
  */
@@ -42,7 +42,7 @@ void rf_function_destroy(RF_FUNCTION *function)
 {
 	if(!function)
 		return;
-	
+
 	if(function->name)
 		free(function->name);
 	free(function);
@@ -50,7 +50,7 @@ void rf_function_destroy(RF_FUNCTION *function)
 
 
 /*! \brief Return the number of arguments the function takes in the Relafix language.
- 
+
  @relates RF_FUNCTION
  @param function The function whoms argument count should be retrieved.
  @return The number of arguments the function takes in the Relafix language.
@@ -60,7 +60,7 @@ int rf_function_get_argument_count(RF_FUNCTION *function)
 {
 	if(!function)
 		return -1;
-	
+
 	return function->argument_count;
 }
 
@@ -69,14 +69,14 @@ int rf_function_get_argument_count(RF_FUNCTION *function)
  @relates RF_FUNCTION
  @param function The function whoms description should be retrieved.
  @return The description. The description will also be used by the struct! But the description
- 		will not be deleted by rf_function_destroy().
+         will not be deleted by rf_function_destroy().
  @return 0 on error or if no description exists.
  */
 char * rf_function_get_description(RF_FUNCTION *function)
 {
 	if(!function)
 		return 0;
-	
+
 	return function->description;
 }
 
@@ -91,7 +91,7 @@ void * rf_function_get_func(RF_FUNCTION *function)
 {
 	if(!function)
 		return 0;
-	
+
 	return function->function;
 }
 
@@ -106,7 +106,7 @@ char * rf_function_get_name(RF_FUNCTION *function)
 {
 	if(!function)
 		return 0;
-	
+
 	return function->name;
 }
 
@@ -122,7 +122,7 @@ RF_BOOL rf_function_has_name(RF_FUNCTION *function, char *name)
 {
 	if(!function || !name)
 		return RF_FALSE;
-	
+
 	if(strcmp(function->name, name) == 0)
 		return RF_TRUE;
 	else
@@ -134,12 +134,12 @@ RF_BOOL rf_function_has_name(RF_FUNCTION *function, char *name)
  @relates RF_FUNCTION
  @param function The function whose description is to be set.
  @param description Will be used by the RF_FUNCTION, but not freed with rf_function_destroy(). If 0 then
- 		the function will not have a description.
+        the function will not have a description.
  */
 void rf_function_set_description(RF_FUNCTION *function, char *description)
 {
 	if(!function)
 		return;
-	
+
 	function->description = description;
 }

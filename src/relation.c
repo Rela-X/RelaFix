@@ -22,7 +22,7 @@
  @param[in] element_1 The left argument.
  @param[in] element_2 The right argument.
  @param[out] element_out If the function succeeds, it contains the resulting element.
- 			Then the string must not be changed or freed by the user!
+             Then the string must not be changed or freed by the user!
  @result on success 0 (no) or 1 (yes)
  @result Any other number on error. An description is written to element_out. This description must be freed by the user!
  */
@@ -629,7 +629,7 @@ RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error)
 		element1 = rf_domain_get_element_by_position(domain, y);
 
 		if(rf_element_get_type(element1) == RF_ET_DOMAIN ||
-		   	rf_element_get_type(element1) == RF_ET_GLOBAL_DOMAIN)
+		   rf_element_get_type(element1) == RF_ET_GLOBAL_DOMAIN)
 		{
 			for(x = 0; x < width; x++)
 			{
