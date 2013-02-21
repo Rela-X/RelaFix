@@ -109,7 +109,7 @@ statement:	'\n'
 																											rf_parser_set_path($3);
 																										}
 			| "LOAD" {rf_lexer_mode = RF_LEXER_FILE;} FILENAME {rf_lexer_mode = RF_LEXER_NORMAL;} ';'	{
-																											if(rf_lexer_need_load_file(rf_string_copy($3), (RF_LOCATION *)&yylloc) != 0)
+																											if(rf_lexer_need_load_file(strdup($3), (RF_LOCATION *)&yylloc) != 0)
 																											{
 																												if(rf_lexer_need_load_file(rf_string_combine(2, rf_parser_get_path(), $3), (RF_LOCATION *)&yylloc) != 0)
 																													rf_parser_error(@3.last_line, @3.last_column, "Can not find file '", 2, $3, "'");
@@ -858,7 +858,7 @@ show:	fexpr ';'	{
 free_domain:	'{' domainx '}'	{
 									if($2)
 									{
-										RF_DOMAIN *domain = rf_domain_create(rf_string_copy("no name"));
+										RF_DOMAIN *domain = rf_domain_create(strdup("no name"));
 										RF_ERROR error;
 
 										if(rf_domain_check_elements($2, &error) == 1)
@@ -1286,7 +1286,7 @@ int rf_relation_build_table(RF_RELATION *relation, RF_PARSER_TABLE_DATA *table_d
 
 	if(!table_data || !relation)
 	{
-		error->string = rf_string_copy("program error - invalid input to relation_build_table");
+		error->string = strdup("program error - invalid input to relation_build_table");
 		return 1;
 	}
 
@@ -1295,12 +1295,12 @@ int rf_relation_build_table(RF_RELATION *relation, RF_PARSER_TABLE_DATA *table_d
 		/* check if table has the right width and height */
 		if(rf_table_get_height(relation->table) != rf_list_get_count(table_data->rows))
 		{
-			error->string = rf_string_copy("wrong table height");
+			error->string = strdup("wrong table height");
 			return 1;
 		}
 		if(rf_table_get_width(relation->table) != rf_list_get_count(table_data->columns))
 		{
-			error->string = rf_string_copy("wrong table width");
+			error->string = strdup("wrong table width");
 			return 1;
 		}
 
@@ -1450,7 +1450,7 @@ int rf_relation_build_table(RF_RELATION *relation, RF_PARSER_TABLE_DATA *table_d
 						rf_list_destroy(list_v, 0);
 						rf_list_destroy(list_h, 0);
 
-						error->string = rf_string_copy("program error - while writing bit to table");
+						error->string = strdup("program error - while writing bit to table");
 						return 1;
 					}
 				}
@@ -1463,7 +1463,7 @@ int rf_relation_build_table(RF_RELATION *relation, RF_PARSER_TABLE_DATA *table_d
 						rf_list_destroy(list_v, 0);
 						rf_list_destroy(list_h, 0);
 
-						error->string = rf_string_copy("program error - while writing bit to table");
+						error->string = strdup("program error - while writing bit to table");
 						return 1;
 					}
 				}
@@ -1481,7 +1481,7 @@ int rf_relation_build_table(RF_RELATION *relation, RF_PARSER_TABLE_DATA *table_d
 	}
 	else
 	{
-		error->string = rf_string_copy("program error - wrong type in tabledata");
+		error->string = strdup("program error - wrong type in tabledata");
 		return 1;
 	}
 
@@ -1576,7 +1576,7 @@ int rf_relation_build_table_by_formula(RF_RELATION *relation, RF_FORMULA *formul
 				rf_list_destroy(list_1, 0);
 				rf_list_destroy(list_2, 0);
 
-				error->string = rf_string_copy("The result has the wrong type.");
+				error->string = strdup("The result has the wrong type.");
 				error->location = result->location;
 				rf_formula_destroy_result(result);
 				return 1;
@@ -1643,7 +1643,7 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 
 	if(!table_data || !operation)
 	{
-		error->string = rf_string_copy("program error - invalid input to operation_build_table");
+		error->string = strdup("program error - invalid input to operation_build_table");
 		return 1;
 	}
 
@@ -1652,12 +1652,12 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 		/* check if table has the right width and height */
 		if(rf_table_get_height(operation->table) != rf_list_get_count(table_data->rows))
 		{
-			error->string = rf_string_copy("wrong table height");
+			error->string = strdup("wrong table height");
 			return 1;
 		}
 		if(rf_table_get_width(operation->table) != rf_list_get_count(table_data->columns))
 		{
-			error->string = rf_string_copy("wrong table width");
+			error->string = strdup("wrong table width");
 			return 1;
 		}
 
@@ -1824,7 +1824,7 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 					rf_list_destroy(list_v, 0);
 					rf_list_destroy(list_h, 0);
 
-					error->string = rf_string_copy("program error - while writing string to table");
+					error->string = strdup("program error - while writing string to table");
 					return 1;
 				}
 
@@ -1842,7 +1842,7 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 	}
 	else
 	{
-		error->string = rf_string_copy("program error - wrong type in tabledata");
+		error->string = strdup("program error - wrong type in tabledata");
 		return 1;
 	}
 
@@ -1939,7 +1939,7 @@ int rf_operation_build_table_by_formula(RF_OPERATION *operation, RF_FORMULA *for
 				rf_list_destroy(list_1, 0);
 				rf_list_destroy(list_2, 0);
 
-				error->string = rf_string_copy("The result has the wrong type.");
+				error->string = strdup("The result has the wrong type.");
 				error->location = result->location;
 				rf_formula_destroy_result(result);
 				return 1;

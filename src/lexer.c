@@ -86,7 +86,7 @@ int yylex(void)
 		rf_parser_register_system_functions();
 
 		/* load system.rfc */
-		file = rf_string_copy("system.rfc");
+		file = strdup("system.rfc");
 		rf_lexer_need_load_file(file, (RF_LOCATION *)&yylloc);
 	}
 
@@ -199,7 +199,7 @@ int yylex(void)
 			rf_lexer_need_ungetc(c);
 
 		id_buffer[i] = '\0';
-		yylval.id = rf_string_copy(id_buffer);
+		yylval.id = strdup(id_buffer);
 		return STRING;
 	}
 
@@ -251,7 +251,7 @@ int yylex(void)
 			else
 			{
 				type = ID;
-				yylval.id = rf_string_copy(id_buffer);
+				yylval.id = strdup(id_buffer);
 			}
 
 			return type;
@@ -289,7 +289,7 @@ int yylex(void)
 			else
 			{
 				type = FILENAME;
-				yylval.id = rf_string_copy(id_buffer);
+				yylval.id = strdup(id_buffer);
 			}
 
 			return type;

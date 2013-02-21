@@ -651,7 +651,7 @@ RF_LIST * rf_parser_table_row_get_list(RF_PARSER_TABLE_ROW *row)
 void rf_parser_register_system_functions()
 {
 	RF_FUNCTION *function;
-	function = rf_function_create(rf_string_copy("is_reflexive"), rf_relation_is_reflexive, 1);
+	function = rf_function_create(strdup("is_reflexive"), rf_relation_is_reflexive, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -664,7 +664,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_reflexive to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_irreflexive"), rf_relation_is_irreflexive, 1);
+	function = rf_function_create(strdup("is_irreflexive"), rf_relation_is_irreflexive, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -675,7 +675,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_irreflexive to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_symmetric"), rf_relation_is_symmetric, 1);
+	function = rf_function_create(strdup("is_symmetric"), rf_relation_is_symmetric, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -686,7 +686,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_symmetric to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_transitive"), rf_relation_is_transitive, 1);
+	function = rf_function_create(strdup("is_transitive"), rf_relation_is_transitive, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -697,7 +697,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_transitive to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_antisymmetric"), rf_relation_is_antisymmetric, 1);
+	function = rf_function_create(strdup("is_antisymmetric"), rf_relation_is_antisymmetric, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -708,7 +708,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_antisymmetric to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_asymmetric"), rf_relation_is_asymmetric, 1);
+	function = rf_function_create(strdup("is_asymmetric"), rf_relation_is_asymmetric, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -719,7 +719,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_asymmetric to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_equivalent"), rf_relation_is_equivalent, 1);
+	function = rf_function_create(strdup("is_equivalent"), rf_relation_is_equivalent, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -731,7 +731,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_equivalent to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_difunctional"), rf_relation_is_difunctional, 1);
+	function = rf_function_create(strdup("is_difunctional"), rf_relation_is_difunctional, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -742,7 +742,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_difunctional to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_preorder"), rf_relation_is_preorder, 1);
+	function = rf_function_create(strdup("is_preorder"), rf_relation_is_preorder, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -754,7 +754,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_preorder to parser", 0);
 
-	function = rf_function_create(rf_string_copy("is_poset"), rf_relation_is_poset, 1);
+	function = rf_function_create(strdup("is_poset"), rf_relation_is_poset, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -766,7 +766,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function is_poset to parser", 0);
 
-	function = rf_function_create(rf_string_copy("complement"), rf_relation_create_complement, 1);
+	function = rf_function_create(strdup("complement"), rf_relation_create_complement, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -778,7 +778,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function complement to parser", 0);
 
-	function = rf_function_create(rf_string_copy("converse"), rf_relation_create_converse, 1);
+	function = rf_function_create(strdup("converse"), rf_relation_create_converse, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -790,7 +790,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function converse to parser", 0);
 
-	function = rf_function_create(rf_string_copy("union"), rf_relation_create_union, 2);
+	function = rf_function_create(strdup("union"), rf_relation_create_union, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -801,7 +801,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function union to parser", 0);
 
-	function = rf_function_create(rf_string_copy("intersection"), rf_relation_create_intersection, 2);
+	function = rf_function_create(strdup("intersection"), rf_relation_create_intersection, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -812,7 +812,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function intersection to parser", 0);
 
-	function = rf_function_create(rf_string_copy("generate_meet"), rf_operation_create_meet, 1);
+	function = rf_function_create(strdup("generate_meet"), rf_operation_create_meet, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -823,7 +823,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function intersection to parser", 0);
 
-	function = rf_function_create(rf_string_copy("generate_join"), rf_operation_create_join, 1);
+	function = rf_function_create(strdup("generate_join"), rf_operation_create_join, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -834,7 +834,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function intersection to parser", 0);
 
-	function = rf_function_create(rf_string_copy("id"), rf_relation_create_id, 1);
+	function = rf_function_create(strdup("id"), rf_relation_create_id, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -845,7 +845,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function id to parser", 0);
 
-	function = rf_function_create(rf_string_copy("empty"), rf_relation_create_empty, 2);
+	function = rf_function_create(strdup("empty"), rf_relation_create_empty, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -856,7 +856,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function empty to parser", 0);
 
-	function = rf_function_create(rf_string_copy("full"), rf_relation_create_full, 2);
+	function = rf_function_create(strdup("full"), rf_relation_create_full, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -867,7 +867,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function full to parser", 0);
 
-	function = rf_function_create(rf_string_copy("concat"), rf_relation_create_concatenation, 2);
+	function = rf_function_create(strdup("concat"), rf_relation_create_concatenation, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -879,7 +879,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function concat to parser", 0);
 
-	function = rf_function_create(rf_string_copy("max"), rf_relation_find_maximum, 1);
+	function = rf_function_create(strdup("max"), rf_relation_find_maximum, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -890,7 +890,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function max to parser", 0);
 
-	function = rf_function_create(rf_string_copy("min"), rf_relation_find_minimum, 1);
+	function = rf_function_create(strdup("min"), rf_relation_find_minimum, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -901,7 +901,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function min to parser", 0);
 
-	function = rf_function_create(rf_string_copy("upperbound"), rf_relation_find_upperbound, 2);
+	function = rf_function_create(strdup("upperbound"), rf_relation_find_upperbound, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -913,7 +913,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function upperbound to parser", 0);
 
-	function = rf_function_create(rf_string_copy("lowerbound"), rf_relation_find_lowerbound, 2);
+	function = rf_function_create(strdup("lowerbound"), rf_relation_find_lowerbound, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -925,7 +925,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function lowerbound to parser", 0);
 
-	function = rf_function_create(rf_string_copy("supremum"), rf_relation_find_supremum, 2);
+	function = rf_function_create(strdup("supremum"), rf_relation_find_supremum, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -937,7 +937,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function supremum to parser", 0);
 
-	function = rf_function_create(rf_string_copy("infimum"), rf_relation_find_infimum, 2);
+	function = rf_function_create(strdup("infimum"), rf_relation_find_infimum, 2);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -949,7 +949,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function infimum to parser", 0);
 
-	function = rf_function_create(rf_string_copy("top"), rf_relation_create_top, 1);
+	function = rf_function_create(strdup("top"), rf_relation_create_top, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -960,7 +960,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function top to parser", 0);
 
-	function = rf_function_create(rf_string_copy("bottom"), rf_relation_create_bottom, 1);
+	function = rf_function_create(strdup("bottom"), rf_relation_create_bottom, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -971,7 +971,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function bottom to parser", 0);
 
-	function = rf_function_create(rf_string_copy("pow"), rf_domain_create_powerset, 1);
+	function = rf_function_create(strdup("pow"), rf_domain_create_powerset, 1);
 	if(function)
 	{
 		rf_function_set_description(function,
@@ -982,7 +982,7 @@ void rf_parser_register_system_functions()
 	else
 		rf_parser_error(0, 0, "could not add function pow to parser", 0);
 
-	function = rf_function_create(rf_string_copy("subsetleq"), rf_relation_create_subsetleq, 1);
+	function = rf_function_create(strdup("subsetleq"), rf_relation_create_subsetleq, 1);
 	if(function)
 	{
 		rf_function_set_description(function,

@@ -65,7 +65,7 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 		return 1;
 	else if(!formula) /* error */
 	{
-		*result = rf_formula_calc_error(0, rf_string_copy("program error - no formula"));
+		*result = rf_formula_calc_error(0, strdup("program error - no formula"));
 		return 1;
 	}
 
@@ -1141,7 +1141,7 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 		}
 		else if(tmp->is_temporary)
 		{
-			el_1 = rf_string_copy(tmp->element);
+			el_1 = strdup(tmp->element);
 		}
 		else
 			el_1 = tmp->element;
@@ -1305,7 +1305,7 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			{
 				rf_formula_destroy_result(*result);
 				*result = rf_formula_calc_error(&formula->location,
-					rf_string_copy("program error - variable 'X' is not set"));
+					strdup("program error - variable 'X' is not set"));
 				return 1;
 			}
 		}
@@ -1320,7 +1320,7 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			{
 				rf_formula_destroy_result(*result);
 				*result = rf_formula_calc_error(&formula->location,
-					rf_string_copy("program error - variable 'Y' is not set"));
+					strdup("program error - variable 'Y' is not set"));
 				return 1;
 			}
 		}
@@ -1328,7 +1328,7 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 
 	/* if we come here, some type is not implemented yet */
 	*result = rf_formula_calc_error(&formula->location,
-		rf_string_copy("program error - some result is not implemented"));
+		strdup("program error - some result is not implemented"));
 	return 1;
 }
 

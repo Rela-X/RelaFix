@@ -37,7 +37,7 @@ int rf_operation_calc(RF_OPERATION *operation, char *element_1, char *element_2,
 
 	if(!operation || !element_1 || !element_2)
 	{
-		*element_out = rf_string_copy("program error - some input is zero");
+		*element_out = strdup("program error - some input is zero");
 		return 1;
 	}
 
@@ -63,7 +63,7 @@ int rf_operation_calc(RF_OPERATION *operation, char *element_1, char *element_2,
 	/* read the solution from the table. On error return an errordescription */
 	if(rf_table_get_string(operation->table, x, y, element_out))
 	{
-		*element_out = rf_string_copy("program error - while reading string from table");
+		*element_out = strdup("program error - while reading string from table");
 		return 1;
 	}
 
@@ -155,7 +155,7 @@ RF_OPERATION * rf_operation_create_meet(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!relation)
 	{
-		error->string = rf_string_copy("program error - relation is zero");
+		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
@@ -167,17 +167,17 @@ RF_OPERATION * rf_operation_create_meet(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!rf_relation_is_poset(relation))
 	{
-		error->string = rf_string_copy("Given relation is not a poset");
+		error->string = strdup("Given relation is not a poset");
 		return 0;
 	}
 
 	if(!(operation = rf_operation_generate_meet(relation)))
 	{
-		error->string = rf_string_copy("program error - while generating meet");
+		error->string = strdup("program error - while generating meet");
 		return 0;
 	}
 
-	rf_operation_set_name(operation, rf_string_copy("no name"));
+	rf_operation_set_name(operation, strdup("no name"));
 	return operation;
 }
 
@@ -195,7 +195,7 @@ RF_OPERATION * rf_operation_create_join(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!relation)
 	{
-		error->string = rf_string_copy("program error - relation is zero");
+		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
@@ -207,17 +207,17 @@ RF_OPERATION * rf_operation_create_join(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!rf_relation_is_poset(relation))
 	{
-		error->string = rf_string_copy("Given relation is not a poset");
+		error->string = strdup("Given relation is not a poset");
 		return 0;
 	}
 
 	if(!(operation = rf_operation_generate_join(relation)))
 	{
-		error->string = rf_string_copy("program error - while generating join");
+		error->string = strdup("program error - while generating join");
 		return 0;
 	}
 
-	rf_operation_set_name(operation, rf_string_copy("no name"));
+	rf_operation_set_name(operation, strdup("no name"));
 	return operation;
 }
 

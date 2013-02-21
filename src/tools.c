@@ -10,29 +10,6 @@
 #include <stdarg.h>
 
 
-/*! \brief	Copies a string
- *
- * Creates a copy of the given string on the heap.
- * @param str pointer to source string
- * @return pointer to the new string on the heap. Must be freed by user. If an error occures, 0 will be returned.
- * @see rf_string_combine
- */
-char * rf_string_copy(const char *str)
-{
-	char *new_string;
-
-	if(!str)
-		return 0;
-
-	new_string = malloc((strlen(str) + 1) * sizeof(char));
-	if(!new_string)
-		return 0;
-
-	strcpy(new_string, str);
-	return new_string;
-}
-
-
 /*! \brief Concatenates strings
  *
  * Concatenates all strings that are given as an argument. This function can take
@@ -40,7 +17,6 @@ char * rf_string_copy(const char *str)
  * @param argc count of following string pointers
  * @param ... variable list of string pointers (char *)
  * @return pointer to the new string on the heap. Must be freed by user. If an error occures, 0 will be returned.
- * @see rf_string_copy
  */
 char * rf_string_combine(int argc, ...)
 {

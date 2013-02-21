@@ -30,7 +30,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 
 	if(!elements)
 	{
-		error->string = rf_string_copy("program error - list is zero");
+		error->string = strdup("program error - list is zero");
 		return 1;
 	}
 
@@ -38,7 +38,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 	main = rf_list_get_begin(elements);
 	if(!main)
 	{
-		error->string = rf_string_copy("program error - last call: rf_list_get_begin()");
+		error->string = strdup("program error - last call: rf_list_get_begin()");
 		return 1;
 	}
 
@@ -51,7 +51,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 		{
 			rf_list_delete_iterator(main);
 
-			error->string = rf_string_copy("Found an zero element in elementlist");
+			error->string = strdup("Found an zero element in elementlist");
 			return 1;
 		}
 
@@ -61,7 +61,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 		{
 			rf_list_delete_iterator(main);
 
-			error->string = rf_string_copy("Found an element that has no name in the elementlist");
+			error->string = strdup("Found an element that has no name in the elementlist");
 			return 1;
 		}
 
@@ -77,7 +77,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 				rf_list_delete_iterator(main);
 				rf_list_delete_iterator(sub);
 
-				error->string = rf_string_copy("Found an zero element in elementlist");
+				error->string = strdup("Found an zero element in elementlist");
 				return 1;
 			}
 
@@ -88,7 +88,7 @@ int rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error)
 				rf_list_delete_iterator(main);
 				rf_list_delete_iterator(sub);
 
-				error->string = rf_string_copy("Found an element that has no name in the elementlist");
+				error->string = strdup("Found an element that has no name in the elementlist");
 				return 1;
 			}
 
@@ -130,7 +130,7 @@ RF_DOMAIN * rf_domain_copy(RF_DOMAIN *domain)
 		return 0;
 
 	/*copy properties */
-	new_domain->name = rf_string_copy(domain->name);
+	new_domain->name = strdup(domain->name);
 
 	if(domain->elements)
 	{
@@ -205,7 +205,7 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 
 	if(!domain)
 	{
-		error->string = rf_string_copy("program error - argument domain is zero");
+		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -232,7 +232,7 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 					name = tmp_name;
 				}
 				else
-					name = rf_string_copy(tmp_name);
+					name = strdup(tmp_name);
 				sub_element = rf_element_copy(element);
 				rf_list_append(tmp_elements, sub_element);
 				sub_element = 0;
@@ -241,7 +241,7 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 
 		/* add new element to new domain */
 		if(!name)
-			name = rf_string_copy("_");
+			name = strdup("_");
 		tmp_domain = rf_domain_create(name);
 		rf_domain_set_list(tmp_domain, tmp_elements);
 		tmp_elements = 0;
@@ -273,7 +273,7 @@ RF_DOMAIN * rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error)
 	{
 		rf_list_destroy(elements, (void (*)(void *))rf_element_destroy);
 
-		error->string = rf_string_copy("program error - no memory");
+		error->string = strdup("program error - no memory");
 		return 0;
 	}
 	rf_domain_set_list(new_domain, elements);
@@ -711,7 +711,7 @@ RF_ELEMENT * rf_element_copy(RF_ELEMENT *element)
 	}
 	else if(element->type == RF_ET_NAME)
 	{
-		new_element->data = rf_string_copy(element->data);
+		new_element->data = strdup(element->data);
 	}
 	else
 	{
