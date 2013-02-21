@@ -115,18 +115,18 @@ char * rf_function_get_name(RF_FUNCTION *function)
  @relates RF_FUNCTION
  @param function The function whose name should be compared.
  @param name The name in question.
- @return RF_TRUE if name is the name of the function.
- @return RF_FALSE if not or error.
+ @return true if name is the name of the function.
+ @return false if not or error.
  */
-RF_BOOL rf_function_has_name(RF_FUNCTION *function, char *name)
+bool rf_function_has_name(RF_FUNCTION *function, char *name)
 {
 	if(!function || !name)
-		return RF_FALSE;
+		return false;
 
 	if(strcmp(function->name, name) == 0)
-		return RF_TRUE;
+		return true;
 	else
-		return RF_FALSE;
+		return false;
 }
 
 

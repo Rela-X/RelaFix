@@ -15,7 +15,8 @@
 #ifndef RF_RELATION_H
 #define RF_RELATION_H
 
-#include "bool.h"
+#include <stdbool.h>
+
 #include "error.h"
 #include "table.h"
 #include "domain.h"
@@ -60,7 +61,7 @@ RF_DOMAIN *   rf_relation_get_domain_1(RF_RELATION *relation);
 RF_DOMAIN *   rf_relation_get_domain_2(RF_RELATION *relation);
 char *        rf_relation_get_name(RF_RELATION *relation);
 RF_TABLE *    rf_relation_get_table(RF_RELATION *relation);
-RF_BOOL       rf_relation_has_name(RF_RELATION *relation, char *name);
+bool          rf_relation_has_name(RF_RELATION *relation, char *name);
 int           rf_relation_is_antisymmetric(RF_RELATION *relation);
 int           rf_relation_is_asymmetric(RF_RELATION *relation);
 int           rf_relation_is_difunctional(RF_RELATION *relation);
@@ -73,16 +74,16 @@ int           rf_relation_is_symmetric(RF_RELATION *relation);
 int           rf_relation_is_transitive(RF_RELATION *relation);
 void          rf_relation_set_name(RF_RELATION *relation, char *name);
 void          rf_relation_set_table(RF_RELATION *relation, RF_TABLE *table);
-int           rf_relation_gain_symmetric(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_antisymmetric(RF_RELATION* relation, RF_BOOL upper);
+int           rf_relation_gain_symmetric(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_antisymmetric(RF_RELATION* relation, bool    upper);
 int           rf_relation_gain_irreflexive(RF_RELATION* relation);
 int           rf_relation_gain_reflexive(RF_RELATION* relation);
-int           rf_relation_gain_transitive(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_difunctional(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_equivalent(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_poset(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_preorder(RF_RELATION* relation, RF_BOOL fill);
-int           rf_relation_gain_asymmetric(RF_RELATION* relation, RF_BOOL upper);
+int           rf_relation_gain_transitive(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_difunctional(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_equivalent(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_poset(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_preorder(RF_RELATION* relation, bool    fill);
+int           rf_relation_gain_asymmetric(RF_RELATION* relation, bool    upper);
 
 
 #endif

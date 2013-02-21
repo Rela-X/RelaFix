@@ -540,28 +540,28 @@ char * rf_domain_get_name(RF_DOMAIN *domain)
  @relates RF_DOMAIN
  @param domain The domain to work on.
  @param name The name of the element in question.
- @return RF_TRUE if the element belongs to the domain.
- @return RF_FALSE if the element does not belong to the domain or on error.
+ @return true if the element belongs to the domain.
+ @return false if the element does not belong to the domain or on error.
  */
-RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
+bool rf_domain_has_element(RF_DOMAIN *domain, char *name)
 {
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element;
 
 	if(!domain || !name)
-		return RF_FALSE;
+		return false;
 
 	/* get list with names from domain */
 	names = rf_domain_get_element_names(domain);
 	if(!names)
-		return RF_FALSE;
+		return false;
 
 	/* get iterator over names */
 	element = rf_list_get_begin(names);
 	if(!element)
 	{
 		rf_list_destroy(names, 0);
-		return RF_FALSE;
+		return false;
 	}
 
 	/* check if given name is in list */
@@ -570,12 +570,12 @@ RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
 		{
 			rf_list_delete_iterator(element);
 			rf_list_destroy(names, 0);
-			return RF_TRUE;
+			return true;
 		}
 
 	rf_list_delete_iterator(element);
 	rf_list_destroy(names, 0);
-	return RF_FALSE;
+	return false;
 }
 
 
@@ -583,20 +583,20 @@ RF_BOOL rf_domain_has_element(RF_DOMAIN *domain, char *name)
  @relates RF_DOMAIN
  @param domain The domain to work on.
  @param The name to compare
- @return RF_TRUE if it is the name of the domain.
- @return RF_FALSE it it is not the name of the domain or on error.
+ @return true if it is the name of the domain.
+ @return false it it is not the name of the domain or on error.
  */
-RF_BOOL rf_domain_has_name(RF_DOMAIN *domain, char *name)
+bool rf_domain_has_name(RF_DOMAIN *domain, char *name)
 {
 	if(!domain || !name)
-		return RF_FALSE;
+		return false;
 	if(!domain->name)
-		return RF_FALSE;
+		return false;
 
 	if(strcmp(domain->name, name))
-		return RF_FALSE;
+		return false;
 	else
-		return RF_TRUE;
+		return true;
 }
 
 
@@ -606,10 +606,10 @@ Tests if the domain1 is subdomain of domain2.
 @relates RF_DOMAIN
 @param[in] domain1 The subdomain.
 @param[in] domain2 The domain the subdomain is part of.
-@return RF_TRUE if domain is subdomain of domain2.
-@return RF_FALSE if not or error.
+@return true if domain is subdomain of domain2.
+@return false if not or error.
 */
-RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
+bool rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
 {
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element;
@@ -617,7 +617,7 @@ RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
 
 	if(!domain1 || !domain2)
 	{
-		return RF_FALSE;
+		return false;
 	}
 
 	/* get names in question */
@@ -626,19 +626,19 @@ RF_BOOL rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2)
 	while(rf_list_has_next(element))
 	{
 		name = rf_list_next(element);
-		if(rf_domain_has_element(domain2, name) == RF_FALSE)
+		if(rf_domain_has_element(domain2, name) == false)
 		{
 			rf_list_delete_iterator(element);
 			rf_list_destroy(names, 0);
 
-			return RF_FALSE;
+			return false;
 		}
 	}
 
 	/* if we arrive here, domain1 is in domain2 */
 	rf_list_delete_iterator(element);
 	rf_list_destroy(names, 0);
-	return RF_TRUE;
+	return true;
 }
 
 /*! \brief Sets the elements for the given domain.

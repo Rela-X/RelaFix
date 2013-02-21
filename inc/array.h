@@ -36,6 +36,6 @@ void *       rf_array_write(RF_ARRAY *array, void * element, unsigned int pos);
 void *       rf_array_delete(RF_ARRAY *array, unsigned int pos);
 int          rf_array_merge(RF_ARRAY *array_1, RF_ARRAY *array_2);
 unsigned int rf_array_size(RF_ARRAY *array);
-void			   rf_array_swap_order(RF_ARRAY *array);
+void         rf_array_swap_order(RF_ARRAY *array);
 
 #endif

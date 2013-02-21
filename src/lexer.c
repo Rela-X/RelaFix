@@ -26,7 +26,7 @@ typedef struct
     int		id; /*!< \brief The id that represents the keyword in the parser */
 } RF_LEXER_KEYWORD;
 
-static RF_BOOL is_first_run = RF_TRUE;
+static bool is_first_run = true;
 
 /*int rf_lexer_id = RF_LEXER_ID;*/
 
@@ -72,7 +72,7 @@ int yylex(void)
 	char *file = 0;
 	static char *id_buffer = 0;
 	static int length = 0;
-	RF_BOOL skip_test = RF_FALSE;
+	bool skip_test = false;
 
 	if(length == 0)
 	{
@@ -80,9 +80,9 @@ int yylex(void)
 		id_buffer = malloc(length + 1);
 	}
 
-	if(is_first_run == RF_TRUE)
+	if(is_first_run == true)
 	{
-		is_first_run = RF_FALSE;
+		is_first_run = false;
 		rf_parser_register_system_functions();
 
 		/* load system.rfc */
@@ -96,7 +96,7 @@ int yylex(void)
 		{
 			yylloc.last_column++;
 
-			if(rf_parser_record == RF_TRUE)
+			if(rf_parser_record == true)
 				rf_parser_record_append(c);
 		}
 
@@ -165,11 +165,11 @@ int yylex(void)
 	else if(c == '"')
 	{
 		i = 0;
-		skip_test = RF_FALSE;
+		skip_test = false;
 		c = rf_lexer_need_char();
-		while((c != EOF && c != '"') || skip_test == RF_TRUE)
+		while((c != EOF && c != '"') || skip_test == true)
 		{
-			skip_test = RF_FALSE;
+			skip_test = false;
 			if(i == length)
 			{
 				length *= 2;
@@ -187,7 +187,7 @@ int yylex(void)
 				if(c == EOF)
 					break;
 
-				skip_test = RF_TRUE;
+				skip_test = true;
 				yylloc.last_column += 1;
 			}
 		}
@@ -208,16 +208,16 @@ int yylex(void)
 		if(c == '_' || isdigit(c) || isalpha(c))
 		{
 			int type;
-			RF_BOOL has_dot = RF_FALSE;
+			bool has_dot = false;
 
 			i = 0;
 			do
 			{
-				if(rf_parser_record == RF_TRUE)
+				if(rf_parser_record == true)
 					rf_parser_record_append(c);
 
 				if(c == '.')
-					has_dot = RF_TRUE;
+					has_dot = true;
 
 				if(i == length)
 				{
@@ -245,7 +245,7 @@ int yylex(void)
 					case T_OPERATION:
 					case T_LOAD:
 					case T_NEGATION:
-						rf_parser_record = RF_FALSE;
+						rf_parser_record = false;
 				}
 			}
 			else
@@ -302,7 +302,7 @@ int yylex(void)
 		return c;
 	}
 
-	if(rf_parser_record == RF_TRUE)
+	if(rf_parser_record == true)
 		rf_parser_record_append(c);
 	yylloc.last_column++;
 	return c;

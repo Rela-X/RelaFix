@@ -203,18 +203,18 @@ char * rf_negation_get_name(RF_NEGATION *negation)
  @relates RF_NEGATION
  @param negation The negation whoes name should be compared.
  @param name The name in question.
- @return RF_TRUE if the name matchs the name of the negation.
- @return RF_FALSE if the name does not match or on error.
+ @return true if the name matchs the name of the negation.
+ @return false if the name does not match or on error.
  */
-RF_BOOL rf_negation_has_name(RF_NEGATION *negation, char *name)
+bool rf_negation_has_name(RF_NEGATION *negation, char *name)
 {
 	if(!negation || !name)
-		return RF_FALSE;
+		return false;
 
 	if(strcmp(negation->name, name) == 0)
-		return RF_TRUE;
+		return true;
 	else
-		return RF_FALSE;
+		return false;
 }
 
 

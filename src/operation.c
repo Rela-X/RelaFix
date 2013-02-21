@@ -754,20 +754,20 @@ RF_TABLE * rf_operation_get_table(RF_OPERATION *operation)
  @relates RF_OPERATION
  @param[in] operation The operation whoes name is in question.
  @param[in] The name that should be compared.
- @return RF_TRUE if the name matches the name of the operation.
- @return RF_FALSE if the name does not match and on error.
+ @return true if the name matches the name of the operation.
+ @return false if the name does not match and on error.
  */
-RF_BOOL rf_operation_has_name(RF_OPERATION *operation, char *name)
+bool rf_operation_has_name(RF_OPERATION *operation, char *name)
 {
 	if(!operation || !name)
-		return RF_FALSE;
+		return false;
 	if(!operation->name)
-		return RF_FALSE;
+		return false;
 
 	if(strcmp(name, operation->name))
-		return RF_FALSE;
+		return false;
 	else
-		return RF_TRUE;
+		return true;
 }
 
 /*!

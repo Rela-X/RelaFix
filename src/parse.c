@@ -21,8 +21,8 @@
 
 /* globals for the parser */
 enum	rf_lexer_mode rf_lexer_mode = RF_LEXER_NORMAL;
-RF_BOOL				rf_parser_record = RF_FALSE;
-RF_BOOL				rf_parser_with_variable = RF_FALSE;
+bool				rf_parser_record = false;
+bool				rf_parser_with_variable = false;
 static RF_LIST		*rf_parser_domains = 0;
 static RF_LIST		*rf_parser_functions = 0;
 static RF_LIST		*rf_parser_negations = 0;

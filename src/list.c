@@ -256,18 +256,18 @@ Tests if there is an item following the given iterator.
 
 @relates RF_LIST
 @param[in] The iterator pointing to an item.
-@return RF_TRUE if there is a following item.
-@return RF_FALSE if not or error.
+@return true if there is a following item.
+@return false if not or error.
 */
-RF_BOOL rf_list_has_next(RF_LIST_ITERATOR *iterator)
+bool rf_list_has_next(RF_LIST_ITERATOR *iterator)
 {
 	if(!iterator)
-		return RF_FALSE;
+		return false;
 
 	if(iterator->next)
-		return RF_TRUE;
+		return true;
 	else
-		return RF_FALSE;
+		return false;
 }
 
 /*!
@@ -275,18 +275,18 @@ Tests if there is an item before the given iterator.
 
 @relates RF_LIST
 @param[in] The iterator pointing to an item.
-@return RF_TRUE if there is a previous item.
-@return RF_FALSE if not or error.
+@return true if there is a previous item.
+@return false if not or error.
 */
-RF_BOOL rf_list_has_prev(RF_LIST_ITERATOR *iterator)
+bool rf_list_has_prev(RF_LIST_ITERATOR *iterator)
 {
 	if(!iterator)
-		return RF_FALSE;
+		return false;
 
 	if(iterator->prev)
-		return RF_TRUE;
+		return true;
 	else
-		return RF_FALSE;
+		return false;
 }
 
 /*!

@@ -69,8 +69,8 @@ typedef struct rf_formula_result
 	RF_DOMAIN       *domain; /*!< \brief If the type is RF_FO_DOMAIN */
 	char            *error; /*!< \brief If the type is RF_FO_ERROR, here is a pointer to an error message */
 	RF_LOCATION     location; /*!< \brief If the type is RF_FO_ERROR, here goes the location where the error did occur */
-	RF_BOOL         is_temporary; /*!< \brief If true the object in this struct is only temporary available. Else it is a global object. */
-	RF_BOOL         can_delete; /*!< \brief If true, a call to function rf_formula_destroy_result() will delete the object if it is temporary! */
+	bool            is_temporary; /*!< \brief If true the object in this struct is only temporary available. Else it is a global object. */
+	bool            can_delete; /*!< \brief If true, a call to function rf_formula_destroy_result() will delete the object if it is temporary! */
 } RF_FORMULA_RESULT;
 
 

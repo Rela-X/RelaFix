@@ -819,7 +819,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element1, *element2;
 	char *name1 = 0, *name2 = 0;
-	RF_BOOL isInfimum;
+	bool isInfimum;
 	int x, y, result;
 
 	if(!relation)
@@ -849,7 +849,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 	}
 
 	/* check if the domain is part of relation->domain_1 */
-	if(rf_domain_is_partof(domain, relation->domain_1) == RF_FALSE)
+	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
 		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
 			rf_domain_get_name(relation->domain_1), "'");
@@ -867,7 +867,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 
 		/* check if element1 is bigger then all others */
 		element2 = rf_list_get_begin(names);
-		isInfimum = RF_TRUE;
+		isInfimum = true;
 		while(rf_list_has_next(element2))
 		{
 			/* get positions in table */
@@ -888,7 +888,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 			}
 			else if(result == 1) /* element1 is not bigger then element2 */
 			{
-				isInfimum = RF_FALSE;
+				isInfimum = false;
 				break;
 			}
 			else if(result == 0)
@@ -906,7 +906,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 				}
 				else if(result == 0) /* element1 is not bigger then element2 (we dont know) */
 				{
-					isInfimum = RF_FALSE;
+					isInfimum = false;
 					break;
 				}
 			}
@@ -914,7 +914,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 		rf_list_delete_iterator(element2);
 
 		/* check if infimum was found */
-		if(isInfimum == RF_TRUE)
+		if(isInfimum == true)
 		{
 			rf_list_delete_iterator(element1);
 			rf_list_destroy(names, 0);
@@ -951,7 +951,7 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 	RF_LIST_ITERATOR *element;
 	RF_ELEMENT *new_element;
 	RF_DOMAIN *new_domain;
-	RF_BOOL isLowerbound;
+	bool isLowerbound;
 	char *name;
 
 	if(!relation)
@@ -981,7 +981,7 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 	}
 
 	/* check if the domain is part of relation->domain_1 */
-	if(rf_domain_is_partof(domain, relation->domain_1) == RF_FALSE)
+	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
 		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
 			rf_domain_get_name(relation->domain_1), "'");
@@ -996,7 +996,7 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 	{
 		/* we compare element y against every element from domain */
 		element = rf_list_get_begin(names);
-		isLowerbound = RF_TRUE;
+		isLowerbound = true;
 		while(rf_list_has_next(element))
 		{
 			name = rf_list_next(element);
@@ -1014,14 +1014,14 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 			}
 			else if(result == 0) /* y is not an lowerbound */
 			{
-				isLowerbound = RF_FALSE;
+				isLowerbound = false;
 			}
 		}
 		rf_list_delete_iterator(element);
 		element = 0;
 
 		/* if y is lowerbound we add it to the new domain */
-		if(isLowerbound == RF_TRUE)
+		if(isLowerbound == true)
 		{
 			new_element = rf_element_copy(rf_domain_get_element_by_position(relation->domain_1, y));
 			rf_list_append(new_elements, new_element);
@@ -1230,7 +1230,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element1, *element2;
 	char *name1 = 0, *name2 = 0;
-	RF_BOOL isSupremum;
+	bool isSupremum;
 	int x, y, result;
 
 	if(!relation)
@@ -1260,7 +1260,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 	}
 
 	/* check if the domain is part of relation->domain_1 */
-	if(rf_domain_is_partof(domain, relation->domain_1) == RF_FALSE)
+	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
 		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
 			rf_domain_get_name(relation->domain_1), "'");
@@ -1278,7 +1278,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 
 		/* check if element1 is smaller then all otheres */
 		element2 = rf_list_get_begin(names);
-		isSupremum = RF_TRUE;
+		isSupremum = true;
 		while(rf_list_has_next(element2))
 		{
 			/* get positions in table */
@@ -1299,7 +1299,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 			}
 			else if(result == 0) /* element1 is not smaller then element2 */
 			{
-				isSupremum = RF_FALSE;
+				isSupremum = false;
 				break;
 			}
 			else if(result == 1)
@@ -1317,7 +1317,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 				}
 				else if(result == 1) /* element1 is not smaller then element2 (we dont know) */
 				{
-					isSupremum = RF_FALSE;
+					isSupremum = false;
 					break;
 				}
 			}
@@ -1325,7 +1325,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 		rf_list_delete_iterator(element2);
 
 		/* check if Supremum was found */
-		if(isSupremum == RF_TRUE)
+		if(isSupremum == true)
 		{
 			rf_list_delete_iterator(element1);
 			rf_list_destroy(names, 0);
@@ -1362,7 +1362,7 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 	RF_LIST_ITERATOR *element;
 	RF_ELEMENT *new_element;
 	RF_DOMAIN *new_domain;
-	RF_BOOL isUpperbound;
+	bool isUpperbound;
 	char *name;
 
 	if(!relation)
@@ -1392,7 +1392,7 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 	}
 
 	/* check if the domain is part of relation->domain_1 */
-	if(rf_domain_is_partof(domain, relation->domain_1) == RF_FALSE)
+	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
 		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
 			rf_domain_get_name(relation->domain_1), "'");
@@ -1407,7 +1407,7 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 	{
 		/* we compare element y against every element from domain */
 		element = rf_list_get_begin(names);
-		isUpperbound = RF_TRUE;
+		isUpperbound = true;
 		while(rf_list_has_next(element))
 		{
 			name = rf_list_next(element);
@@ -1425,14 +1425,14 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 			}
 			else if(result == 0) /* y is not an upperbound */
 			{
-				isUpperbound = RF_FALSE;
+				isUpperbound = false;
 			}
 		}
 		rf_list_delete_iterator(element);
 		element = 0;
 
 		/* if y is upperbound we add it to the new domain */
-		if(isUpperbound == RF_TRUE)
+		if(isUpperbound == true)
 		{
 			new_element = rf_element_copy(rf_domain_get_element_by_position(relation->domain_1, y));
 			rf_list_append(new_elements, new_element);
@@ -1525,20 +1525,20 @@ Tests if the given name is the name of the relation.
 @relates RF_RELATION
 @param[in] relation The relation whoes name should be compared.
 @param[in] name The name to be compared.
-@return RF_TRUE if the given name is the name of the relation.
-@return RF_FALSE if not or on error.
+@return true if the given name is the name of the relation.
+@return false if not or on error.
 */
-RF_BOOL rf_relation_has_name(RF_RELATION *relation, char *name)
+bool rf_relation_has_name(RF_RELATION *relation, char *name)
 {
 	if(!relation || !name)
-		return RF_FALSE;
+		return false;
 	if(!relation->name)
-		return RF_FALSE;
+		return false;
 
 	if(strcmp(relation->name, name))
-		return RF_FALSE;
+		return false;
 	else
-		return RF_TRUE;
+		return true;
 }
 
 
@@ -2027,7 +2027,7 @@ void rf_relation_set_table(RF_RELATION *relation, RF_TABLE *table)
 
 
 
-int rf_relation_gain_symmetric(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_symmetric(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_symmetric(relation);
     if (res != 0)
@@ -2063,7 +2063,7 @@ int rf_relation_gain_symmetric(RF_RELATION* relation, RF_BOOL fill)
 }
 
 
-int rf_relation_gain_antisymmetric(RF_RELATION* relation, RF_BOOL upper)
+int rf_relation_gain_antisymmetric(RF_RELATION* relation, bool upper)
 {
     int res = rf_relation_is_antisymmetric(relation);
     if (res != 0)
@@ -2154,7 +2154,7 @@ int rf_relation_gain_reflexive(RF_RELATION* relation)
 
 
 
-int rf_relation_gain_transitive(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_transitive(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_transitive(relation);
     if (res != 0)
@@ -2207,7 +2207,7 @@ int rf_relation_gain_transitive(RF_RELATION* relation, RF_BOOL fill)
 
 
 
-int rf_relation_gain_difunctional(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_difunctional(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_difunctional(relation);
     if (res != 0)
@@ -2264,7 +2264,7 @@ int rf_relation_gain_difunctional(RF_RELATION* relation, RF_BOOL fill)
 }
 
 
-int rf_relation_gain_equivalent(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_equivalent(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_equivalent(relation);
     if (res != 0)
@@ -2280,7 +2280,7 @@ int rf_relation_gain_equivalent(RF_RELATION* relation, RF_BOOL fill)
 }
 
 
-int rf_relation_gain_poset(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_poset(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_poset(relation);
     if (res != 0)
@@ -2296,7 +2296,7 @@ int rf_relation_gain_poset(RF_RELATION* relation, RF_BOOL fill)
 }
 
 
-int rf_relation_gain_preorder(RF_RELATION* relation, RF_BOOL fill)
+int rf_relation_gain_preorder(RF_RELATION* relation, bool fill)
 {
     int res = rf_relation_is_preorder(relation);
     if (res != 0)
@@ -2310,7 +2310,7 @@ int rf_relation_gain_preorder(RF_RELATION* relation, RF_BOOL fill)
     return rf_relation_gain_preorder(relation, fill);
 }
 
-int rf_relation_gain_asymmetric(RF_RELATION* relation, RF_BOOL upper)
+int rf_relation_gain_asymmetric(RF_RELATION* relation, bool upper)
 {
     int res = rf_relation_is_asymmetric(relation);
     if (res != 0)

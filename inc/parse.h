@@ -7,7 +7,8 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#include "bool.h"
+#include <stdbool.h>
+
 #include "error.h"
 #include "list.h"
 #include "domain.h"
@@ -51,8 +52,8 @@ enum rf_lexer_mode {RF_LEXER_NORMAL, RF_LEXER_CROSS, RF_LEXER_FILE};
 
 
 extern enum rf_lexer_mode rf_lexer_mode;
-extern RF_BOOL    rf_parser_record;
-extern RF_BOOL    rf_parser_with_variable;
+extern bool       rf_parser_record;
+extern bool       rf_parser_with_variable;
 
 int rf_lexer_need_char();
 int rf_lexer_need_ungetc(int c);
@@ -89,7 +90,7 @@ char *                rf_parser_record_read();
 void                  rf_parser_register_system_functions();
 void                  rf_parser_set_location(RF_LOCATION *location);
 void                  rf_parser_set_path(char *path);
-void                  rf_parser_show_bool(RF_BOOL boolean);
+void                  rf_parser_show_bool(bool    boolean);
 void                  rf_parser_show_domain(RF_DOMAIN *domain);
 void                  rf_parser_show_element(char *id);
 void                  rf_parser_show_negation(RF_NEGATION *negation);

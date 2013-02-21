@@ -14,7 +14,8 @@
 #ifndef RF_OPERATION_H
 #define RF_OPERATION_H
 
-#include "bool.h"
+#include <stdbool.h>
+
 #include "error.h"
 #include "relation.h"
 
@@ -47,7 +48,7 @@ RF_DOMAIN *    rf_operation_get_domain_2(RF_OPERATION *operation);
 RF_DOMAIN *    rf_operation_get_domain_3(RF_OPERATION *operation);
 char *         rf_operation_get_name(RF_OPERATION *operation);
 RF_TABLE *     rf_operation_get_table(RF_OPERATION *operation);
-RF_BOOL        rf_operation_has_name(RF_OPERATION *operation, char *name);
+bool           rf_operation_has_name(RF_OPERATION *operation, char *name);
 void           rf_operation_set_name(RF_OPERATION *operation, char *name);
 void           rf_operation_set_table(RF_OPERATION *operation, RF_TABLE *table);
 

@@ -92,9 +92,9 @@
 %%
 input:
 		| input statement	{
-								rf_parser_record = RF_TRUE;
+								rf_parser_record = true;
 								rf_parser_record_clear();
-								rf_parser_with_variable = RF_FALSE;
+								rf_parser_with_variable = false;
 							}
 		;
 
@@ -117,7 +117,7 @@ statement:	'\n'
 
 																											free($3);
 																										}
-			| show {rf_parser_record = RF_FALSE;}
+			| show {rf_parser_record = false;}
 			;
 
 domaindef:	"DOMAIN" ID "AS" fexpr ';'	{
@@ -350,7 +350,7 @@ relationdefx:	table	{$$ = $1;}
 								if(result->is_temporary && result->can_delete)
 								{
 									relation = result->relation;
-									result->can_delete = RF_FALSE;
+									result->can_delete = false;
 								}
 								else
 									relation = rf_relation_copy(result->relation);
@@ -558,7 +558,7 @@ operationdefx:	table	{$$ = $1;}
 								if(result->is_temporary && result->can_delete)
 								{
 									operation = result->operation;
-									result->can_delete = RF_FALSE;
+									result->can_delete = false;
 								}
 								else
 									operation = rf_operation_copy(result->operation);
@@ -1038,7 +1038,7 @@ tableb:	ID ':' tablea	{
 									}
 		;
 
-formula:	"FORMULA" {rf_parser_with_variable = RF_TRUE;} fexpr	{
+formula:	"FORMULA" {rf_parser_with_variable = true;} fexpr	{
 																		RF_PARSER_TABLE_DATA *table = malloc(sizeof(RF_PARSER_TABLE_DATA));
 																		table->type = RF_PTD_FORMULA;
 																		table->formula = $3;
@@ -1109,7 +1109,7 @@ fexprx:	ID	{
 				$$ = formula;
 			}
 		| 'X'	{
-					if(rf_parser_with_variable == RF_TRUE)
+					if(rf_parser_with_variable == true)
 					{
 						RF_FORMULA *formula = rf_formula_create();
 						rf_formula_set_variable(formula, 'X');
@@ -1123,7 +1123,7 @@ fexprx:	ID	{
 					}
 				}
 		| 'Y'	{
-					if(rf_parser_with_variable == RF_TRUE)
+					if(rf_parser_with_variable == true)
 					{
 						RF_FORMULA *formula = rf_formula_create();
 						rf_formula_set_variable(formula, 'Y');
@@ -1562,7 +1562,7 @@ int rf_relation_build_table_by_formula(RF_RELATION *relation, RF_FORMULA *formul
 				/* pass the error description and position to the caller */
 				error->string = result->error;
 				error->location = result->location;
-				result->can_delete = RF_FALSE;		/* this way the error string wont get freed */
+				result->can_delete = false;		/* this way the error string wont get freed */
 				rf_formula_destroy_result(result);
 				return 1;
 			}
@@ -1637,7 +1637,7 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 	RF_LIST *list_h, *list_v, *names_d3_list = 0;
 	RF_LIST_ITERATOR *names_h, *names_v, *iterator_row, *iterator_column = 0, *names_d3 = 0;
 	RF_PARSER_TABLE_ROW *table_row;
-	RF_BOOL is_element_of_d3;
+	bool is_element_of_d3;
 	int row, column, pos;
 	char *name_h, *name_v, *tmp_name, *tmp_value;
 
@@ -1786,7 +1786,7 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 
 
 				/* check if element is from resultdomain */
-				is_element_of_d3 = RF_FALSE;
+				is_element_of_d3 = false;
 				names_d3_list = rf_domain_get_element_names(operation->domain_3);
 				names_d3 = rf_list_get_begin(names_d3_list);
 				while(rf_list_has_next(names_d3))
@@ -1795,14 +1795,14 @@ int rf_operation_build_table(RF_OPERATION *operation, RF_PARSER_TABLE_DATA *tabl
 					tmp_name = rf_list_next(names_d3);
 					if(strcmp(tmp_name, tmp_value) == 0)
 					{
-						is_element_of_d3 = RF_TRUE;
+						is_element_of_d3 = true;
 						break;
 					}
 				}
 				rf_list_delete_iterator(names_d3);
 				rf_list_destroy(names_d3_list, 0);
 
-				if(is_element_of_d3 == RF_FALSE)
+				if(is_element_of_d3 == false)
 				{
 					rf_list_delete_iterator(names_h);
 					rf_list_delete_iterator(names_v);
@@ -1925,7 +1925,7 @@ int rf_operation_build_table_by_formula(RF_OPERATION *operation, RF_FORMULA *for
 				/* pass the error description and position to the caller */
 				error->string = result->error;
 				error->location = result->location;
-				result->can_delete = RF_FALSE;		/* this way the error string wont get freed */
+				result->can_delete = false;		/* this way the error string wont get freed */
 				rf_formula_destroy_result(result);
 				return 1;
 			}

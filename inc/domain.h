@@ -19,7 +19,8 @@ CAUSED ERRORS WITH SOME COMPILERS */
 #ifndef RF_DOMAIN_H
 #define RF_DOMAIN_H
 
-#include "bool.h"
+#include <stdbool.h>
+
 #include "error.h"
 #include "list.h"
 
@@ -78,9 +79,9 @@ RF_LIST *    rf_domain_get_element_names(RF_DOMAIN *domain);
 int          rf_domain_get_element_position(RF_DOMAIN *domain, char *element);
 RF_LIST *    rf_domain_get_list(RF_DOMAIN *domain);
 char *       rf_domain_get_name(RF_DOMAIN *domain);
-RF_BOOL      rf_domain_has_element(RF_DOMAIN *domain, char *name);
-RF_BOOL      rf_domain_has_name(RF_DOMAIN *domain, char *name);
-RF_BOOL      rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2);
+bool         rf_domain_has_element(RF_DOMAIN *domain, char *name);
+bool         rf_domain_has_name(RF_DOMAIN *domain, char *name);
+bool         rf_domain_is_partof(RF_DOMAIN *domain1, RF_DOMAIN *domain2);
 void         rf_domain_set_list(RF_DOMAIN *domain, RF_LIST *list);
 void         rf_domain_set_name(RF_DOMAIN *domain, char *name);
 

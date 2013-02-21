@@ -75,8 +75,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 		*result = rf_formula_create_result();
 		(*result)->type = RF_FO_ID;
 		(*result)->element = formula->element;
-		(*result)->is_temporary = RF_TRUE;
-		(*result)->can_delete = RF_FALSE;
+		(*result)->is_temporary = true;
+		(*result)->can_delete = false;
 		return 0;
 	}
 
@@ -85,8 +85,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 		*result = rf_formula_create_result();
 		(*result)->type = RF_FO_DOMAIN;
 		(*result)->domain = formula->domain;
-		(*result)->is_temporary = RF_TRUE;
-		(*result)->can_delete = RF_FALSE;
+		(*result)->is_temporary = true;
+		(*result)->can_delete = false;
 		return 0;
 	}
 
@@ -170,8 +170,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_ELEMENT;
 			(*result)->element = res ? "1" : "0";
-			(*result)->is_temporary = RF_FALSE;
-			(*result)->can_delete = RF_FALSE;
+			(*result)->is_temporary = false;
+			(*result)->can_delete = false;
 
 			rf_formula_destroy_result(tmp);
 			return 0;
@@ -234,8 +234,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_ELEMENT;
 			(*result)->element = rfunc(relation, &error);
-			(*result)->is_temporary = RF_FALSE;
-			(*result)->can_delete = RF_FALSE;
+			(*result)->is_temporary = false;
+			(*result)->can_delete = false;
 
 			if(!(*result)->element) /* error */
 			{
@@ -310,8 +310,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_RELATION;
 			(*result)->relation = rel_func(relation, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->relation) /* error */
 			{
@@ -405,8 +405,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_RELATION;
 			(*result)->relation = rfunc(relation_1, relation_2, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->relation) /* error */
 			{
@@ -513,8 +513,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_DOMAIN;
 			(*result)->domain = rfunc(relation, domain, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->domain) /* error */
 			{
@@ -621,8 +621,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_ELEMENT;
 			(*result)->element = rfunc(relation, domain, &error);
-			(*result)->is_temporary = RF_FALSE;
-			(*result)->can_delete = RF_FALSE;
+			(*result)->is_temporary = false;
+			(*result)->can_delete = false;
 
 			if(!(*result)->element) /* error */
 			{
@@ -698,8 +698,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_OPERATION;
 			(*result)->operation = op_func(relation, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->operation) /* error */
 			{
@@ -783,8 +783,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_RELATION;
 			(*result)->relation = rel_func_2(domain, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->relation) /* error */
 			{
@@ -913,8 +913,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_RELATION;
 			(*result)->relation = rel_func_3(domain_1, domain_2, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->relation) /* error */
 			{
@@ -1005,8 +1005,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_RELATION;
 			(*result)->relation = rfunc(domain, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->relation) /* error */
 			{
@@ -1082,8 +1082,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_DOMAIN;
 			(*result)->domain = dfunc(domain, &error);
-			(*result)->is_temporary = RF_TRUE;
-			(*result)->can_delete = RF_TRUE;
+			(*result)->is_temporary = true;
+			(*result)->can_delete = true;
 
 			if(!(*result)->domain) /* error */
 			{
@@ -1164,8 +1164,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 		*result = rf_formula_create_result();
 		(*result)->type = RF_FO_ELEMENT;
 		(*result)->element = out;
-		(*result)->is_temporary = RF_FALSE;
-		(*result)->can_delete = RF_FALSE;
+		(*result)->is_temporary = false;
+		(*result)->can_delete = false;
 
 		free(el_1);
 		return 0;
@@ -1256,8 +1256,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 			*result = rf_formula_create_result();
 			(*result)->type = RF_FO_ELEMENT;
 			(*result)->element = out;
-			(*result)->is_temporary = RF_FALSE;
-			(*result)->can_delete = RF_FALSE;
+			(*result)->is_temporary = false;
+			(*result)->can_delete = false;
 			return 0;
 		}
 		else
@@ -1272,8 +1272,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 					(*result)->element = "1";
 				else
 					(*result)->element = "0";
-				(*result)->is_temporary = RF_FALSE;
-				(*result)->can_delete = RF_FALSE;
+				(*result)->is_temporary = false;
+				(*result)->can_delete = false;
 				return 0;
 			}
 			else /* error */
@@ -1291,8 +1291,8 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 	{
 		*result = rf_formula_create_result();
 		(*result)->type = RF_FO_ELEMENT;
-		(*result)->is_temporary = RF_TRUE;
-		(*result)->can_delete = RF_FALSE;
+		(*result)->is_temporary = true;
+		(*result)->can_delete = false;
 
 		if(formula->variable == 'X')
 		{
@@ -1353,8 +1353,8 @@ RF_FORMULA_RESULT * rf_formula_calc_error(RF_LOCATION *location, char *error)
 	result->error = error;
 	if(location)
 		result->location = *location;
-	result->is_temporary = RF_TRUE;
-	result->can_delete = RF_TRUE;
+	result->is_temporary = true;
+	result->can_delete = true;
 
 	return result;
 }
@@ -1410,8 +1410,8 @@ RF_FORMULA_RESULT * rf_formula_create_result()
 	if(!result)
 		return 0;
 
-	result->is_temporary = RF_FALSE;
-	result->can_delete = RF_FALSE;
+	result->is_temporary = false;
+	result->can_delete = false;
 	return result;
 }
 
@@ -1427,7 +1427,7 @@ void rf_formula_destroy_result(RF_FORMULA_RESULT *result)
 	if(!result)
 		return;
 
-	if(result->can_delete == RF_TRUE)
+	if(result->can_delete == true)
 	{
 		switch(result->type)
 		{

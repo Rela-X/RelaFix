@@ -1,5 +1,5 @@
-CC      = gcc
-CFLAGS  = -Os -Wall -pedantic
+CC      = clang
+CFLAGS  = -std=c99 -Os -Wall -pedantic
 MAKE    = make
 LEX     = flex
 YACC    = bison --yacc

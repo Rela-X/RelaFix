@@ -14,7 +14,8 @@
 #ifndef RF_NEGATION_H
 #define RF_NEGATION_H
 
-#include "bool.h"
+#include <stdbool.h>
+
 #include "list.h"
 #include "domain.h"
 
@@ -47,7 +48,7 @@ void          rf_negation_destroy(RF_NEGATION *negation);
 RF_DOMAIN *   rf_negation_get_domain(RF_NEGATION *negation);
 RF_LIST *     rf_negation_get_items(RF_NEGATION *negation);
 char *        rf_negation_get_name(RF_NEGATION *negation);
-RF_BOOL       rf_negation_has_name(RF_NEGATION *negation, char *name);
+bool          rf_negation_has_name(RF_NEGATION *negation, char *name);
 int           rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error);
 
 #endif

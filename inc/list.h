@@ -15,16 +15,16 @@
 #ifndef RF_LIST_H
 #define RF_LIST_H
 
-#include "bool.h"
+#include <stdbool.h>
 
 /*!
 \brief The item that builds the linked list.
 */
 typedef struct rf_list_item
 {
-	struct rf_list_item	*prev; /*!< \brief The previous item. 0 if there is no previous item. */
-	struct rf_list_item	*next; /*!< \brief The next item. 0 if there is no next item. */
-	void				*data; /*!< \brief A pointer to the data saved at this node. */
+	struct rf_list_item     *prev; /*!< \brief The previous item. 0 if there is no previous item. */
+	struct rf_list_item     *next; /*!< \brief The next item. 0 if there is no next item. */
+	void                    *data; /*!< \brief A pointer to the data saved at this node. */
 } RF_LIST_ITEM;
 
 /*!
@@ -36,9 +36,9 @@ and delete items from it.
 */
 typedef struct rf_list
 {
-	int				count; /*!< \brief The number of elements in the list. */
-	RF_LIST_ITEM	*first; /*!< \brief The first element in the list. */
-	RF_LIST_ITEM	*last; /*!< \brief The last element in the list. */
+	int             count; /*!< \brief The number of elements in the list. */
+	RF_LIST_ITEM    *first; /*!< \brief The first element in the list. */
+	RF_LIST_ITEM    *last; /*!< \brief The last element in the list. */
 } RF_LIST;
 
 /*!
@@ -46,10 +46,10 @@ typedef struct rf_list
 */
 typedef struct rf_list_iterator
 {
-	RF_LIST			*list; /*!< \brief The list the iterator works on. */
-	RF_LIST_ITEM	*prev; /*!< \brief The next item. 0 if there is no next item. */
-	RF_LIST_ITEM	*mid; /*!< \brief The item that the iterator points on. 0 if at the begining or end.*/
-	RF_LIST_ITEM	*next; /*!< \brief The next item. 0 if there is no next item. */
+	RF_LIST         *list; /*!< \brief The list the iterator works on. */
+	RF_LIST_ITEM    *prev; /*!< \brief The next item. 0 if there is no next item. */
+	RF_LIST_ITEM    *mid; /*!< \brief The item that the iterator points on. 0 if at the begining or end.*/
+	RF_LIST_ITEM    *next; /*!< \brief The next item. 0 if there is no next item. */
 } RF_LIST_ITERATOR;
 
 
@@ -63,8 +63,8 @@ RF_LIST_ITERATOR * rf_list_get_begin(RF_LIST *list);
 void *             rf_list_get_by_position(RF_LIST *list, int position);
 int                rf_list_get_count(RF_LIST *list);
 RF_LIST_ITERATOR * rf_list_get_end(RF_LIST *list);
-RF_BOOL            rf_list_has_next(RF_LIST_ITERATOR *iterator);
-RF_BOOL            rf_list_has_prev(RF_LIST_ITERATOR *iterator);
+bool               rf_list_has_next(RF_LIST_ITERATOR *iterator);
+bool               rf_list_has_prev(RF_LIST_ITERATOR *iterator);
 void               rf_list_merge(RF_LIST *list_1, RF_LIST *list_2);
 void *             rf_list_next(RF_LIST_ITERATOR *iterator);
 void *             rf_list_prev(RF_LIST_ITERATOR *iterator);
