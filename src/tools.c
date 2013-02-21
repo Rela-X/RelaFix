@@ -10,7 +10,7 @@
 #include <stdarg.h>
 
 
-/*! \brief Concatenates strings
+/*! Concatenates strings
  *
  * Concatenates all strings that are given as an argument. This function can take
  * a variable list of string pointers. Every source string will be copied into the final new string.

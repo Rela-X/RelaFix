@@ -4,23 +4,12 @@
  * Copyright (C) Peter Berger, 2011
  */
 
-#include "table.h"
 #include <stdlib.h>
 #include <string.h>
 
-
-/*enum {__SINGLE_BLOCK, __MULTI_BLOCK};*/
-
+#include "table.h"
 
 
-
-/*!
- Table data is be copied. But not the data the pointers stored in the table point to.
- @relates RF_TABLE
- @param[in] table The table that should be copied.
- @return The copy of the table.
- @return 0 on error.
- */
 RF_TABLE * rf_table_copy(RF_TABLE *table)
 {
 	RF_TABLE *copy;
@@ -62,17 +51,6 @@ RF_TABLE * rf_table_copy(RF_TABLE *table)
 	return copy;
 }
 
-
-/*!
-Creates a new empty table of given size and type.
-
-@relates RF_TABLE
-@param width The width of the table
-@param height The height of the table
-@param type The type of the table. Must be from ::rf_enum_tt.
-@return The new table
-@return 0 on error.
-*/
 RF_TABLE * rf_table_create(unsigned int width, unsigned int height, int type)
 {
 	RF_TABLE *table;
@@ -119,12 +97,6 @@ RF_TABLE * rf_table_create(unsigned int width, unsigned int height, int type)
 	return table;
 }
 
-/*!
-Frees the table.
-
-@relates RF_TABLE
-@param[in] table The table that should be freed.
-*/
 void rf_table_destroy(RF_TABLE *table)
 {
 	if(!table)
@@ -136,14 +108,6 @@ void rf_table_destroy(RF_TABLE *table)
 	free(table);
 }
 
-/*!
-Returns the height of the table.
-
-@relates RF_TABLE
-@param[in] table The table whoes height is in question.
-@return The height
-@return 0 on error.
-*/
 unsigned int rf_table_get_height(RF_TABLE *table)
 {
 	if(!table)
@@ -152,16 +116,6 @@ unsigned int rf_table_get_height(RF_TABLE *table)
 	return table->height;
 }
 
-/*!
-Returns the bit at the given position.
-
-@relates RF_TABLE
-@param[in] table The table that contains the bits.
-@param x Horizontal position
-@param y Vertical position
-@return The bit at the position (1 or 0)
-@return <0 on error
-*/
 int rf_table_get_bit(RF_TABLE *table, unsigned int x, unsigned int y)
 {
 	unsigned int pos, block_pos, bit_pos;
@@ -189,17 +143,6 @@ int rf_table_get_bit(RF_TABLE *table, unsigned int x, unsigned int y)
 		return 0;
 }
 
-/*!
-Returns the string at the given position.
-
-@relates RF_TABLE
-@param[in] table The table that contains the strings.
-@param x Horizontal position
-@param y Vertical position
-@param[out] string_out A null-pointer. Will contain a string after the call. The owner is the table!
-@return 0 on success. The string is written to string_out.
-@return >0 on error
-*/
 int rf_table_get_string(RF_TABLE *table, unsigned int x, unsigned int y, char **string_out)
 {
 	unsigned int pos;
@@ -223,14 +166,6 @@ int rf_table_get_string(RF_TABLE *table, unsigned int x, unsigned int y, char **
 	return 0;
 }
 
-/*!
-Returns the type of the table (::rf_enum_tt)
-
-@relates RF_TABLE
-@param[in] table The tables whoes type is in question.
-@return the type that is from ::rf_enum_tt.
-@return -1 on error.
-*/
 int rf_table_get_type(RF_TABLE *table)
 {
 	if(!table)
@@ -239,14 +174,6 @@ int rf_table_get_type(RF_TABLE *table)
 	return table->type;
 }
 
-/*!
-Returns the width of the table.
-
-@relates RF_TABLE
-@param[in] table The table whoes width is in question.
-@return The width
-@return 0 on error.
-*/
 unsigned int rf_table_get_width(RF_TABLE *table)
 {
 	if(!table)
@@ -255,18 +182,6 @@ unsigned int rf_table_get_width(RF_TABLE *table)
 	return table->width;
 }
 
-
-/*!
-Sets the bit at the given position.
-
-@relates RF_TABLE
-@param[in] table The table that contains the bits.
-@param x Horizontal position
-@param y Vertical position
-@param bit the new bit to be written (0 or 1)
-@return 0 on success
-@return >0 on error
-*/
 int rf_table_set_bit(RF_TABLE *table, unsigned int x, unsigned int y, int bit)
 {
 	unsigned int pos, block_pos, bit_pos;
@@ -297,17 +212,6 @@ int rf_table_set_bit(RF_TABLE *table, unsigned int x, unsigned int y, int bit)
 	return 0;
 }
 
-/*!
-Sets the string at the given position.
-
-@relates RF_TABLE
-@param[in] table The table that contains the strings.
-@param x Horizontal position
-@param y Vertical position
-@param string the new string to be written. The table takes the ownership of the string. The string gets invalid, when the table gets invalid.
-@return 0 on success
-@return >0 on error
-*/
 int rf_table_set_string(RF_TABLE *table, unsigned int x, unsigned int y, char *string)
 {
 	unsigned int pos;

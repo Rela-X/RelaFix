@@ -4,25 +4,15 @@
  * Copyright (C) Peter Berger, 2011
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "negation.h"
 #include "tools.h"
 #include "list.h"
 #include "domain.h"
-#include <stdlib.h>
-#include <string.h>
 
 
-
-/*!
- \brief Returns the negated input
-
- @relates RF_NEGATION
- @param negation The negation to use.
- @param element The name of the element that should be negated.
- @param error Will contain an errormessage if the function failed
- @return The name of the negated element.
- @return 0 when the function did fail. an errordescription is written to error.
- */
 char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 {
 	RF_LIST_ITERATOR *pos;
@@ -99,14 +89,6 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 	return 0;
 }
 
-
-/*!
- @relates RF_NEGATION
- @param name The name of the new negation. 0 is not allowed.
- @param domain The domain whoes elements are negated.
- @return New negation.
- @return 0 on error.
- */
 RF_NEGATION * rf_negation_create(char *name, RF_DOMAIN *domain)
 {
 	RF_NEGATION *negation;
@@ -133,11 +115,6 @@ RF_NEGATION * rf_negation_create(char *name, RF_DOMAIN *domain)
 	return negation;
 }
 
-
-/*!
- @relates RF_NEGATION
- @param negation The negation to be destroyed.
- */
 void rf_negation_destroy(RF_NEGATION *negation)
 {
 	if(!negation)
@@ -151,13 +128,6 @@ void rf_negation_destroy(RF_NEGATION *negation)
 	free(negation);
 }
 
-
-/*!
- @relates RF_NEGATION
- @param negation The negation whoes domain should be returned.
- @return The domain the given negation is based on.
- @return 0 on error.
- */
 RF_DOMAIN * rf_negation_get_domain(RF_NEGATION *negation)
 {
 	if(!negation)
@@ -166,14 +136,6 @@ RF_DOMAIN * rf_negation_get_domain(RF_NEGATION *negation)
 	return negation->domain;
 }
 
-
-/*!
- @relates RF_NEGATION
- @param negation The negation whoes elementlist should be returned.
- @return A list with element names (char *). The list has a special format (See RF_NEGATION).
-         The list and its contained data must not be changed or deleted by the user!
- @return 0 on error.
- */
 RF_LIST * rf_negation_get_items(RF_NEGATION *negation)
 {
 	if(!negation)
@@ -182,13 +144,6 @@ RF_LIST * rf_negation_get_items(RF_NEGATION *negation)
 	return negation->items;
 }
 
-
-/*!
- @relates RF_NEGATION
- @param negation The negation whoes name should be returned.
- @return The name of the negation. Should not be changed or deleted by the user!
- @return 0 on error or if the negation has no name.
- */
 char * rf_negation_get_name(RF_NEGATION *negation)
 {
 	if(!negation)
@@ -197,15 +152,6 @@ char * rf_negation_get_name(RF_NEGATION *negation)
 	return negation->name;
 }
 
-
-/*! \brief Compares the given name with the name of the negation.
-
- @relates RF_NEGATION
- @param negation The negation whoes name should be compared.
- @param name The name in question.
- @return true if the name matchs the name of the negation.
- @return false if the name does not match or on error.
- */
 bool rf_negation_has_name(RF_NEGATION *negation, char *name)
 {
 	if(!negation || !name)
@@ -218,18 +164,6 @@ bool rf_negation_has_name(RF_NEGATION *negation, char *name)
 }
 
 
-/*!
- Sets the negation items. If the negation had a list before, that list will be destroyed first.
- Before the list is set, the contained data is checked against the domain and if all elements
- have a negation.
- @relates RF_NEGATION
- @param negation The negation whoes items should be set.
- @param items A list with element names (char *). The list must follow a special format (See RF_NEGATION).
-        The list gets invalid for the caller!
- @param error If the function fails an error description is written in error. See RF_ERROR. 0 is not allowed.
- @return 0 on success.
- @return 1 on fail. An error description is written into error.
- */
 int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error)
 {
 	RF_LIST_ITERATOR *element, *rest;

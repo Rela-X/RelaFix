@@ -5,7 +5,7 @@
  */
 
 /*! \file
- \brief A dynamic array that keeps track of its size and reallocates its memory automaticly.
+ A dynamic array that keeps track of its size and reallocates its memory automaticly.
 
  Declares functions to work on struct RF_ARRAY. The array is an array of pointers to the data.
  That array will be rallocated automaticly if needed. It will grow to the double size every time
@@ -16,26 +16,88 @@
 #define RF_ARRAY_H
 
 /*!
- \brief An dynamic array that takes pointers to data.
+ A dynamic array that takes pointers to data.
 
- It will keep track of the arraysize and grow if its full. It will grow to the double of the
+ It will keep track of the array size and grow if its full. It will grow to the double of the
  size it had before. The pointers are stored in a void* buffer allocated with malloc().
  */
 typedef struct rf_array
 {
-	unsigned int length;	/*!< \brief The allocated memory */
-	unsigned int count;		/*!< \brief The elements in the memory. The size of the array */
-	void **array;			/*!< \brief The array that stores the pointers to the data */
+	unsigned int length; //!< Length of the allocated memory
+	unsigned int count;  //!< Number of elements in the memory. The size of the array
+	void **array;        //!< The array that stores the pointers to the data
 } RF_ARRAY;
 
+/*!
+ @return new array
+ @return 0 on error.
+ */
 RF_ARRAY *   rf_array_create();
+
+/*!
+ Frees the array. If a function is passed, all pointers stored in the array are passed to that
+ function before the array will be freed. On this way the data can be freed fastly.
+ @param array The array that should be destroyed.
+ @param destroy A function that takes a void pointer as an argument. Every element in the
+            array will be passed to that function before the array is be freed.
+ */
 void         rf_array_destroy(RF_ARRAY *array, void (*free)(void *));
-int          rf_array_append(RF_ARRAY *array, void * element);
+
+/*!
+ Appends the element at the end of the array. The array will grow automaticly.
+ @param array The array where the pointer should be added.
+ @param element The pointer to be added.
+ @return 0 on success.
+ @return 1 on error.
+ */
+int          rf_array_append(RF_ARRAY *array, void *element);
+
+/*!
+ Returns the pointer saved at the given position.
+ @param array The array that stores the data.
+ @param pos The position in the array. Array starts at position 0.
+ @return The stored pointer at the given position.
+ @return 0 on error.
+ */
 void *       rf_array_read(RF_ARRAY *array, unsigned int pos);
+
+/*!
+ Writes the given pointer at the given position. The position must fit the range!
+ @param array The array that stores the data.
+ @param pos The position in the array. Array starts at position 0. The position must fit the range!
+ @return The old stored pointer at the given position.
+ @return 0 on error.
+ */
 void *       rf_array_write(RF_ARRAY *array, void * element, unsigned int pos);
+
+/*!
+ Removes that element from the array and returns it.
+ @param array The array containing the data.
+ @param pos The position of the data to be deleted. Must be in the range of the array!
+ @return The removed data.
+ @return 0 on error.
+ */
 void *       rf_array_delete(RF_ARRAY *array, unsigned int pos);
+
+/*!
+ Appends the second array to the first. The second array will be empty after this.
+ @param array_1 The array that should contain all data.
+ @param array_2 The array that gets appended to the first. Will be empty after the call.
+ @return 0 on success.
+ @return 1 on error.
+ */
 int          rf_array_merge(RF_ARRAY *array_1, RF_ARRAY *array_2);
+
+/*!
+ Returns the size of the used array. Not the size of the pre allocated memory!
+ @param[in] array The array whoes size should be returned.
+ @return The element count.
+ */
 unsigned int rf_array_size(RF_ARRAY *array);
+
+/*!
+ @param array The array whoes element order should be swaped.
+ */
 void         rf_array_swap_order(RF_ARRAY *array);
 
 #endif

@@ -18,12 +18,12 @@
 
 
 /*!
-\brief Safes a keyword and its id in the parser
+Safes a keyword and its id in the parser
 */
 typedef struct
 {
-    char	*word; /*!< \brief The keyword */
-    int		id; /*!< \brief The id that represents the keyword in the parser */
+    char	*word; /*!< The keyword */
+    int		id; /*!< The id that represents the keyword in the parser */
 } RF_LEXER_KEYWORD;
 
 static bool is_first_run = true;

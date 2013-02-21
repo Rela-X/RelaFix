@@ -5,7 +5,7 @@
  */
 
 /*! \file
- * \brief	Functions to make things easier
+ * Functions to make things easier
  */
 
 #ifndef RF_TOOLS_H

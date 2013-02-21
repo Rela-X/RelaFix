@@ -5,13 +5,13 @@
  */
 
 /*! \file
- * \brief	Error handling structures
+ * Error handling structures
  */
 
 #ifndef RF_ERROR_H
 #define RF_ERROR_H
 
-/*! \brief	Provides start and end position of textarea
+/*! Provides start and end position of textarea
  *
  * This structure is used in the library to remember the position of the
  * parsed token. If some error occures the library will use this structure in RF_ERROR
@@ -19,14 +19,14 @@
  */
 typedef struct rf_location
 {
-	int first_line;		/*!< \brief line where the textarea starts */
-	int first_column;	/*!< \brief column where the textarea starts */
-	int last_line;		/*!< \brief line where the textarea ends */
-	int last_column;	/*!< \brief column where the thextarea ends */
+	int first_line;		/*!< line where the textarea starts */
+	int first_column;	/*!< column where the textarea starts */
+	int last_line;		/*!< line where the textarea ends */
+	int last_column;	/*!< column where the thextarea ends */
 } RF_LOCATION;
 
 
-/*! \brief	Used to return message and location of an error
+/*! Used to return message and location of an error
  *
  * A pointer to an instance of this structure should be given to a function that can
  * fail for many different reasons. If that function fails, it will fill out the structure.
@@ -35,8 +35,8 @@ typedef struct rf_location
  */
 typedef struct rf_error
 {
-	char		*string;	/*!< \brief Points to an errormessage on the heap. */
-	RF_LOCATION	location;	/*!< \brief Textposition where the error occured */
+	char		*string;	/*!< Points to an errormessage on the heap. */
+	RF_LOCATION	location;	/*!< Textposition where the error occured */
 } RF_ERROR;
 
 #endif

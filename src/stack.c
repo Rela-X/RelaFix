@@ -4,18 +4,13 @@
  * Copyright (C) Peter Berger, 2011
  */
 
-#include "stack.h"
-#include "array.h"
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "stack.h"
+#include "array.h"
 
 
-/*!
- @relates RF_STACK
- @return The new stack
- @return 0 on error.
- */
 RF_STACK * rf_stack_create()
 {
 	RF_STACK *stack = malloc(sizeof(RF_STACK));
@@ -32,12 +27,6 @@ RF_STACK * rf_stack_create()
 }
 
 
-/*!
- @relates RF_STACK
- @param[in] stack The stack to be destroyed.
- @param[in] destroy This function will be called with every element in the stack, before the
-            stack gets freed. Can be used to fastly free data.
- */
 void rf_stack_destroy(RF_STACK *stack, void (*destroy)(void *))
 {
 	void *tmp;
@@ -56,12 +45,6 @@ void rf_stack_destroy(RF_STACK *stack, void (*destroy)(void *))
 }
 
 
-/*!
- Put the element on top of the stack.
- @relates RF_STACK
- @param[in] stack The element will be put on this stack.
- @param[in] element The element that will be pushed on the stack.
- */
 void rf_stack_push(RF_STACK *stack, void *element)
 {
 	if(!element)
@@ -84,12 +67,6 @@ void rf_stack_push(RF_STACK *stack, void *element)
 }
 
 
-/*!
- @relates RF_STACK
- @param[in] stack The stack that contains the data.
- @return The element on top of the stack.
- @return 0 on error or if stack is empty.
- */
 void * rf_stack_pop(RF_STACK *stack)
 {
 	if(stack->pos == 0) /* stack is empty */

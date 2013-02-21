@@ -4,6 +4,9 @@
  * Copyright (C) Peter Berger, 2011
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "operation.h"
 #include "domain.h"
 #include "relation.h"
@@ -13,21 +16,8 @@
 #include "tools.h"
 #include "list.h"
 #include "parse.h"
-#include <stdlib.h>
-#include <string.h>
 
 
-/*!
- Calculates the the solution for to elements based on the given operation.
- @relates RF_OPERATION
- @param[in] operation The operation used for the calculation.
- @param[in] element_1 The left argument.
- @param[in] element_2 The right argument.
- @param[out] element_out If the function succeeds, it contains the resulting element.
-             Then the string must not be changed or freed by the user!
- @result 0 on success. The result of the operation is stored in element_out.
- @result 1 on error. An description is written to element_out. This description must be freed by the user!
- */
 int rf_operation_calc(RF_OPERATION *operation, char *element_1, char *element_2, char **element_out)
 {
 	int x, y;
@@ -70,13 +60,6 @@ int rf_operation_calc(RF_OPERATION *operation, char *element_1, char *element_2,
 	return 0;
 }
 
-
-/*!
- @relates RF_OPERATION
- @param[in] operation The operation that should be copied.
- @return The copy of the given operation.
- @return 0 on error.
- */
 RF_OPERATION * rf_operation_copy(RF_OPERATION *operation)
 {
 	RF_OPERATION *copy = 0;
@@ -99,16 +82,6 @@ RF_OPERATION * rf_operation_copy(RF_OPERATION *operation)
 	return copy;
 }
 
-
-/*!
- @relates RF_OPERATION
- @param[in] name The name of the new operation. 0 is allowed. Gets invalid for the caller.
- @param[in] domain_1 The domain of the left argument.
- @param[in] domain_2 The domain of the right argument.
- @param[in] domain_3 The domain containing the elements of the solution.
- @return The new operation
- @return 0 on error
- */
 RF_OPERATION * rf_operation_create(char *name, RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, RF_DOMAIN *domain_3)
 {
 	RF_OPERATION *operation;
@@ -141,14 +114,6 @@ RF_OPERATION * rf_operation_create(char *name, RF_DOMAIN *domain_1, RF_DOMAIN *d
 	return operation;
 }
 
-
-/*!
- @relates RF_OPERATION
- @param[in] relation The less equal relation the meet is based on.
- @param[out] If the function fails an error is written here. The string must be deleted by the caller!
- @return An new meet operation.
- @return 0 on error. An description is written to error.
- */
 RF_OPERATION * rf_operation_create_meet(RF_RELATION *relation, RF_ERROR *error)
 {
 	RF_OPERATION *operation;
@@ -182,13 +147,6 @@ RF_OPERATION * rf_operation_create_meet(RF_RELATION *relation, RF_ERROR *error)
 }
 
 
-/*!
- @relates RF_OPERATION
- @param[in] relation The less equal relation the join is based on.
- @param[out] If the function fails an error is written here. The string must be deleted by the caller!
- @return An new join operation.
- @return 0 on error. An description is written to error.
- */
 RF_OPERATION * rf_operation_create_join(RF_RELATION *relation, RF_ERROR *error)
 {
 	RF_OPERATION *operation;
@@ -222,10 +180,6 @@ RF_OPERATION * rf_operation_create_join(RF_RELATION *relation, RF_ERROR *error)
 }
 
 
-/*!
- @relates RF_OPERATION
- @param[in] operation The operation that should be freed. Gets invalid for the caller.
- */
 void rf_operation_destroy(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -388,13 +342,6 @@ static int rf_operation_generate_meet_helper(RF_TABLE *table, int x, int y)
 }
 
 
-/*!
- Generates the meet operation for a given less equal relation.
- @relates RF_OPERATION
- @param[in] leq The less equal relation the meet operation will be based on.
- @return The new meet operation.
- @return 0 on error.
- */
 RF_OPERATION * rf_operation_generate_meet(RF_RELATION *leq)
 {
 	RF_OPERATION *operation = 0;
@@ -605,13 +552,6 @@ static int rf_operation_generate_join_helper(RF_TABLE *table, int x, int y)
 }
 
 
-/*!
- Generates the join operation for a given less equal relation.
- @relates RF_OPERATION
- @param[in] leq The less equal relation the join operation will be based on.
- @return The new join operation.
- @return 0 on error.
- */
 RF_OPERATION * rf_operation_generate_join(RF_RELATION *leq)
 {
 	RF_OPERATION *operation = 0;
@@ -675,13 +615,6 @@ RF_OPERATION * rf_operation_generate_join(RF_RELATION *leq)
 	return operation;
 }
 
-/*!
- Returns the domain the first element in an operation must be from.
- @relates RF_OPERATION
- @param[in] operation The operation whoes domain should be returned.
- @return The domain. Should not be changed by the caller!
- @return 0 on error.
- */
 RF_DOMAIN * rf_operation_get_domain_1(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -690,13 +623,6 @@ RF_DOMAIN * rf_operation_get_domain_1(RF_OPERATION *operation)
 	return operation->domain_1;
 }
 
-/*!
- Returns the domain the second element in an operation must be from.
- @relates RF_OPERATION
- @param[in] operation The operation whoes domain should be returned.
- @return The domain. Should not be changed by the caller!
- @return 0 on error.
- */
 RF_DOMAIN * rf_operation_get_domain_2(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -705,13 +631,6 @@ RF_DOMAIN * rf_operation_get_domain_2(RF_OPERATION *operation)
 	return operation->domain_2;
 }
 
-/*!
- Returns the domain the resulting element of an operation must be from.
- @relates RF_OPERATION
- @param[in] operation The operation whoes domain should be returned.
- @return The domain. Should not be changed by the caller!
- @return 0 on error.
- */
 RF_DOMAIN * rf_operation_get_domain_3(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -720,12 +639,6 @@ RF_DOMAIN * rf_operation_get_domain_3(RF_OPERATION *operation)
 	return operation->domain_3;
 }
 
-/*!
- @relates RF_OPERATION
- @param[in] operation The operation whoes name should be returned.
- @return The name. Should not be changed by the caller!
- @return 0 on error.
- */
 char * rf_operation_get_name(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -734,13 +647,6 @@ char * rf_operation_get_name(RF_OPERATION *operation)
 	return operation->name;
 }
 
-/*!
- Returns the table storing the solutions for all possible operations.
- @relates RF_OPERATION
- @param[in] operation The operation whoes table should be returned.
- @return Should not be changed by the caller!
- @return 0 on error.
- */
 RF_TABLE * rf_operation_get_table(RF_OPERATION *operation)
 {
 	if(!operation)
@@ -749,14 +655,6 @@ RF_TABLE * rf_operation_get_table(RF_OPERATION *operation)
 	return operation->table;
 }
 
-/*!
- Checks if a given name matches the name of the given operation.
- @relates RF_OPERATION
- @param[in] operation The operation whoes name is in question.
- @param[in] The name that should be compared.
- @return true if the name matches the name of the operation.
- @return false if the name does not match and on error.
- */
 bool rf_operation_has_name(RF_OPERATION *operation, char *name)
 {
 	if(!operation || !name)
@@ -770,12 +668,6 @@ bool rf_operation_has_name(RF_OPERATION *operation, char *name)
 		return true;
 }
 
-/*!
- The function will free the old name if exists.
- @relates RF_OPERATION
- @param[in] operation The operation whoes name should be set.
- @param[in] name The name to set. Gets invalid for the caller!
- */
 void rf_operation_set_name(RF_OPERATION *operation, char *name)
 {
 	if(!operation)
@@ -791,12 +683,6 @@ void rf_operation_set_name(RF_OPERATION *operation, char *name)
 	operation->name = name;
 }
 
-/*!
- The function will destroy the old table if exists.
- @relates RF_OPERATION
- @param[in] operation The operation whoes table should be set.
- @param[in] table The table to set. Gets invalid for caller!
- */
 void rf_operation_set_table(RF_OPERATION *operation, RF_TABLE *table)
 {
 	if(!operation)

@@ -592,7 +592,7 @@ void rf_parser_list_functions()
 	rf_list_delete_iterator(functions);
 }
 
-/*! \brief records the input. This is used to print the expression after the calculation */
+/*! records the input. This is used to print the expression after the calculation */
 void rf_parser_record_append(char c)
 {
 	if(!rf_parser_record_string)

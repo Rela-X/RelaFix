@@ -4,3 +4,4 @@ MAKE    = make
 LEX     = flex
 YACC    = bison --yacc
 YFLAGS  = -d
+DOXYGEN = doxygen

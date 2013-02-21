@@ -8,11 +8,14 @@ INC += -I ./
 INC += -I inc/
 OBJ := array.o domain.o formula.o function.o lexer.o list.o negation.o operation.o parse.o parser.tab.o relation.o stack.o table.o tools.o
 
+.PHONY : all doc clean
+
 all : $(OBJ)
 	ar rcs librelafix.a $(OBJ)
 
 clean :
 	rm -f *.o *.a *.tab.c *.tab.h
+	rm -rf doc
 
 lexer.o : lexer.c parser.tab.h
 	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
@@ -22,3 +25,6 @@ lexer.o : lexer.c parser.tab.h
 
 %.tab.c %.tab.h : %.y
 	$(YACC) $(YFLAGS) -b $* $<
+
+doc :
+	$(DOXYGEN)

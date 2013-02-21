@@ -20,32 +20,32 @@
 
 
 /*!
-\brief This structure is used to parse the TABLE.
+This structure is used to parse the TABLE.
 
 While the TABLE is parsed the rows are added to the structure RF_PARSER_TABLE_DATA.
 */
 typedef struct
 {
-	char	*element; /*!< \brief The name of the row */
-	RF_LIST	*values; /*!< \brief The values in the row matching the columncount. type of the value is char * */
+	char	*element; /*!< The name of the row */
+	RF_LIST	*values; /*!< The values in the row matching the columncount. type of the value is char * */
 } RF_PARSER_TABLE_ROW;
 
 enum rf_parser_ptd {RF_PTD_DATA, RF_PTD_RELATION, RF_PTD_OPERATION, RF_PTD_FORMULA};
 
 /*!
-\brief This structure is used to parse the TABLE.
+This structure is used to parse the TABLE.
 
 After the TABLE is parsed, the real table is created with the help of this structure
 (To fit the parserrules it also contains other types then table)
 */
 typedef struct rf_parser_table_data
 {
-    enum rf_parser_ptd type; /*!< \brief Must be from ::rf_parser_ptd */
-    RF_LIST            *rows; /*!< \brief The rows of the table. Type is RF_PARSER_TABLE_ROW *. type is RF_PTD_DATA */
-    RF_LIST            *columns; /*!< \brief The columnnames of the table. Type is char *. type is RF_PTD_DATA */
-    RF_RELATION        *relation; /*!< \brief If type is RF_PTD_RELATION */
-    RF_OPERATION       *operation; /*!< \brief If type is RF_PTD_OPERATION */
-    RF_FORMULA         *formula; /*!< \brief If type is RF_PTD_FORMULA	*/
+    enum rf_parser_ptd type; /*!< Must be from ::rf_parser_ptd */
+    RF_LIST            *rows; /*!< The rows of the table. Type is RF_PARSER_TABLE_ROW *. type is RF_PTD_DATA */
+    RF_LIST            *columns; /*!< The columnnames of the table. Type is char *. type is RF_PTD_DATA */
+    RF_RELATION        *relation; /*!< If type is RF_PTD_RELATION */
+    RF_OPERATION       *operation; /*!< If type is RF_PTD_OPERATION */
+    RF_FORMULA         *formula; /*!< If type is RF_PTD_FORMULA	*/
 } RF_PARSER_TABLE_DATA;
 
 enum rf_lexer_mode {RF_LEXER_NORMAL, RF_LEXER_CROSS, RF_LEXER_FILE};

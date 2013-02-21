@@ -4,6 +4,9 @@
  * Copyright (C) Peter Berger, 2011
  */
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "domain.h"
 #include "formula.h"
 #include "function.h"
@@ -13,17 +16,8 @@
 #include "tools.h"
 #include "parse.h"
 #include "array.h"
-#include <stdlib.h>
-#include <string.h>
 
 
-/*!
-Appends an argument (RF_FORMULA) to a given formula node.
-
-@relates RF_FORMULA
-@param[in] formula The formula that takes the arguments.
-@param[in] argument The argument that should get appended.
-*/
 void rf_formula_append_argument(RF_FORMULA *formula, RF_FORMULA *argument)
 {
 	if(!formula || !argument)
@@ -35,20 +29,6 @@ void rf_formula_append_argument(RF_FORMULA *formula, RF_FORMULA *argument)
 	rf_array_append(formula->arguments, argument);
 }
 
-
-/*!
-Calculates an formula tree.
-
-The result is stored in RF_FORMULA_RESULT. If an error did appear, the type is set to RF_FO_ERROR.
-The result will contain an errormessage and the location of the error in the sourcecode.
-@relates RF_FORMULA
-@param[in] formula The root of the formula tree.
-@param[in] element_1 If the formula contains a variable X, X will be replaced by element_1.
-@param[in] element_2 If the formula contains a variable Y, Y will be replaced by element_2.
-@param[out] result A null-pointer! The result will be written here. The result must be freed by a call to rf_formula_destroy_result() by the caller!
-@return 0 on success. The result of the calculation is written to result.
-@return 1 on error.
-*/
 int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FORMULA_RESULT **result)
 {
 	/* Used variables. For some unknown reason MSC2010 didnt allow them in the if block. But others work... */
@@ -1332,15 +1312,6 @@ int rf_formula_calc(RF_FORMULA *formula, char *element_1, char *element_2, RF_FO
 	return 1;
 }
 
-/*!
-Creates an error result.
-
-@relates RF_FORMULA
-@param[in] location The location where the error happend in the sourcecode.
-@param[in] error The errormessage. The function takes the ownership of this memory! error gets invalid for the caller.
-@return A result with the error data.
-@return 0 on fail.
-*/
 RF_FORMULA_RESULT * rf_formula_calc_error(RF_LOCATION *location, char *error)
 {
 	RF_FORMULA_RESULT *result;
@@ -1359,13 +1330,6 @@ RF_FORMULA_RESULT * rf_formula_calc_error(RF_LOCATION *location, char *error)
 	return result;
 }
 
-
-/*!
-Removes all content from the structure.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be cleared.
-*/
 void rf_formula_clear(RF_FORMULA *formula)
 {
 	if(!formula)
@@ -1397,13 +1361,6 @@ void rf_formula_clear(RF_FORMULA *formula)
 	formula->variable = 0;
 }
 
-/*!
-Creates a empty result in memory.
-
-@relates RF_FORMULA
-@return The new result.
-@return 0 on error.
-*/
 RF_FORMULA_RESULT * rf_formula_create_result()
 {
 	RF_FORMULA_RESULT *result = calloc(1, sizeof(RF_FORMULA_RESULT));
@@ -1415,13 +1372,6 @@ RF_FORMULA_RESULT * rf_formula_create_result()
 	return result;
 }
 
-/*!
-Destroys the result.
-
-If can_delete is true, then the object stored in the result will be deleted!
-@relates RF_FORMULA
-@param[in] The result to be deleted.
-*/
 void rf_formula_destroy_result(RF_FORMULA_RESULT *result)
 {
 	if(!result)
@@ -1462,13 +1412,6 @@ void rf_formula_destroy_result(RF_FORMULA_RESULT *result)
 	free(result);
 }
 
-/*!
-Creates a new empty formula
-
-@relates RF_FORMULA
-@return The new formula.
-@return 0 on error.
-*/
 RF_FORMULA * rf_formula_create()
 {
 	RF_FORMULA *formula = calloc(1, sizeof(RF_FORMULA));
@@ -1480,12 +1423,6 @@ RF_FORMULA * rf_formula_create()
 	return formula;
 }
 
-/*!
-Frees the given formula.
-
-@relates RF_FORMULA
-@param[in] The formula to be destroyed.
-*/
 void rf_formula_destroy(RF_FORMULA *formula)
 {
 	if(!formula)
@@ -1495,14 +1432,6 @@ void rf_formula_destroy(RF_FORMULA *formula)
 	free(formula);
 }
 
-/*!
-Replaces the argumentlist of the given formula.
-
-The formulas old arguments will be destroyed!
-@relates RF_FORMULA
-@param[in] formula The formula whoes arguments should be replaced.
-@param[in] arguments The new arguments. Must be of type RF_FORMULA *.
-*/
 void rf_formula_set_arguments(RF_FORMULA *formula, RF_ARRAY *arguments)
 {
 	if(!formula || !arguments)
@@ -1514,13 +1443,6 @@ void rf_formula_set_arguments(RF_FORMULA *formula, RF_ARRAY *arguments)
 	formula->arguments = arguments;
 }
 
-/*!
-Clears the formula and set it to the given domain.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] domain The new object.
-*/
 void rf_formula_set_domain(RF_FORMULA *formula, RF_DOMAIN *domain)
 {
 	if(!formula || !domain)
@@ -1532,13 +1454,6 @@ void rf_formula_set_domain(RF_FORMULA *formula, RF_DOMAIN *domain)
 	formula->domain = domain;
 }
 
-/*!
-Clears the formula and set it to the given element.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] element The new object.
-*/
 void rf_formula_set_element(RF_FORMULA *formula, char *element)
 {
 	if(!formula || !element)
@@ -1550,13 +1465,6 @@ void rf_formula_set_element(RF_FORMULA *formula, char *element)
 	formula->element = element;
 }
 
-/*!
-Clears the formula and set it to the given function.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] function The new object.
-*/
 void rf_formula_set_function(RF_FORMULA *formula, RF_FUNCTION *function)
 {
 	if(!formula || !function)
@@ -1568,16 +1476,6 @@ void rf_formula_set_function(RF_FORMULA *formula, RF_FUNCTION *function)
 	formula->function = function;
 }
 
-/*!
-Sets the location in the sourcecode.
-
-@relates RF_FORMULA
-@param[in] formula The formula whoes location should be set.
-@param first_line The line of sourcecode where the formula starts
-@param first_column The column of sourcecode where the formula starts
-@param last_line The line of sourcecode where the formula ends
-@param last_column The column of sourcecode where the formula ends
-*/
 void rf_formula_set_location(RF_FORMULA *formula, int first_line, int first_column, int last_line, int last_column)
 {
 	if(!formula)
@@ -1589,13 +1487,6 @@ void rf_formula_set_location(RF_FORMULA *formula, int first_line, int first_colu
 	formula->location.last_column = last_column;
 }
 
-/*!
-Clears the formula and set it to the given negation.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] negation The new object.
-*/
 void rf_formula_set_negation(RF_FORMULA *formula, RF_NEGATION *negation)
 {
 	if(!formula || !negation)
@@ -1607,13 +1498,6 @@ void rf_formula_set_negation(RF_FORMULA *formula, RF_NEGATION *negation)
 	formula->negation = negation;
 }
 
-/*!
-Clears the formula and set it to the given operation.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] operation The new object.
-*/
 void rf_formula_set_operation(RF_FORMULA *formula, RF_OPERATION *operation)
 {
 	if(!formula || !operation)
@@ -1625,13 +1509,6 @@ void rf_formula_set_operation(RF_FORMULA *formula, RF_OPERATION *operation)
 	formula->operation = operation;
 }
 
-/*!
-Clears the formula and set it to the given relation.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] relation The new object.
-*/
 void rf_formula_set_relation(RF_FORMULA *formula, RF_RELATION *relation)
 {
 	if(!formula || !relation)
@@ -1643,13 +1520,6 @@ void rf_formula_set_relation(RF_FORMULA *formula, RF_RELATION *relation)
 	formula->relation = relation;
 }
 
-/*!
-Clears the formula and set it to the given variable.
-
-@relates RF_FORMULA
-@param[in] formula The formula to be set.
-@param[in] variable The new object.
-*/
 void rf_formula_set_variable(RF_FORMULA *formula, char variable)
 {
 	if(!formula || !variable)
