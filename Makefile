@@ -21,4 +21,4 @@ lexer.o : lexer.c parser.tab.h
 	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
 
 %.tab.c %.tab.h : %.y
-	bison -d $<
+	$(YACC) $(YFLAGS) -b $* $<
