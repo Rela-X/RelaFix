@@ -21,7 +21,6 @@ CAUSED ERRORS WITH SOME COMPILERS */
 
 #include <stdbool.h>
 
-#include "error.h"
 #include "list.h"
 
 /*! Represents a mathematical domain
@@ -71,11 +70,10 @@ typedef struct rf_element
  Checks if some element is double in the list. If so the function fails and an errormessage is
  returned.
  @param[in] elements A list containing pointers to struct RF_ELEMENT.
- @param[out] error On error a description is written into error.
  @return 0 on success.
  @return 1 on fail. A description is written to error. The errormessage must be freed by the caller.
  */
-int          rf_domain_check_elements(RF_LIST *elements, RF_ERROR *error);
+int          rf_domain_check_elements(RF_LIST *elements);
 
 /*!
  @relates RF_DOMAIN
@@ -101,7 +99,7 @@ Creates a new powerset based on the given domain.
 @return The new domain based on the elements in domain.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_DOMAIN *  rf_domain_create_powerset(RF_DOMAIN *domain, RF_ERROR *error);
+RF_DOMAIN *  rf_domain_create_powerset(RF_DOMAIN *domain);
 
 /*! @relates RF_DOMAIN
  * Frees all memory of domain. Including elements. Only destroy a domain if the domain is not

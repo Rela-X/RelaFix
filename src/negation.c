@@ -13,14 +13,14 @@
 #include "domain.h"
 
 
-char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
+char * rf_negation_calc(RF_NEGATION *negation, char *element)
 {
 	RF_LIST_ITERATOR *pos;
 	char *tmp;
 
 	if(!negation || !element)
 	{
-		error->string = strdup("program error - no negation or element in negation_calc");
+//		error->string = strdup("program error - no negation or element in negation_calc");
 		return 0;
 	}
 
@@ -28,8 +28,8 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 	/* check if given element is in domain */
 	if(!rf_domain_has_element(rf_negation_get_domain(negation), element))
 	{
-		error->string = rf_string_combine(5, "'", element, "' is not a element of domain '",
-			rf_domain_get_name(rf_negation_get_domain(negation)), "'");
+//		error->string = rf_string_combine(5, "'", element, "' is not a element of domain '",
+//			rf_domain_get_name(rf_negation_get_domain(negation)), "'");
 		return 0;
 	}
 
@@ -38,7 +38,7 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 	pos = rf_list_get_begin(negation->items);
 	if(!pos)
 	{
-		error->string = strdup("program error");
+//		error->string = strdup("program error");
 		return 0;
 	}
 
@@ -50,7 +50,7 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 		if(!tmp)
 		{
 			rf_list_delete_iterator(pos);
-			error->string = strdup("program error");
+//			error->string = strdup("program error");
 			return 0;
 		}
 
@@ -65,7 +65,7 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 				rf_list_delete_iterator(pos);
 				if(!tmp)
 				{
-					error->string = strdup("program error");
+//					error->string = strdup("program error");
 					return 0;
 				}
 				else
@@ -74,7 +74,7 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 			else
 			{
 				rf_list_delete_iterator(pos);
-				error->string = strdup("program error - reached end of list in negation_calc");
+//				error->string = strdup("program error - reached end of list in negation_calc");
 				return 0;
 			}
 		}
@@ -85,7 +85,7 @@ char * rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error)
 	}
 
 	rf_list_delete_iterator(pos);
-	error->string = strdup("program error - reached end of list in negation_calc");
+//	error->string = strdup("program error - reached end of list in negation_calc");
 	return 0;
 }
 
@@ -164,19 +164,19 @@ bool rf_negation_has_name(RF_NEGATION *negation, char *name)
 }
 
 
-int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error)
+int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items)
 {
 	RF_LIST_ITERATOR *element, *rest;
 	char *tmp, *tmp_rest;
 
 	if(!negation)
 	{
-		error->string = strdup("program error - argument negation is zero in negation_set_items");
+//		error->string = strdup("program error - argument negation is zero in negation_set_items");
 		return 1;
 	}
 	if(!items)
 	{
-		error->string = strdup("program error - argument items is zero in negation_set_items");
+//		error->string = strdup("program error - argument items is zero in negation_set_items");
 		return 1;
 	}
 
@@ -195,7 +195,7 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 	/* Check if id count is double of domain element-count */
 	if((rf_domain_get_element_count(negation->domain) * 2) != rf_list_get_count(items))
 	{
-		error->string = strdup("wrong count of elements");
+//		error->string = strdup("wrong count of elements");
 		return 1;
 	}
 
@@ -210,15 +210,15 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 		{
 			rf_list_delete_iterator(element);
 
-			error->string = strdup("program error - found id with null pointer");
+//			error->string = strdup("program error - found id with null pointer");
 			return 1;
 		}
 		if(!rf_domain_has_element(negation->domain, tmp))
 		{
 			rf_list_delete_iterator(element);
 
-			error->string = rf_string_combine(5, "element '", tmp, "' is not from domain '",
-				rf_domain_get_name(negation->domain), "'");
+//			error->string = rf_string_combine(5, "element '", tmp, "' is not from domain '",
+//				rf_domain_get_name(negation->domain), "'");
 			return 1;
 		}
 		rest = rf_list_copy_iterator(element);
@@ -231,7 +231,7 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 				rf_list_delete_iterator(element);
 				rf_list_delete_iterator(rest);
 
-				error->string = strdup("program error - found id with null pointer");
+//				error->string = strdup("program error - found id with null pointer");
 				return 1;
 			}
 			if(!rf_list_has_next(rest))
@@ -244,7 +244,7 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 				rf_list_delete_iterator(element);
 				rf_list_delete_iterator(rest);
 
-				error->string = strdup("program error - found id with null pointer");
+//				error->string = strdup("program error - found id with null pointer");
 				return 1;
 			}
 
@@ -253,7 +253,7 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 				rf_list_delete_iterator(rest);
 				rf_list_delete_iterator(element);
 
-				error->string = rf_string_combine(3, "element '", tmp_rest, "' is redefined");
+//				error->string = rf_string_combine(3, "element '", tmp_rest, "' is redefined");
 				return 1;
 			}
 		}
@@ -268,7 +268,7 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 			{
 				rf_list_delete_iterator(element);
 
-				error->string = strdup("program error - found id with null pointer");
+//				error->string = strdup("program error - found id with null pointer");
 				return 1;
 			}
 
@@ -276,8 +276,8 @@ int rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error
 			{
 				rf_list_delete_iterator(element);
 
-				error->string = rf_string_combine(5, "element '", tmp, "' is not from domain '",
-					rf_domain_get_name(negation->domain), "'");
+//				error->string = rf_string_combine(5, "element '", tmp, "' is not from domain '",
+//					rf_domain_get_name(negation->domain), "'");
 				return 1;
 			}
 		}

@@ -9,20 +9,18 @@
 
 #include "relation.h"
 #include "domain.h"
-#include "formula.h"
 #include "tools.h"
 #include "list.h"
-#include "parse.h"
 #include "table.h"
 
 
-int rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2, RF_ERROR *error)
+int rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2)
 {
 	int x, y, result;
 
 	if(!relation || !element_1 || !element_2)
 	{
-		error->string = strdup("program error - some input value of relation_calc is zero");
+//		error->string = strdup("program error - some input value of relation_calc is zero");
 		return 4;
 	}
 
@@ -34,14 +32,14 @@ int rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2, RF
 	y = rf_domain_get_element_position(relation->domain_1, element_1);
 	if(x < 0)
 	{
-		error->string = rf_string_combine(5, "'", element_2, "' is not a element of domain '",
-			rf_domain_get_name(relation->domain_2), "'");
+//		error->string = rf_string_combine(5, "'", element_2, "' is not a element of domain '",
+//			rf_domain_get_name(relation->domain_2), "'");
 		return 4;
 	}
 	if(y < 0)
 	{
-		error->string = rf_string_combine(5, "'", element_1, "' is not a element of domain '",
-			rf_domain_get_name(relation->domain_1), "'");
+//		error->string = rf_string_combine(5, "'", element_1, "' is not a element of domain '",
+//			rf_domain_get_name(relation->domain_1), "'");
 		return 4;
 	}
 
@@ -51,7 +49,7 @@ int rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2, RF
 		return result;
 	else
 	{
-		error->string = strdup("program error - while reading bit from table");
+//		error->string = strdup("program error - while reading bit from table");
 		return 4;
 	}
 }
@@ -107,14 +105,14 @@ RF_RELATION * rf_relation_create(char *name, RF_DOMAIN *domain_1, RF_DOMAIN *dom
 	return relation;
 }
 
-RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain, RF_ERROR *error)
+RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height;
 
 	if(!domain)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -122,7 +120,7 @@ RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain, RF_ERROR *error)
 	new_relation = rf_relation_create(0, domain, domain);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -139,14 +137,14 @@ RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain, RF_ERROR *error)
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_complement(RF_RELATION *relation, RF_ERROR *error)
+RF_RELATION * rf_relation_create_complement(RF_RELATION *relation)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height, result;
 
 	if(!relation)
 	{
-		error->string = strdup("program error - argument relation is zero");
+//		error->string = strdup("program error - argument relation is zero");
 		return 0;
 	}
 
@@ -154,14 +152,14 @@ RF_RELATION * rf_relation_create_complement(RF_RELATION *relation, RF_ERROR *err
 	new_relation = rf_relation_create(0, relation->domain_1, relation->domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 	else if(!new_relation->table)
 	{
 		rf_relation_destroy(new_relation);
 
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -181,7 +179,7 @@ RF_RELATION * rf_relation_create_complement(RF_RELATION *relation, RF_ERROR *err
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 		}
@@ -189,22 +187,22 @@ RF_RELATION * rf_relation_create_complement(RF_RELATION *relation, RF_ERROR *err
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error)
+RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELATION *relation_2)
 {
 	RF_RELATION *new_relation = 0;
 	int width1, width2, height1, height2, x1, x2, y1, result;
 
 	if(!relation_1 || !relation_2)
 	{
-		error->string = strdup("program error - argument relation is zero");
+//		error->string = strdup("program error - argument relation is zero");
 		return 0;
 	}
 
 	/* check if the Domains match */
 	if(relation_1->domain_2 != relation_2->domain_1)
 	{
-		error->string = rf_string_combine(5, "'", rf_domain_get_name(relation_1->domain_2), "' and '",
-			rf_domain_get_name(relation_2->domain_1), "' must be the same domain");
+//		error->string = rf_string_combine(5, "'", rf_domain_get_name(relation_1->domain_2), "' and '",
+//			rf_domain_get_name(relation_2->domain_1), "' must be the same domain");
 		return 0;
 	}
 
@@ -212,7 +210,7 @@ RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELAT
 	new_relation = rf_relation_create(0, relation_1->domain_1, relation_2->domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -229,7 +227,7 @@ RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELAT
 			result = rf_table_get_bit(relation_1->table, x1, y1);
 			if(result < 0)
 			{
-				error->string = strdup("program error - while reading bit from table");
+//				error->string = strdup("program error - while reading bit from table");
 				rf_relation_destroy(new_relation);
 				return 0;
 			}
@@ -241,7 +239,7 @@ RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELAT
 					result = rf_table_get_bit(relation_2->table, x2, x1);
 					if(result < 0)
 					{
-						error->string = strdup("program error - while reading bit from table");
+//						error->string = strdup("program error - while reading bit from table");
 						rf_relation_destroy(new_relation);
 						return 0;
 					}
@@ -256,21 +254,21 @@ RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELAT
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_converse(RF_RELATION *relation, RF_ERROR *error)
+RF_RELATION * rf_relation_create_converse(RF_RELATION *relation)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height, result;
 
 	if(!relation)
 	{
-		error->string = strdup("program error - argument relation is zero");
+//		error->string = strdup("program error - argument relation is zero");
 		return 0;
 	}
 
 	/* check if it is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous");
 		return 0;
 	}
 
@@ -278,14 +276,14 @@ RF_RELATION * rf_relation_create_converse(RF_RELATION *relation, RF_ERROR *error
 	new_relation = rf_relation_create(0, relation->domain_1, relation->domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 	else if(!new_relation->table)
 	{
 		rf_relation_destroy(new_relation);
 
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -304,7 +302,7 @@ RF_RELATION * rf_relation_create_converse(RF_RELATION *relation, RF_ERROR *error
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 		}
@@ -313,14 +311,14 @@ RF_RELATION * rf_relation_create_converse(RF_RELATION *relation, RF_ERROR *error
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, RF_ERROR *error)
+RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height;
 
 	if(!domain_1 || !domain_2)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -328,7 +326,7 @@ RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2,
 	new_relation = rf_relation_create(0, domain_1, domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -345,14 +343,14 @@ RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2,
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, RF_ERROR *error)
+RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height;
 
 	if(!domain_1 || !domain_2)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -360,7 +358,7 @@ RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, 
 	new_relation = rf_relation_create(0, domain_1, domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -377,14 +375,14 @@ RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, 
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain, RF_ERROR *error)
+RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height;
 
 	if(!domain)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -392,7 +390,7 @@ RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain, RF_ERROR *error)
 	new_relation = rf_relation_create(0, domain, domain);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -413,14 +411,14 @@ RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain, RF_ERROR *error)
 }
 
 
-RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error)
+RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATION *relation_2)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height, result_1, result_2;
 
 	if(!relation_1 || !relation_2)
 	{
-		error->string = strdup("program error - argument relation is zero");
+//		error->string = strdup("program error - argument relation is zero");
 		return 0;
 	}
 
@@ -428,14 +426,14 @@ RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATI
 	/* check if both relations have same domains */
 	if(relation_1->domain_1 != relation_2->domain_1)
 	{
-		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
-			relation_2->name, "' have different domains");
+//		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
+//			relation_2->name, "' have different domains");
 		return 0;
 	}
 	else if(relation_1->domain_2 != relation_2->domain_2)
 	{
-		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
-			relation_2->name, "' have different domains");
+//		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
+//			relation_2->name, "' have different domains");
 		return 0;
 	}
 
@@ -443,14 +441,14 @@ RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATI
 	new_relation = rf_relation_create(0, relation_1->domain_1, relation_1->domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 	else if(!new_relation->table)
 	{
 		rf_relation_destroy(new_relation);
 
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -467,14 +465,14 @@ RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATI
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 			else if(result_2 < 0)
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 			else if(result_1 == 1 && result_2 == 1)
@@ -486,7 +484,7 @@ RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATI
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error)
+RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain)
 {
 	RF_DOMAIN *domain1, *domain2;
 	RF_RELATION *new_relation;
@@ -495,7 +493,7 @@ RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error)
 
 	if(!domain)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -503,7 +501,7 @@ RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error)
 	new_relation = rf_relation_create(0, domain, domain);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -545,14 +543,14 @@ RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error)
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain, RF_ERROR *error)
+RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height;
 
 	if(!domain)
 	{
-		error->string = strdup("program error - argument domain is zero");
+//		error->string = strdup("program error - argument domain is zero");
 		return 0;
 	}
 
@@ -560,7 +558,7 @@ RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain, RF_ERROR *error)
 	new_relation = rf_relation_create(0, domain, domain);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -577,14 +575,14 @@ RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain, RF_ERROR *error)
 	return new_relation;
 }
 
-RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error)
+RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *relation_2)
 {
 	RF_RELATION *new_relation;
 	int x, y, width, height, result_1, result_2;
 
 	if(!relation_1 || !relation_2)
 	{
-		error->string = strdup("program error - argument relation is zero");
+//		error->string = strdup("program error - argument relation is zero");
 		return 0;
 	}
 
@@ -592,14 +590,14 @@ RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *rel
 	/* check if both relations have same domains */
 	if(relation_1->domain_1 != relation_2->domain_1)
 	{
-		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
-			relation_2->name, "' have different domains");
+//		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
+//			relation_2->name, "' have different domains");
 		return 0;
 	}
 	else if(relation_1->domain_2 != relation_2->domain_2)
 	{
-		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
-			relation_2->name, "' have different domains");
+//		error->string = rf_string_combine(5, "Relation '", relation_1->name, "' and relation '",
+//			relation_2->name, "' have different domains");
 		return 0;
 	}
 
@@ -607,14 +605,14 @@ RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *rel
 	new_relation = rf_relation_create(0, relation_1->domain_1, relation_1->domain_2);
 	if(!new_relation)
 	{
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 	else if(!new_relation->table)
 	{
 		rf_relation_destroy(new_relation);
 
-		error->string = strdup("program error - no memory");
+//		error->string = strdup("program error - no memory");
 		return 0;
 	}
 
@@ -631,14 +629,14 @@ RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *rel
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 			else if(result_2 < 0)
 			{
 				rf_relation_destroy(new_relation);
 
-				error->string = strdup("program error - while set bit in table");
+//				error->string = strdup("program error - while set bit in table");
 				return 0;
 			}
 			else if(result_1 == 1 || result_2 == 1)
@@ -664,7 +662,7 @@ void rf_relation_destroy(RF_RELATION *relation)
 	free(relation);
 }
 
-char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error)
+char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain)
 {
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element1, *element2;
@@ -674,35 +672,35 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	if(!domain)
 	{
-		error->string = strdup("program error - domain is zero");
+//		error->string = strdup("program error - domain is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
 	/* check if the domain is part of relation->domain_1 */
 	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
-		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
-			rf_domain_get_name(relation->domain_1), "'");
+//		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
+//			rf_domain_get_name(relation->domain_1), "'");
 		return 0;
 	}
 
@@ -733,7 +731,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 				rf_list_delete_iterator(element2);
 				rf_list_destroy(names, 0);
 
-				error->string = strdup("program error - while reading bit in table");
+//				error->string = strdup("program error - while reading bit in table");
 				return 0;
 			}
 			else if(result == 1) /* element1 is not bigger then element2 */
@@ -751,7 +749,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 					rf_list_delete_iterator(element2);
 					rf_list_destroy(names, 0);
 
-					error->string = strdup("program error - while reading bit in table");
+//					error->string = strdup("program error - while reading bit in table");
 					return 0;
 				}
 				else if(result == 0) /* element1 is not bigger then element2 (we dont know) */
@@ -784,7 +782,7 @@ char * rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERR
 	return "no infimum";
 }
 
-RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error)
+RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain)
 {
 	int x, y, height, result;
 	RF_LIST *names, *new_elements;
@@ -796,35 +794,35 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	if(!domain)
 	{
-		error->string = strdup("program error - domain is zero");
+//		error->string = strdup("program error - domain is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
 	/* check if the domain is part of relation->domain_1 */
 	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
-		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
-			rf_domain_get_name(relation->domain_1), "'");
+//		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
+//			rf_domain_get_name(relation->domain_1), "'");
 		return 0;
 	}
 
@@ -849,7 +847,7 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 				rf_list_destroy(names, 0);
 				rf_list_destroy(new_elements, 0);
 
-				error->string = strdup("program error - while reading bit from table");
+//				error->string = strdup("program error - while reading bit from table");
 				return 0;
 			}
 			else if(result == 0) /* y is not an lowerbound */
@@ -876,7 +874,7 @@ RF_DOMAIN * rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain
 	return new_domain;
 }
 
-char * rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error)
+char * rf_relation_find_maximum(RF_RELATION *relation)
 {
 	int x, y, width, height, max, result;
 	RF_LIST *names;
@@ -884,21 +882,21 @@ char * rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
@@ -915,7 +913,7 @@ char * rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error)
 			result = rf_table_get_bit(relation->table, x, y); /* check if relation exist */
 			if(result < 0)
 			{
-				error->string = strdup("program error - while reading bit from table");
+//				error->string = strdup("program error - while reading bit from table");
 				return 0;
 			}
 			else if(result == 0) /* y is maybe a posssible maximum */
@@ -923,7 +921,7 @@ char * rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error)
 				result = rf_table_get_bit(relation->table, y, x); /* if it exists -> y > x */
 				if(result < 0)
 				{
-					error->string = strdup("program error - while reading bit from table");
+//					error->string = strdup("program error - while reading bit from table");
 					return 0;
 				}
 				else if(result == 1) /* y > x */
@@ -950,11 +948,11 @@ char * rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error)
 	}
 
 	/* if we come here, there exists no maximum and we create an error */
-	error->string = rf_string_combine(3, "For relation '", relation->name, "' exists no maximum.");
+//	error->string = rf_string_combine(3, "For relation '", relation->name, "' exists no maximum.");
 	return 0;
 }
 
-char * rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error)
+char * rf_relation_find_minimum(RF_RELATION *relation)
 {
 	int x, y, width, height, min, result;
 	RF_LIST *names;
@@ -962,21 +960,21 @@ char * rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error)
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
@@ -993,7 +991,7 @@ char * rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error)
 			result = rf_table_get_bit(relation->table, y, x); /* check if relation exist */
 			if(result < 0)
 			{
-				error->string = strdup("program error - while reading bit from table");
+//				error->string = strdup("program error - while reading bit from table");
 				return 0;
 			}
 			else if(result == 0) /* y is maybe a posssible minimum */
@@ -1001,7 +999,7 @@ char * rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error)
 				result = rf_table_get_bit(relation->table, x, y); /* if it exists -> y < x */
 				if(result < 0)
 				{
-					error->string = strdup("program error - while reading bit from table");
+//					error->string = strdup("program error - while reading bit from table");
 					return 0;
 				}
 				else if(result == 1) /* y > x */
@@ -1028,11 +1026,11 @@ char * rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error)
 	}
 
 	/* if we come here, there exists no minimum and we create an error */
-	error->string = rf_string_combine(3, "For relation '", relation->name, "' exists no minimum.");
+//	error->string = rf_string_combine(3, "For relation '", relation->name, "' exists no minimum.");
 	return 0;
 }
 
-char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error)
+char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain)
 {
 	RF_LIST *names;
 	RF_LIST_ITERATOR *element1, *element2;
@@ -1042,35 +1040,35 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	if(!domain)
 	{
-		error->string = strdup("program error - domain is zero");
+//		error->string = strdup("program error - domain is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
 	/* check if the domain is part of relation->domain_1 */
 	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
-		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
-			rf_domain_get_name(relation->domain_1), "'");
+//		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
+//			rf_domain_get_name(relation->domain_1), "'");
 		return 0;
 	}
 
@@ -1101,7 +1099,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 				rf_list_delete_iterator(element2);
 				rf_list_destroy(names, 0);
 
-				error->string = strdup("program error - while reading bit in table");
+//				error->string = strdup("program error - while reading bit in table");
 				return 0;
 			}
 			else if(result == 0) /* element1 is not smaller then element2 */
@@ -1119,7 +1117,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 					rf_list_delete_iterator(element2);
 					rf_list_destroy(names, 0);
 
-					error->string = strdup("program error - while reading bit in table");
+//					error->string = strdup("program error - while reading bit in table");
 					return 0;
 				}
 				else if(result == 1) /* element1 is not smaller then element2 (we dont know) */
@@ -1152,7 +1150,7 @@ char * rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ER
 	return "no supremum";
 }
 
-RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error)
+RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain)
 {
 	int x, y, height, result;
 	RF_LIST *names, *new_elements;
@@ -1164,35 +1162,35 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 
 	if(!relation)
 	{
-		error->string = strdup("program error - relation is zero");
+//		error->string = strdup("program error - relation is zero");
 		return 0;
 	}
 
 	if(!domain)
 	{
-		error->string = strdup("program error - domain is zero");
+//		error->string = strdup("program error - domain is zero");
 		return 0;
 	}
 
 	/* check if the relation is homogeneous */
 	if(relation->domain_1 != relation->domain_2)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not homogeneous.");
 		return 0;
 	}
 
 	/* check if relation is a poset */
 	if(rf_relation_is_poset(relation) != 1)
 	{
-		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
+//		error->string = rf_string_combine(3, "'", relation->name, "' is not a ordered set.");
 		return 0;
 	}
 
 	/* check if the domain is part of relation->domain_1 */
 	if(rf_domain_is_partof(domain, relation->domain_1) == false)
 	{
-		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
-			rf_domain_get_name(relation->domain_1), "'");
+//		error->string = rf_string_combine(5, "'", rf_domain_get_name(domain), "' is not part of '",
+//			rf_domain_get_name(relation->domain_1), "'");
 		return 0;
 	}
 
@@ -1217,7 +1215,7 @@ RF_DOMAIN * rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain
 				rf_list_destroy(names, 0);
 				rf_list_destroy(new_elements, 0);
 
-				error->string = strdup("program error - while reading bit from table");
+//				error->string = strdup("program error - while reading bit from table");
 				return 0;
 			}
 			else if(result == 0) /* y is not an upperbound */

@@ -47,11 +47,10 @@ typedef struct rf_negation
  @relates RF_NEGATION
  @param negation The negation to use.
  @param element The name of the element that should be negated.
- @param error Will contain an errormessage if the function failed
  @return The name of the negated element.
  @return 0 when the function did fail. an errordescription is written to error.
  */
-char *        rf_negation_calc(RF_NEGATION *negation, char *element, RF_ERROR *error);
+char *        rf_negation_calc(RF_NEGATION *negation, char *element);
 
 /*!
  @relates RF_NEGATION
@@ -115,6 +114,6 @@ bool          rf_negation_has_name(RF_NEGATION *negation, char *name);
  @return 0 on success.
  @return 1 on fail. An error description is written into error.
  */
-int           rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items, RF_ERROR *error);
+int           rf_negation_set_items(RF_NEGATION *negation, RF_LIST *items);
 
 #endif

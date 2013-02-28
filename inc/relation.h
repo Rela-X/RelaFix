@@ -47,7 +47,7 @@ typedef struct rf_relation
  @result on success 0 (no) or 1 (yes)
  @result Any other number on error. An description is written to element_out. This description must be freed by the user!
  */
-int           rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2, RF_ERROR *error);
+int           rf_relation_calc(RF_RELATION *relation, char *element_1, char *element_2);
 
 /*!
  @relates RF_RELATION
@@ -78,7 +78,7 @@ Creates a new relation with the bottom triangle of the table filled.
 @return The new relation based on domain.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain, RF_ERROR *error);
+RF_RELATION * rf_relation_create_bottom(RF_DOMAIN *domain);
 
 /*!
 Creates the complement of the given relation
@@ -89,7 +89,7 @@ Creates the complement of the given relation
 @return On success a new relation, the complement of the given, is returned.
 @return 0 on fail. An errormessage is written to error.
 */
-RF_RELATION * rf_relation_create_complement(RF_RELATION *relation, RF_ERROR *error);
+RF_RELATION * rf_relation_create_complement(RF_RELATION *relation);
 
 /*!
 Creates the concatenation of two given relations.
@@ -103,7 +103,7 @@ The second domain of the first relation and the first domain of the second relat
 @return The new relation that is the concatenation of the given ones.
 @return 0 on fail. An errormessage is written to error.
 */
-RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error);
+RF_RELATION * rf_relation_create_concatenation(RF_RELATION *relation_1, RF_RELATION *relation_2);
 
 /*!
 Creates the converse of the given relation
@@ -114,7 +114,7 @@ Creates the converse of the given relation
 @return On success a new relation, the converse of the given, is returned.
 @return 0 on fail. An errormessage is written to error.
 */
-RF_RELATION * rf_relation_create_converse(RF_RELATION *relation, RF_ERROR *error);
+RF_RELATION * rf_relation_create_converse(RF_RELATION *relation);
 
 /*!
 Creates a new empty relation
@@ -126,7 +126,7 @@ Creates a new empty relation
 @return The new empty relation based on domain_1 und domain_2.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, RF_ERROR *error);
+RF_RELATION * rf_relation_create_empty(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2);
 
 /*!
 Creates a new relation with all xRy existing.
@@ -138,7 +138,7 @@ Creates a new relation with all xRy existing.
 @return The new relation based on domain_1 und domain_2.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2, RF_ERROR *error);
+RF_RELATION * rf_relation_create_full(RF_DOMAIN *domain_1, RF_DOMAIN *domain_2);
 
 /*!
 Creates a homogeneous relation with only xRx
@@ -149,7 +149,7 @@ Creates a homogeneous relation with only xRx
 @return The new relation
 @return 0 on fail. error will contain a message.
 */
-RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain, RF_ERROR *error);
+RF_RELATION * rf_relation_create_id(RF_DOMAIN *domain);
 
 /*!
 Creates the intersection of two given relations.
@@ -162,7 +162,7 @@ Both relations must have the same domains!
 @return A new relation, that is the intersection of the given relations.
 @return 0 on fail. An errormessage is written to error.
 */
-RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error);
+RF_RELATION * rf_relation_create_intersection(RF_RELATION *relation_1, RF_RELATION *relation_2);
 
 /*!
 Creates a new relation with with subsets leq.
@@ -173,7 +173,7 @@ Creates a new relation with with subsets leq.
 @return The new relation based on domain.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain, RF_ERROR *error);
+RF_RELATION * rf_relation_create_subsetleq(RF_DOMAIN *domain);
 
 /*!
 Creates a new relation with the top of the table filled.
@@ -184,7 +184,7 @@ Creates a new relation with the top of the table filled.
 @return The new relation based on domain.
 @return 0 on fail. An errormessage is written in error.
 */
-RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain, RF_ERROR *error);
+RF_RELATION * rf_relation_create_top(RF_DOMAIN *domain);
 
 /*!
 Creates the union of two given relations.
@@ -197,7 +197,7 @@ Both relations must have the same domains!
 @return A new relation, that is the union of the given relations.
 @return 0 on fail. An errormessage is written to error.
 */
-RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *relation_2, RF_ERROR *error);
+RF_RELATION * rf_relation_create_union(RF_RELATION *relation_1, RF_RELATION *relation_2);
 
 /*!
 Frees all data of the relation.
@@ -218,7 +218,7 @@ Finds the infimum for the given elements if it exists.
 @return If no infimum exist "no infimum" is returned.
 @return 0 on fail. An errormessage is written to error.
 */
-char *        rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error);
+char *        rf_relation_find_infimum(RF_RELATION *relation, RF_DOMAIN *domain);
 
 /*!
 Searches a set of lowerbounds for the given elements.
@@ -230,7 +230,7 @@ Searches a set of lowerbounds for the given elements.
 @return A temporary domain with the elements that are a lowerbound to the given elements.
 @return 0 on fail. An errormessage is writen to error.
 */
-RF_DOMAIN *   rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error);
+RF_DOMAIN *   rf_relation_find_lowerbound(RF_RELATION *relation, RF_DOMAIN *domain);
 
 /*!
 Finds the maximum of an partial ordered relation.
@@ -243,7 +243,7 @@ If there does not exist a maximum, an error will appear.
 		or freed by the user! The name is only valid as long as the relation exists.
 @return 0 on fail or when no maximum exists. An errormessage is written to error.
 */
-char *        rf_relation_find_maximum(RF_RELATION *relation, RF_ERROR *error);
+char *        rf_relation_find_maximum(RF_RELATION *relation);
 
 /*!
 Finds the minimum of an partial ordered relation.
@@ -256,7 +256,7 @@ If there does not exist a minimum, an error will appear.
 		or freed by the user! The name is only valid as long as the relation exists.
 @return 0 on fail or when no minimum exists. An errormessage is written to error.
 */
-char *        rf_relation_find_minimum(RF_RELATION *relation, RF_ERROR *error);
+char *        rf_relation_find_minimum(RF_RELATION *relation);
 
 /*!
 Finds the supremum for the given elements if it exists.
@@ -269,7 +269,7 @@ Finds the supremum for the given elements if it exists.
 @return If no supremum exist "no supremum" is returned.
 @return 0 on fail. An errormessage is written to error.
 */
-char *        rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error);
+char *        rf_relation_find_supremum(RF_RELATION *relation, RF_DOMAIN *domain);
 
 /*!
 Searches a set of upperbounds for the given elements.
@@ -281,7 +281,7 @@ Searches a set of upperbounds for the given elements.
 @return A temporary domain with the elements that are an upperbound to the given elements.
 @return 0 on fail. An errormessage is writen to error.
 */
-RF_DOMAIN *   rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain, RF_ERROR *error);
+RF_DOMAIN *   rf_relation_find_upperbound(RF_RELATION *relation, RF_DOMAIN *domain);
 
 /*!
 Returns the domain x is from in xRy.

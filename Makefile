@@ -2,29 +2,24 @@ include config.mk
 
 vpath %.h inc/
 vpath %.c src/
-vpath %.y src/
 
 INC += -I ./
 INC += -I inc/
-OBJ := array.o domain.o formula.o function.o lexer.o list.o negation.o operation.o parse.o parser.tab.o relation.o stack.o table.o tools.o
+OBJ := array.o domain.o list.o negation.o relation.o stack.o table.o tools.o
 
 .PHONY : all doc clean
 
+TARGET = librelafix.a
+
 all : $(OBJ)
-	ar rcs librelafix.a $(OBJ)
+	ar rcs $(TARGET) $(OBJ)
 
 clean :
-	rm -f *.o *.a *.tab.c *.tab.h
+	rm -f $(OBJ) $(TARGET)
 	rm -rf doc
-
-lexer.o : lexer.c parser.tab.h
-	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
 
 %.o : %.c %.h
 	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
-
-%.tab.c %.tab.h : %.y
-	$(YACC) $(YFLAGS) -b $* $<
 
 doc :
 	$(DOXYGEN)
