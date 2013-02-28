@@ -5,17 +5,18 @@ vpath %.c src/
 
 INC += -I ./
 INC += -I inc/
-OBJ := array.o domain.o list.o negation.o relation.o stack.o table.o tools.o
+OBJ := error.o set.o relation.o
 
 .PHONY : all doc clean
 
-TARGET = librelafix.a
+TARGET = librelafix
 
 all : $(OBJ)
-	ar rcs $(TARGET) $(OBJ)
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(TARGET).so.2 -o $(TARGET).so.2.0.0 $<
+	ar rcs $(TARGET).a $<
 
 clean :
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGET).so.* $(TARGET).a
 	rm -rf doc
 
 %.o : %.c %.h
