@@ -1,7 +1,20 @@
-/*
- * RelaFix    Relation
+/* 
+ * Copyright (C) 2008,2013 Peter Berger, Wilke Schwiedop
  *
- * Copyright (C) Peter Berger, 2011
+ * This file is part of RelaFix.
+ *
+ * RelaFix is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RelaFix is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser Public License
+ * along with RelaFix.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /*! \file
@@ -32,7 +45,7 @@ bool            rf_relation_calc(rf_Relation *relation, rf_SetElement *element1,
 
 
 rf_Relation *   rf_relation_new(rf_Set *domain1, rf_Set *domain2, bool *table);
-rf_Relation *   rf_relation_copy(rf_Relation *relation);
+rf_Relation *   rf_relation_copy(const rf_Relation *relation);
 
 rf_Relation *   rf_relation_new_empty(rf_Set *domain1, rf_Set *domain2);
 rf_Relation *   rf_relation_new_full(rf_Set *domain1, rf_Set *domain2);
