@@ -11,9 +11,13 @@ OBJ := error.o set.o relation.o
 
 TARGET = librelafix
 
-all : $(OBJ)
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$(TARGET).so.2 -o $(TARGET).so.2.0.0 $<
-	ar rcs $(TARGET).a $<
+all : shared static
+
+shared : $(OBJ)
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$(TARGET).so.2 -o $(TARGET).so.2.0.0 $^
+
+static : $(OBJ)
+	ar rcs $(TARGET).a $^
 
 clean :
 	rm -f $(OBJ) $(TARGET).so.* $(TARGET).a
