@@ -141,47 +141,164 @@ rf_relation_new_id(rf_Set *d) {
 	size_t table_size = d->cardinality * d->cardinality;
 	bool *table = calloc(table_size, sizeof(*table));
 
-	rf_Relation *new = rf_relation_new(d, d, table);
-	for(int i = table_size-1; i >= 0; --i) {
-		new->table[i] = i % (d->cardinality+1) == 0;
+	rf_Relation *new = rf_relation_new_empty(d, d);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		new->table[rf_table_idx(new, x, x)] = true;
+	}
+
+	return new;
+}
+
+// includes the (x,x) elements
+rf_Relation *
+rf_relation_new_top(rf_Set *d) {
+	assert(d != NULL);
+
+	rf_Relation *new = rf_relation_new_empty(d, d);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		for(int y = dim-1; y >= x; --y) {
+			new->table[rf_table_idx(new, x, y)] = true;
+		}
+	}
+
+	return new;
+}
+
+// includes the (x,x) elements
+rf_Relation *
+rf_relation_new_bottom(rf_Set *d) {
+	assert(d != NULL);
+
+	rf_Relation *new = rf_relation_new_empty(d, d);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		for(int y = x; y >= 0; --y) {
+			new->table[rf_table_idx(new, x, y)] = true;
+		}
 	}
 
 	return new;
 }
 
 rf_Relation *
-rf_relation_new_top(rf_Set *d) {
-	// TODO
-}
-
-rf_Relation *
-rf_relation_new_bottom(rf_Set *d) {
-	// TODO
-}
-
-rf_Relation *
 rf_relation_new_union(rf_Relation *r1, rf_Relation *r2, rf_Error *error) {
-	// TODO
+	assert(r1 != NULL);
+	assert(r2 != NULL);
+
+	for(int i = N_DOMAINS-1; i >= 0; --i) {
+		if(!rf_set_equal(r1->domains[i], r2->domains[i])) {
+			if(error != NULL) {
+				rf_error_set(error, RF_E_GENERIC, "Domains of r1 and r2 differ");
+			}
+			return NULL;
+		}
+	}
+
+	rf_Relation *new = rf_relation_new_empty(r1->domains[0], r1->domains[1]);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		for(int y = x; y >= 0; --y) {
+			new->table[rf_table_idx(new, x, y)] = r1->table[rf_table_idx(r1, x, y)] || r2->table[rf_table_idx(r2, x, y)];
+		}
+	}
+
+	return new;
 }
 
 rf_Relation *
 rf_relation_new_intersection(rf_Relation *r1, rf_Relation *r2, rf_Error *error) {
-	// TODO
+	assert(r1 != NULL);
+	assert(r2 != NULL);
+
+	for(int i = N_DOMAINS-1; i >= 0; --i) {
+		if(!rf_set_equal(r1->domains[i], r2->domains[i])) {
+			if(error != NULL) {
+				rf_error_set(error, RF_E_GENERIC, "Domains of r1 and r2 differ");
+			}
+			return NULL;
+		}
+	}
+
+	rf_Relation *new = rf_relation_new_empty(r1->domains[0], r1->domains[1]);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		for(int y = x; y >= 0; --y) {
+			new->table[rf_table_idx(new, x, y)] = r1->table[rf_table_idx(r1, x, y)] && r2->table[rf_table_idx(r2, x, y)];
+		}
+	}
+
+	return new;
 }
 
 rf_Relation *
 rf_relation_new_complement(rf_Relation *r, rf_Error *error) {
-	// TODO
+	assert(r != NULL);
+
+	rf_Relation *new = rf_relation_copy(r);
+
+	const size_t table_size = new->domains[0]->cardinality * new->domains[1]->cardinality;
+	for(int i = table_size-1; i >= 0; --i) {
+		new->table[i] = !new->table[i];
+	}
+
+	return new;
 }
 
 rf_Relation *
 rf_relation_new_concatenation(rf_Relation *r1, rf_Relation *r2, rf_Error *error) {
-	// TODO
+	assert(r1 != NULL);
+	assert(r2 != NULL);
+
+	if(!rf_set_equal(r1->domains[1], r2->domains[0])) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_GENERIC, "Domains of r1->domain1 and r2->domain0 differ");
+		}
+		return NULL;
+	}
+
+	rf_Relation *new = rf_relation_new_empty(r1->domains[0], r2->domains[1]);
+
+	for(int x = r1->domains[1]->cardinality-1; x >= 0; --x) {
+		for(int y = r1->domains[0]->cardinality-1; y >= 0; --y) {
+			if(!r1->table[rf_table_idx(r1, x, y)])
+				continue;
+
+			for(int z = r2->domains[1]->cardinality-1; z >= 0; --z) {
+				new->table[rf_table_idx(new, z, y)] = r2->table[rf_table_idx(r2, z, y)];
+			}
+		}
+	}
+
+	return new;
 }
 
 rf_Relation *
 rf_relation_new_converse(rf_Relation *r, rf_Error *error) {
-	// TODO
+	assert(r != NULL);
+
+	if(!rf_relation_is_homogeneous(r)) {
+		if(error != NULL)
+			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
+		return NULL;
+	}
+
+	rf_Relation *new = rf_relation_new_empty(r->domains[0], r->domains[1]);
+
+	const int dim = new->domains[0]->cardinality;
+	for(int x = dim-1; x >= 0; --x) {
+		for(int y = dim-1; y >= 0; --y) {
+			new->table[rf_table_idx(new, x, y)] = r->table[rf_table_idx(r, y, x)];
+		}
+	}
+
+	return new;
 }
 
 rf_Relation *
@@ -197,6 +314,7 @@ rf_relation_is_homogeneous(const rf_Relation *r) {
 	for(int i = N_DOMAINS-2; i >= 0; --i)
 		if(!rf_set_equal(r->domains[i], r->domains[i+1]))
 			return false;
+
 	return true;
 }
 
@@ -352,37 +470,6 @@ rf_relation_is_transitive(const rf_Relation *r) {
 
 
 rf_SetElement *
-rf_relation_find_infimum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
-	assert(r != NULL);
-	assert(domain != NULL);
-
-	if(!rf_relation_is_homogeneous(r)) {
-		if(error != NULL) {
-			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
-		}
-		return NULL;
-	}
-	if(!rf_relation_is_partial_order(r)) {
-		if(error != NULL) {
-			rf_error_set(error, RF_E_REL_NOT_ORDERED, "");
-		}
-		return NULL;
-	}
-	if(!rf_set_is_subset(domain, r->domains[0])) {
-		if(error != NULL) {
-			rf_error_set(error, RF_E_SET_NOT_SUBSET, "");
-		}
-		return NULL;
-	}
-
-	const int dim = r->domains[0]->cardinality;
-	for(int i = dim-1; i >= 0; --i) {
-
-	}
-	// TODO
-}
-
-rf_SetElement *
 rf_relation_find_maximum(const rf_Relation *r, rf_Error *error) {
 	assert(r != NULL);
 
@@ -463,6 +550,53 @@ rf_relation_find_minimum(const rf_Relation *r, rf_Error *error) {
 rf_SetElement *
 rf_relation_find_supremum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
 	assert(r != NULL);
+	assert(domain != NULL);
+
+	if(!rf_relation_is_homogeneous(r)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
+		}
+		return NULL;
+	}
+	if(!rf_relation_is_partial_order(r)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_ORDERED, "");
+		}
+		return NULL;
+	}
+	if(!rf_set_is_subset(domain, r->domains[0])) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_SET_NOT_SUBSET, "");
+		}
+		return NULL;
+	}
+
+	// TODO
+}
+
+rf_SetElement *
+rf_relation_find_infimum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
+	assert(r != NULL);
+	assert(domain != NULL);
+
+	if(!rf_relation_is_homogeneous(r)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
+		}
+		return NULL;
+	}
+	if(!rf_relation_is_partial_order(r)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_ORDERED, "");
+		}
+		return NULL;
+	}
+	if(!rf_set_is_subset(domain, r->domains[0])) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_SET_NOT_SUBSET, "");
+		}
+		return NULL;
+	}
 
 	// TODO
 }
@@ -597,6 +731,7 @@ rf_relation_make_symmetric(rf_Relation *r, bool fill, rf_Error *error) {
 			r->table[rf_table_idx(r, y, x)] = fill;
 		}
 	}
+
 	return true;
 }
 
