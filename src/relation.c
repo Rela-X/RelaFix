@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2008,2013 Peter Berger, Wilke Schwiedop
+ * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop
  *
  * This file is part of RelaFix.
  *
