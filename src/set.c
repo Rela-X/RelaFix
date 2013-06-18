@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop
+ * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop, Sebastian Pospiech
  *
  * This file is part of RelaFix.
  *
@@ -27,15 +27,17 @@ rf_Set *
 rf_set_new(int n, rf_SetElement *elements[n]) {
 	assert(n >= 0);
 	assert(elements != NULL);
+	
+	for(int i=0;i<n;i++){
+	  for(int j=i+1;j<n;j++){
+	    assert(elements[i] != elements[j]);
+	  }
+	}
 
 	rf_Set *s = malloc(sizeof(*s));
 	s->cardinality = n;
 	s->elements = elements;
-
-	if(false /* TODO check for duplicate elements */) {
-		;
-	}
-
+	
 	return s;
 }
 
@@ -94,7 +96,7 @@ static unsigned int
 rf_bitcount(unsigned int v) {
 	v = v - ((v >> 1) & 0x55555555); // reuse input as temporary
 	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
-	return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24;
+	return (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
 rf_Set *
@@ -116,12 +118,13 @@ rf_set_generate_powerset(const rf_Set *s) {
 		size_t ps_elem_n = rf_bitcount(i);
 		rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
 		int b = s->cardinality-1;
-		for(int j = ps_elem_n; j >= 0; --b) {
+		for(int j = ps_elem_n -1 ; j >= 0; --b) {
 			assert(b >= 0);
 			// bit b is 1
 			if(i & (1 << b)) {
-				ps_elem_elems[--j] = rf_set_element_copy(s->elements[b]);
-			}
+				ps_elem_elems[j] = rf_set_element_copy(s->elements[b]);
+				j--;
+			} 	
 		}
 		rf_Set *ps_elem = rf_set_new(ps_elem_n, ps_elem_elems);
 		ps_elems[i] = rf_set_element_new_set(ps_elem);
@@ -130,6 +133,28 @@ rf_set_generate_powerset(const rf_Set *s) {
 	rf_Set *powerset = rf_set_new(ps_n, ps_elems);
 
 	return powerset;
+}
+
+rf_Set *
+rf_set_intersection(const rf_Set *s1, const rf_Set *s2){
+	assert(s1 != NULL);
+	assert(s2 != NULL);
+	
+	
+	int maxElements = s1->cardinality < s2->cardinality ? s1->cardinality : s2->cardinality; 
+	rf_SetElement **elements = malloc(sizeof(elements)*maxElements);
+
+	int elemCount = 0;
+	for(int i=0;i<s1->cardinality;i++){
+	  for(int j=0;j<s2->cardinality;j++){
+	     if (rf_set_element_equal(s1->elements[i], s2->elements[j])){
+		elements[elemCount] = rf_set_element_copy(s1->elements[i]);
+		elemCount++;
+	     }
+	  }
+	}
+	
+	return rf_set_new(elemCount, elements);
 }
 
 bool
@@ -230,7 +255,10 @@ rf_set_element_equal(const rf_SetElement *a, const rf_SetElement *b) {
 
 	switch(a->type) {
 	case RF_SET_ELEMENT_TYPE_STRING:
-		return strcmp(a->value.string, b->value.string) == 0;
+	{
+	  return strcmp(a->value.string, b->value.string) == 0;
+	}
+		
 	case RF_SET_ELEMENT_TYPE_SET:
 		return rf_set_equal(a->value.set, b->value.set);
 	default:

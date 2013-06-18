@@ -71,13 +71,29 @@ bool            rf_relation_is_preorder(const rf_Relation *relation);
 bool            rf_relation_is_reflexive(const rf_Relation *relation);
 bool            rf_relation_is_symmetric(const rf_Relation *relation);
 bool            rf_relation_is_transitive(const rf_Relation *relation);
+bool		rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error);
+bool		rf_relation_is_sublattice(rf_Relation *superlattice, rf_Relation *sublattice, rf_Error *error);
+bool		rf_relation_is_lefttotal(const rf_Relation *relation);
+bool		rf_relation_is_functional(const rf_Relation *relation);
+bool		rf_relation_is_function(const rf_Relation *relation);
+bool		rf_relation_is_surjective(const rf_Relation *relation);
+bool		rf_relation_is_injective(const rf_Relation *relation);
+bool		rf_relation_is_bijective(const rf_Relation *relation);
 
+
+rf_Set *	rf_relation_find_minimal_elements(const rf_Relation *r, rf_Set *s, rf_Error *error);
+rf_SetElement *	rf_relation_find_minimum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error *error);
+rf_Set *	rf_relation_find_maximal_elements(const rf_Relation *r, rf_Set *s, rf_Error *error);
+rf_SetElement *	rf_relation_find_mmaximum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error *error);
 rf_SetElement * rf_relation_find_infimum(const rf_Relation *relation, const rf_Set *domain, rf_Error *error);
 rf_SetElement * rf_relation_find_maximum(const rf_Relation *relation, rf_Error *error);
 rf_SetElement * rf_relation_find_minimum(const rf_Relation *relation, rf_Error *error);
 rf_SetElement * rf_relation_find_supremum(const rf_Relation *relation, const rf_Set *domain, rf_Error *error);
 rf_Set *        rf_relation_find_upperbound(const rf_Relation *relation, const rf_Set *domain, rf_Error *error);
 rf_Set *        rf_relation_find_lowerbound(const rf_Relation *relation, const rf_Set *domain, rf_Error *error);
+int		rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps, rf_Error *error);
+bool		rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error);
+rf_Relation *	rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error);
 
 bool            rf_relation_make_antisymmetric(rf_Relation *relation, bool upper, rf_Error *error);
 bool            rf_relation_make_asymmetric(rf_Relation *relation, bool upper, rf_Error *error);

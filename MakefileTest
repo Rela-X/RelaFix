@@ -1,0 +1,30 @@
+CC	= gcc
+CFLAGS	= -Wall -std=c99 -I/usr/local/lib -I inc/
+LDLIBS	= -L/use/local/lib -lcunit 
+
+
+
+all::	setTest.o relationTest.o transitiveCorePerformanceTest.o
+
+
+setTest.o:: setTest.o
+		$(CC) $(CFLAGS) -o $@ src/setTest.c $(LDLIBS)
+
+relationTest.o:: relationTest.o
+		$(CC) $(CFLAGS) -o $@ src/relationTest.c $(LDLIBS)
+
+transitiveCorePerformanceTest.o:: transitiveCorePerformanceTest.o
+		$(CC) $(CFLAGS) -o $@ src/transitiveCorePerformanceTest.c $(LDLIBS)
+
+clean::
+	-rm -f *Test.o
+
+run:: 		setTest.o relationTest.o 
+			LD_LIBRARY_PATH=/usr/local/lib ./setTest.o
+			LD_LIBRARY_PATH=/usr/local/lib ./relationTest.o
+		
+
+runPerfTest: 	transitiveCorePerformanceTest.o
+			LD_LIBRARY_PATH=/usr/local/lib ./transitiveCorePerformanceTest.o
+
+
