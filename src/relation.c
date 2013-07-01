@@ -286,7 +286,7 @@ rf_relation_new_concatenation(rf_Relation *r1, rf_Relation *r2, rf_Error *error)
 }
 
 rf_Relation *
-rf_relation_new_converse(rf_Relation *r, rf_Error *error) {
+rf_relation_new_converse(const rf_Relation *r, rf_Error *error) {
 	assert(r != NULL);
 
 	if(!rf_relation_is_homogeneous(r)) {
@@ -1050,7 +1050,7 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
 
 	int *occurrences = malloc(sizeof(int)*arbeitsrelation->domains[0]->cardinality*arbeitsrelation->domains[0]->cardinality);
 	rf_Set *gaps = rf_set_new(0, malloc(0));
-	int numOfGaps = rf_relation_find_transitive_gaps(arbeitsrelation, occurrences, gaps, error);
+	rf_relation_find_transitive_gaps(arbeitsrelation, occurrences, gaps, error);
 
 	int minCombi = 1 << gaps->cardinality;
 	for(int i = (1 << gaps->cardinality)-1; i >= 0; --i) {
@@ -1062,12 +1062,10 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
 				assert(b >= 0);
 				if(i & (1 << b)) {
 					ps_elem_elems[j] = gaps->elements[b];
-					//ps_elem_elems[j] = rf_set_element_copy(gaps->elements[b]);
 					j--;
 				}
 			}
 		    rf_Set *currentCombi = rf_set_new(ps_elem_n, ps_elem_elems);
-		    int maxSumClosedGaps = 0;
 		    //try current combination
 		    for(int j=0;j<currentCombi->cardinality;j++){
 		    	rf_SetElement *tmp = currentCombi->elements[j];
