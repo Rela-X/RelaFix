@@ -37,6 +37,8 @@ char b[] = "b";
 char c[] = "c";
 char d[] = "d";
 char e[] = "e";
+char g[] = "g";
+char i[] = "i";
 
 rf_Set *set;
 rf_Set *set2;
@@ -252,19 +254,15 @@ void test_rf_relation_new_union(){
 }
 
 void test_rf_relation_new_intersection(){
-
    //inits
    rf_Error *error = rf_error_new();
    rf_Relation *idR = rf_relation_new_id(set);
    rf_Relation *r1 = rf_relation_new_empty(set, set);
    rf_Relation *r2 = rf_relation_new_empty(set, set);
-   r2->table[rf_table_idx(r1,1,1)] = 1;
+   r2->table[rf_table_idx(r1,1,1)] = true;
    rf_Relation *result;
 
    rf_Relation *idRSet2 = rf_relation_new_id(set2);
-
-
-   //TESTS
 
    //Intersection between id-Relation and an empty relation
    result = rf_relation_new_intersection(idR, r1, error);
@@ -273,19 +271,13 @@ void test_rf_relation_new_intersection(){
 	    CU_ASSERT_FALSE(result->table[i]);
    }
 
-   //Intersction id-Relation with itself
+   //Intersection id-Relation with itself
    result = rf_relation_new_intersection(idR, idR, error);
    for(int i=0;i<n;i++){
 	    CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
    }
 
-   //Intersction id-Relation with itself
-   result = rf_relation_new_intersection(idR, idR, error);
-   for(int i=0;i<n;i++){
-	    CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
-   }
-
-   //Intersection id-Relation with a relation having one intersction element
+   //Intersection id-Relation with a relation having one intersection element
    result = rf_relation_new_intersection(idR, r2, error);
    for(int i=0;i<n;i++){
 	    if (i == rf_table_idx(result, 1,1)){
@@ -299,7 +291,6 @@ void test_rf_relation_new_intersection(){
    //Intersection between two relations that have different domains
    result = rf_relation_new_intersection(idR, idRSet2, error);
    CU_ASSERT_TRUE(result == NULL);
-
 }
 
 void test_rf_relation_new_complement(){
@@ -570,12 +561,11 @@ void test_rf_relation_is_transitive(){
 
 void test_rf_relation_find_maximum(){
 	rf_Relation *id = rf_relation_new_id(set);
+
 	id->table[rf_table_idx(id, 0,1)] = true;
-
-	CU_ASSERT_TRUE(rf_set_element_equal(rf_relation_find_maximum(id, NULL), id->domains[0]->elements[0]));
-
 	id->table[rf_table_idx(id, 1,2)] = true;
 	id->table[rf_table_idx(id, 1,0)] = true;
+
 	CU_ASSERT_EQUAL(rf_relation_find_maximum(id, NULL), NULL);
 	id->table[rf_table_idx(id, 0,1)] = false;
 	CU_ASSERT_TRUE(rf_set_element_equal(rf_relation_find_maximum(id, NULL), id->domains[0]->elements[1]));
@@ -583,11 +573,12 @@ void test_rf_relation_find_maximum(){
 
 void test_rf_relation_find_minimum(){
 	rf_Relation *id = rf_relation_new_id(set);
-	id->table[rf_table_idx(id, 0,1)] = true;
-
-	CU_ASSERT_TRUE(rf_set_element_equal(rf_relation_find_minimum(id, NULL),id->domains[0]->elements[1]));
-
+	id->table[rf_table_idx(id, 0,2)] = true;
 	id->table[rf_table_idx(id, 1,2)] = true;
+	CU_ASSERT_TRUE(rf_set_element_equal(rf_relation_find_minimum(id, NULL),id->domains[0]->elements[2]));
+
+	id->table[rf_table_idx(id, 0,1)] = true;
+	id->table[rf_table_idx(id, 0,2)] = false;
 	id->table[rf_table_idx(id, 1,0)] = true;
 	CU_ASSERT_EQUAL(rf_relation_find_minimum(id, NULL), NULL);
 	id->table[rf_table_idx(id, 0,1)] = false;
@@ -623,11 +614,69 @@ void test_rf_relation_find_maximum_within_subset(){
       rf_SetElement *expected = rf_relation_find_maximum_within_subset(relation2, subset, NULL);
 
       CU_ASSERT_TRUE(rf_set_element_equal(expected, elems[4]));
+
+      //another test
+
+	  rf_SetElement *elems6[9];
+	  generateTestElements(9, elems6);
+
+	  rf_Set *superSet2 = rf_set_new(9, elems6);
+	  relation2 = rf_relation_new_top(superSet2);
+
+	  relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+	  relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+	  relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+	  relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+	  relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+	  relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+	  relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+	  relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+	  relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+	  rf_SetElement *elems5[3];
+
+	  elems5[0] = rf_set_element_new_string(d);
+	  elems5[1] = rf_set_element_new_string(g);
+	  elems5[2] = rf_set_element_new_string(i);
+
+	  expected = rf_relation_find_maximum_within_subset(relation2, rf_set_new(3, elems5), NULL);
+	  CU_ASSERT_TRUE(rf_set_element_equal(expected, elems5[0]));
+
+
 }
 
 void test_rf_relation_find_minimal_elements(){
   //lower priority, tested also in maximum by function call in find method
 }
+
+void test_rf_relation_find_maximal_elements(){
+	rf_SetElement *elems6[9];
+	generateTestElements(9, elems6);
+
+	rf_Set *superSet2 = rf_set_new(9, elems6);
+	rf_Relation *relation2 = rf_relation_new_top(superSet2);
+
+	relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+	relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+	relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+	relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+	rf_SetElement *elems5[2];
+
+	elems5[0] = rf_set_element_new_string(d);
+	elems5[1] = rf_set_element_new_string(g);
+	elems5[2] = rf_set_element_new_string(i);
+
+	rf_Set *expected = rf_relation_find_maximal_elements(relation2, rf_set_new(3, elems5), NULL);
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems5[0]));
+	CU_ASSERT_EQUAL(expected->cardinality, 1);
+}
+
 
 void test_rf_relation_find_supremum(){
 	/*
@@ -660,6 +709,32 @@ void test_rf_relation_find_supremum(){
       rf_SetElement *expected = rf_relation_find_supremum(relation, subset2, NULL);
 
       CU_ASSERT_TRUE(rf_set_element_equal(expected, elems[0]));
+
+      //another test
+
+      rf_SetElement *elems4[9];
+      generateTestElements(9, elems4);
+
+      rf_Set *superSet2 = rf_set_new(9, elems4);
+      rf_Relation *relation2 = rf_relation_new_top(superSet2);
+
+  	  relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+  	  relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+  	  relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+  	  relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+      rf_SetElement *elems5[2];
+
+      elems5[0] = rf_set_element_new_string(b);
+      elems5[1] = rf_set_element_new_string(d);
+
+      expected = rf_relation_find_supremum(relation2, rf_set_new(2, elems5), NULL);
+      CU_ASSERT_TRUE(rf_set_element_equal(expected, elems4[1]));
 }
 
 void test_rf_relation_find_infimum(){
@@ -702,6 +777,32 @@ void test_rf_relation_find_infimum(){
     CU_ASSERT_TRUE(expected == NULL);
     CU_ASSERT_TRUE(rf_set_element_equal(expected2, elems[4]));
     CU_ASSERT_TRUE(rf_set_element_equal(expected3, elems[2]));
+
+    //another test
+
+	rf_SetElement *elems6[9];
+	generateTestElements(9, elems6);
+
+	rf_Set *superSet2 = rf_set_new(9, elems6);
+	rf_Relation *relation2 = rf_relation_new_top(superSet2);
+
+  	relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+  	relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+  	relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+  	relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+  	relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+  	relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+  	relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+  	relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+  	relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+	rf_SetElement *elems5[2];
+
+	elems5[0] = rf_set_element_new_string(b);
+	elems5[1] = rf_set_element_new_string(d);
+
+	expected = rf_relation_find_infimum(relation2, rf_set_new(2, elems5), NULL);
+	CU_ASSERT_TRUE(rf_set_element_equal(expected, elems6[3]));
 }
 
 void test_rf_relation_find_upperbound(){
@@ -823,7 +924,33 @@ void test_rf_relation_find_lowerbound(){
       CU_ASSERT_EQUAL(expected->cardinality, 1);
       CU_ASSERT_TRUE(rf_set_contains_element(expected, elems[4]));
 
+      //another test
 
+  	  rf_SetElement *elems6[9];
+  	  generateTestElements(9, elems6);
+
+  	  rf_Set *superSet2 = rf_set_new(9, elems6);
+  	  relation2 = rf_relation_new_top(superSet2);
+
+  	  relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+  	  relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+  	  relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+  	  relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+  	  relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+  	  rf_SetElement *elems5[2];
+
+  	  elems5[0] = rf_set_element_new_string(b);
+  	  elems5[1] = rf_set_element_new_string(d);
+
+  	  expected = rf_relation_find_lowerbound(relation2, rf_set_new(2, elems5), NULL);
+  	  CU_ASSERT_TRUE(rf_set_contains_element(expected, elems6[3]));
+  	  CU_ASSERT_TRUE(rf_set_contains_element(expected, elems6[6]));
+  	  CU_ASSERT_TRUE(rf_set_contains_element(expected, elems6[8]));
 
 }
 
@@ -1350,6 +1477,7 @@ void add_CreateMethods() {
 void add_findGet() {
 	CU_pSuite findGet = CU_add_suite("find/get-Methods", init_suite1, clean_suite1);
 
+	CU_add_test(findGet, "rf_relation_find_maximal_elements", test_rf_relation_find_maximal_elements);
 	CU_add_test(findGet, "rf_relation_find_maximum", test_rf_relation_find_maximum);
 	CU_add_test(findGet, "rf_relation_find_minimum", test_rf_relation_find_minimum);
 	CU_add_test(findGet, "rf_relation_find_maximum_within_subset", test_rf_relation_find_maximum_within_subset);

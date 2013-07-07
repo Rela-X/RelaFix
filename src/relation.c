@@ -538,22 +538,23 @@ rf_relation_find_minimal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 	if (s->cardinality == 1)
 	  return s;
 
-	const int dim = r->domains[0]->cardinality;
-	for(int x = dim-1; x >= 0; --x) {
-		if (!rf_set_contains_element(s, r->domains[0]->elements[x]))
-				continue;
-		for(int y = dim-1; y >= 0; --y) {
-			if (!rf_set_contains_element(s, r->domains[0]->elements[y]))
-				continue;
-			if(x == y)
-				continue;
-			if(r->table[rf_table_idx(r, y, x)])
-				continue;
-
-			if(r->table[rf_table_idx(r, x, y)] && !rf_set_contains_element(returnSet, r->domains[0]->elements[y])){
-				mins[returnSet->cardinality] = rf_set_element_copy(r->domains[0]->elements[y]);
-				returnSet->cardinality++;
+	const int dimS = s->cardinality;
+	for(int x=0;x<dimS;x++){
+		bool xRx = false;
+		bool zRx = false;
+		for(int y=0;y<dimS;y++){
+			int xr = rf_set_get_element_index(r->domains[0],s->elements[x]);
+			int yr = rf_set_get_element_index(r->domains[1],s->elements[y]);
+			if (r->table[rf_table_idx(r,xr,yr)]){
+				if (xr == yr)
+					xRx = true;
+				if (xr !=yr)
+					zRx = true;
 			}
+		}
+		if (xRx & !zRx){
+			mins[returnSet->cardinality] = rf_set_element_copy(s->elements[x]);
+			returnSet->cardinality++;
 		}
 	}
 
@@ -604,22 +605,24 @@ rf_relation_find_maximal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 	if (s->cardinality == 1)
 	  return s;
 
-	const int dim = r->domains[0]->cardinality;
-	for(int x = dim-1; x >= 0; --x) {
-		if (!rf_set_contains_element(s, r->domains[0]->elements[x]))
-				continue;
-		for(int y = dim-1; y >= 0; --y) {
-			if (!rf_set_contains_element(s, r->domains[0]->elements[y]))
-				continue;
-			if(x == y)
-				continue;
-			if(r->table[rf_table_idx(r, x, y)])
-				continue;
+	const int dimS = s->cardinality;
 
-			if(r->table[rf_table_idx(r, y, x)] && !rf_set_contains_element(returnSet, r->domains[0]->elements[y])){
-				maxs[returnSet->cardinality] = rf_set_element_copy(r->domains[0]->elements[y]);
-				returnSet->cardinality++;
+	for(int y=0;y<dimS;y++){
+		bool xRx = false;
+		bool zRx = false;
+		for(int x=0;x<dimS;x++){
+			int xr = rf_set_get_element_index(r->domains[0],s->elements[x]);
+			int yr = rf_set_get_element_index(r->domains[1],s->elements[y]);
+			if (r->table[rf_table_idx(r,xr,yr)]){
+				if (xr == yr)
+					xRx = true;
+				if (xr !=yr)
+					zRx = true;
 			}
+		}
+		if (xRx & !zRx){
+			maxs[returnSet->cardinality] = rf_set_element_copy(s->elements[y]);
+			returnSet->cardinality++;
 		}
 	}
 
@@ -635,6 +638,7 @@ rf_relation_find_maximum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error
 
 	if (maxs->cardinality == 1)
 	  return maxs->elements[0];
+
 
 	return NULL;
 }
@@ -662,8 +666,9 @@ rf_SetElement *
 rf_relation_find_infimum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
 	rf_Set *lowerbound = rf_relation_find_lowerbound(r, domain, error);
 
-	if (lowerbound == NULL)
-	  return NULL;
+	if (lowerbound == NULL){
+		return NULL;
+	}
 
 	return rf_relation_find_maximum_within_subset(r, lowerbound, error);
 }
@@ -1184,7 +1189,6 @@ rf_relation_is_surjective(const rf_Relation *relation){
 
 bool
 rf_relation_is_injective(const rf_Relation *relation){
-
 	assert(relation !=NULL);
 
 	//each y has not more then one x
@@ -1234,7 +1238,7 @@ rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error){
 
   int dim = relation->domains[0]->cardinality;
 
-  for(int x = 1; x<dim;x++){
+  for(int x = 0; x<dim;x++){
     for(int y = x+1;y<dim;y++){
       //check for supremum and infimum
 
@@ -1247,8 +1251,7 @@ rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error){
       rf_SetElement *inf = rf_relation_find_infimum(relation, subset, error);
 
       if (sup == NULL || inf == NULL)
-	return false;
-
+    	  return false;
       free(elems);
     }
   }
@@ -1278,7 +1281,7 @@ rf_relation_is_sublattice(rf_Relation *superlattice, rf_Relation *sublattice, rf
       int xSuper = rf_set_get_element_index(superlattice->domains[0], sublattice->domains[0]->elements[x]);
       int ySuper = rf_set_get_element_index(superlattice->domains[1], sublattice->domains[1]->elements[y]);
       if (sublattice->table[rf_table_idx(sublattice,x,y)] != superlattice->table[rf_table_idx(superlattice,xSuper,ySuper)]){
-	return false;
+    	  return false;
       }
     }
   }
@@ -1302,11 +1305,11 @@ rf_relation_get_image(const rf_Relation *relation, rf_Set *subrelation){
       continue;
     for(int x=0;x<relation->domains[0]->cardinality;x++){
       if (!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
-	continue;
+    	  continue;
       if (relation->table[rf_table_idx(relation,x,y)]){
-	elems[elemCount] = rf_set_element_copy(relation->domains[1]->elements[y]);
-	elemCount++;
-	break;
+    	  elems[elemCount] = rf_set_element_copy(relation->domains[1]->elements[y]);
+    	  elemCount++;
+    	  break;
       }
     }
   }
@@ -1329,11 +1332,11 @@ rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation){
 	continue;
     for(int y=0;y<relation->domains[1]->cardinality;y++){
       if (!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
-	continue;
+    	  continue;
       if (relation->table[rf_table_idx(relation,x,y)]){
-	elems[elemCount] = rf_set_element_copy(relation->domains[0]->elements[x]);
-	elemCount++;
-	break;
+    	  elems[elemCount] = rf_set_element_copy(relation->domains[0]->elements[x]);
+    	  elemCount++;
+    	  break;
       }
     }
   }
