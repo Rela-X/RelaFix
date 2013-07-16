@@ -276,8 +276,6 @@ rf_relation_new_concatenation(rf_Relation *r1, rf_Relation *r2, rf_Error *error)
 				if (r2->table[rf_table_idx(r2, y,z)]){
 				    new->table[rf_table_idx(new,x,z)] = true;
 				}
-
-				//new->table[rf_table_idx(new, y, z)] = r2->table[rf_table_idx(r2, y, z)];
 			}
 		}
 	}
@@ -762,7 +760,7 @@ rf_relation_make_antisymmetric(rf_Relation *r, bool upper, rf_Error *error) {
 bool
 rf_relation_make_asymmetric(rf_Relation *r, bool upper, rf_Error *error) {
 	assert(r != NULL);
-//bool
+
 	return rf_relation_make_irreflexive(r, error) && rf_relation_make_antisymmetric(r, upper, error);
 }
 
@@ -802,11 +800,16 @@ rf_relation_make_difunctional(rf_Relation *r, bool fill, rf_Error *error) {
 	return true;
 }
 
+/*
+ * Bezeichnung irreführend. Ist im falle fill = false ein "try_make_equivalent"
+ */
 bool
 rf_relation_make_equivalent(rf_Relation *r, bool fill, rf_Error *error) {
 	assert(r != NULL);
 
-	return rf_relation_make_reflexive(r, error) && rf_relation_make_symmetric(r, fill, error) && rf_relation_make_transitive(r, fill, error);
+	rf_relation_make_reflexive(r, error) && rf_relation_make_symmetric(r, fill, error) && rf_relation_make_transitive(r, fill, error);
+
+	return rf_relation_is_reflexive(r) && rf_relation_is_symmetric(r) && rf_relation_is_transitive(r);
 }
 
 bool
@@ -827,18 +830,28 @@ rf_relation_make_irreflexive(rf_Relation *r, rf_Error *error) {
 	return true;
 }
 
+/*
+ * Bezeichnung irreführend. Ist im falle fill = false ein "try_make_partial_order"
+ */
 bool
 rf_relation_make_partial_order(rf_Relation *r, bool fill, rf_Error *error) {
 	assert(r != NULL);
 
-	return rf_relation_make_reflexive(r, error) && rf_relation_make_antisymmetric(r, fill, error) && rf_relation_make_transitive(r, fill, error);
+	rf_relation_make_reflexive(r, error) && rf_relation_make_antisymmetric(r, fill, error) && rf_relation_make_transitive(r, fill, error);
+
+	return rf_relation_is_reflexive(r) && rf_relation_is_antisymmetric(r) && rf_relation_is_transitive(r);
 }
 
+/*
+ * Bezeichnung irreführend. Ist im falle fill = false ein "try_make_preorder"
+ */
 bool
 rf_relation_make_preorder(rf_Relation *r, bool fill, rf_Error *error) {
 	assert(r != NULL);
 
-	return rf_relation_make_reflexive(r, error) && rf_relation_make_transitive(r, fill, error);
+	rf_relation_make_reflexive(r, error) && rf_relation_make_transitive(r, fill, error);
+
+	return rf_relation_is_reflexive(r) && rf_relation_is_transitive(r);
 }
 
 bool
@@ -1013,11 +1026,8 @@ rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error){
 	  numOfGaps = numOfGaps - occurrences[biggestOccurrenceIndex];
 	  occurrences[biggestOccurrenceIndex] = -1;
 	}
-	if (rf_relation_is_transitive(r)  && numOfGaps == 0){
+	if (rf_relation_is_transitive(r)  && numOfGaps <= 0){
 	   return true;
-	}
-	else if (rf_relation_is_transitive(r)  && numOfGaps < 0){
-	   return false;
 	}
 
 	while(!rf_relation_is_transitive(r)){

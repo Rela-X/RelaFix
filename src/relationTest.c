@@ -26,12 +26,6 @@
 #include "relation.c"
 
 
-/**
- * @TODO:
- * bool            rf_relation_calc(rf_Relation *relation, rf_SetElement *element1, rf_SetElement *element2, rf_Error *error);
- *
- */
-
 char a[] = "a";
 char b[] = "b";
 char c[] = "c";
@@ -73,7 +67,16 @@ int clean_suite1(void)
 	return 0;
 }
 
-//Here follow all test cases
+void test_rf_relation_calc(){
+	rf_Relation * rel = rf_relation_new_id(set);
+
+	bool result1 = rf_relation_calc(rel, rf_set_element_new_string(b), rf_set_element_new_string(b), NULL);
+	bool result2 = rf_relation_calc(rel, rf_set_element_new_string(c), rf_set_element_new_string(b), NULL);
+
+	CU_ASSERT_TRUE(result1);
+	CU_ASSERT_FALSE(result2);
+
+}
 
 void test_rf_relation_new_empty(){
 	rf_Relation *empty_relation = rf_relation_new_empty(set, set);
@@ -646,7 +649,41 @@ void test_rf_relation_find_maximum_within_subset(){
 }
 
 void test_rf_relation_find_minimal_elements(){
-  //lower priority, tested also in maximum by function call in find method
+	rf_SetElement *elems6[9];
+	generateTestElements(9, elems6);
+
+	rf_Set *superSet2 = rf_set_new(9, elems6);
+	rf_Relation *relation2 = rf_relation_new_top(superSet2);
+
+	relation2->table[rf_table_idx(relation2, 1, 2)] = false;
+	relation2->table[rf_table_idx(relation2, 1, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 2, 3)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 4)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 3, 7)] = false;
+	relation2->table[rf_table_idx(relation2, 4, 5)] = false;
+	relation2->table[rf_table_idx(relation2, 5, 6)] = false;
+	relation2->table[rf_table_idx(relation2, 6, 7)] = false;
+
+	rf_SetElement *elems5[3];
+
+	elems5[0] = rf_set_element_new_string(d);
+	elems5[1] = rf_set_element_new_string(g);
+	elems5[2] = rf_set_element_new_string(i);
+
+	rf_SetElement *elems7[2];
+	elems7[0] = rf_set_element_new_string(b);
+	elems7[1] = rf_set_element_new_string(d);
+	elems7[2] = rf_set_element_new_string(e);
+
+	rf_Set *expected = rf_relation_find_minimal_elements(relation2, rf_set_new(3, elems5), NULL);
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems5[2]));
+	CU_ASSERT_EQUAL(expected->cardinality, 1);
+
+	expected = rf_relation_find_minimal_elements(relation2, rf_set_new(3, elems7), NULL);
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems7[1]));
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems7[2]));
+	CU_ASSERT_EQUAL(expected->cardinality, 2);
 }
 
 void test_rf_relation_find_maximal_elements(){
@@ -666,15 +703,25 @@ void test_rf_relation_find_maximal_elements(){
 	relation2->table[rf_table_idx(relation2, 5, 6)] = false;
 	relation2->table[rf_table_idx(relation2, 6, 7)] = false;
 
-	rf_SetElement *elems5[2];
+	rf_SetElement *elems5[4];
 
 	elems5[0] = rf_set_element_new_string(d);
 	elems5[1] = rf_set_element_new_string(g);
 	elems5[2] = rf_set_element_new_string(i);
 
+	rf_SetElement *elems7[2];
+	elems7[0] = rf_set_element_new_string(b);
+	elems7[1] = rf_set_element_new_string(d);
+	elems7[2] = rf_set_element_new_string(c);
+
 	rf_Set *expected = rf_relation_find_maximal_elements(relation2, rf_set_new(3, elems5), NULL);
 	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems5[0]));
 	CU_ASSERT_EQUAL(expected->cardinality, 1);
+
+	expected = rf_relation_find_minimal_elements(relation2, rf_set_new(3, elems7), NULL);
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems7[1]));
+	CU_ASSERT_TRUE(rf_set_contains_element(expected, elems7[2]));
+	CU_ASSERT_EQUAL(expected->cardinality, 2)
 }
 
 
@@ -847,7 +894,6 @@ void test_rf_relation_find_upperbound(){
       CU_ASSERT_EQUAL(expected2->cardinality, 2);
       CU_ASSERT_TRUE(rf_set_contains_element(expected2, elems[0]));
       CU_ASSERT_TRUE(rf_set_contains_element(expected2, elems[1]));
-
 
       //additional test
 
@@ -1148,7 +1194,7 @@ void test_rf_relation_guess_transitive_core(){
       bool success = rf_relation_guess_transitive_core(rel, NULL);
 
       //In this example the algorithm should not know if he has found the tc, so he returns false
-      CU_ASSERT_FALSE(success);
+      CU_ASSERT_TRUE(success);
       CU_ASSERT_TRUE(rf_relation_is_transitive(rel));
 
       int dim = 8;
@@ -1276,7 +1322,7 @@ void test_rf_relation_get_preimage(){
       CU_ASSERT_TRUE(rf_set_contains_element(result, set->elements[1]));
       CU_ASSERT_TRUE(rf_set_contains_element(result, set->elements[2]));
 
-       //Test with real subset
+      //Test with real subset
 
       rf_SetElement *elems[2];
       elems[0] = rf_set_element_new_string(a);
@@ -1397,8 +1443,37 @@ void test_rf_relation_make_difunctional(){
 }
 
 void test_rf_relation_make_equivalent(){
-      //low priority
+	  rf_SetElement *elems[4];
+	  generateTestElements(4, elems);
 
+	  rf_Set *mySet = rf_set_new(4, elems);
+
+	  rf_Relation *rel = rf_relation_new_empty(mySet, mySet);
+
+	  rel->table[rf_table_idx(rel,0,2)] = true;
+	  rel->table[rf_table_idx(rel,0,3)] = true;
+	  rel->table[rf_table_idx(rel,1,0)] = true;
+	  rel->table[rf_table_idx(rel,2,1)] = true;
+	  rel->table[rf_table_idx(rel,3,2)] = true;
+
+	  CU_ASSERT_FALSE(rf_relation_is_equivalent(rel));
+
+	  bool result = rf_relation_make_equivalent(rel, true, NULL);
+	  CU_ASSERT_TRUE(result);
+	  CU_ASSERT_TRUE(rf_relation_is_equivalent(rel));
+
+	  rel = rf_relation_new_empty(mySet, mySet);
+	  rel->table[rf_table_idx(rel,0,2)] = true;
+	  rel->table[rf_table_idx(rel,0,3)] = true;
+	  rel->table[rf_table_idx(rel,1,0)] = true;
+	  rel->table[rf_table_idx(rel,2,1)] = true;
+	  rel->table[rf_table_idx(rel,3,2)] = true;
+
+	  CU_ASSERT_FALSE(rf_relation_is_equivalent(rel));
+
+	  result = rf_relation_make_equivalent(rel, false, NULL);
+	  CU_ASSERT_TRUE(result);
+	  CU_ASSERT_TRUE(rf_relation_is_equivalent(rel));
 }
 
 void test_rf_relation_make_irreflexive(){
@@ -1412,12 +1487,55 @@ void test_rf_relation_make_irreflexive(){
 }
 
 void test_rf_relation_make_partial_order(){
-      //low priority
+	  rf_Relation *rel = rf_relation_new_full(set, set);
+	  CU_ASSERT_FALSE(rf_relation_is_partial_order(rel));
 
+	  rf_relation_make_partial_order(rel, false, NULL);
+	  CU_ASSERT_TRUE(rf_relation_is_partial_order(rel));
+
+	  rel = rf_relation_new_id(set);
+	  rel->table[rf_table_idx(rel, 0,1)] = true;
+	  rel->table[rf_table_idx(rel, 2,2)] = false;
+	  CU_ASSERT_FALSE(rf_relation_is_partial_order(rel));
+
+	  rf_relation_make_partial_order(rel, true, NULL);
+	  CU_ASSERT_TRUE(rf_relation_is_partial_order(rel));
 }
 
 void test_rf_relation_make_preorder(){
-      //low priority
+	  rf_SetElement *elems[4];
+	  generateTestElements(4, elems);
+
+	  rf_Set *mySet = rf_set_new(4, elems);
+
+	  rf_Relation *rel = rf_relation_new_empty(mySet, mySet);
+
+	  rel->table[rf_table_idx(rel,0,2)] = true;
+	  rel->table[rf_table_idx(rel,0,3)] = true;
+	  rel->table[rf_table_idx(rel,1,0)] = true;
+	  rel->table[rf_table_idx(rel,2,1)] = true;
+	  rel->table[rf_table_idx(rel,3,2)] = true;
+
+	  CU_ASSERT_FALSE(rf_relation_is_preorder(rel));
+
+	  bool result = rf_relation_make_preorder(rel, true, NULL);
+	  CU_ASSERT_TRUE(result);
+	  CU_ASSERT_TRUE(rf_relation_is_preorder(rel));
+
+	  rel = rf_relation_new_empty(mySet, mySet);
+	  rel->table[rf_table_idx(rel,0,2)] = true;
+	  rel->table[rf_table_idx(rel,0,3)] = true;
+	  rel->table[rf_table_idx(rel,1,0)] = true;
+	  rel->table[rf_table_idx(rel,2,1)] = true;
+	  rel->table[rf_table_idx(rel,3,2)] = true;
+
+	  CU_ASSERT_FALSE(rf_relation_is_preorder(rel));
+
+	  //In this case, the preorder algorithm fails. That can happen in make_preorder / make_partial_order / make_equivalent
+	  //Problem is, that e.g. make_transitive and make_reflexive don't take care of each other in case fill = false
+	  result = rf_relation_make_preorder(rel, false, NULL);
+	  CU_ASSERT_FALSE(result);
+	  CU_ASSERT_FALSE(rf_relation_is_preorder(rel));
 
 }
 
@@ -1464,6 +1582,7 @@ void add_CreateMethods() {
 	CU_add_test(createSuite, "rf_relation_copy", test_rf_relation_copy);
 	CU_add_test(createSuite, "rf_relation_new_id", test_rf_relation_new_id);
 	CU_add_test(createSuite, "rf_table_idx", test_rf_table_idx);
+	CU_add_test(createSuite, "rf_relation_calc", test_rf_relation_calc);
 	CU_add_test(createSuite, "rf_relation_new_top", test_rf_relation_new_top);
 	CU_add_test(createSuite, "rf_relation_new_bottom", test_rf_relation_new_bottom);
 	CU_add_test(createSuite, "rf_relation_new_union", test_rf_relation_new_union);
@@ -1478,6 +1597,7 @@ void add_findGet() {
 	CU_pSuite findGet = CU_add_suite("find/get-Methods", init_suite1, clean_suite1);
 
 	CU_add_test(findGet, "rf_relation_find_maximal_elements", test_rf_relation_find_maximal_elements);
+	CU_add_test(findGet, "rf_relation_find_minimal_elements", test_rf_relation_find_minimal_elements);
 	CU_add_test(findGet, "rf_relation_find_maximum", test_rf_relation_find_maximum);
 	CU_add_test(findGet, "rf_relation_find_minimum", test_rf_relation_find_minimum);
 	CU_add_test(findGet, "rf_relation_find_maximum_within_subset", test_rf_relation_find_maximum_within_subset);
