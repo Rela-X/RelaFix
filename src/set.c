@@ -42,13 +42,13 @@ rf_set_new(int n, rf_SetElement *elements[n]) {
 }
 
 rf_Set *
-rf_set_copy(const rf_Set *s) {
+rf_set_clone(const rf_Set *s) {
 	assert(s != NULL);
 
 	int n = s->cardinality;
 	rf_SetElement **elements = calloc(n, sizeof(*elements));
 	for(int i = n-1; i >= 0; --i) {
-		elements[i] = rf_set_element_copy(s->elements[i]);
+		elements[i] = rf_set_element_clone(s->elements[i]);
 	}
 
 	return rf_set_new(n, elements);
@@ -122,7 +122,7 @@ rf_set_generate_powerset(const rf_Set *s) {
 			assert(b >= 0);
 			// bit b is 1
 			if(i & (1 << b)) {
-				ps_elem_elems[j] = rf_set_element_copy(s->elements[b]);
+				ps_elem_elems[j] = rf_set_element_clone(s->elements[b]);
 				j--;
 			} 	
 		}
@@ -148,7 +148,7 @@ rf_set_intersection(const rf_Set *s1, const rf_Set *s2){
 	for(int i=0;i<s1->cardinality;i++){
 	  for(int j=0;j<s2->cardinality;j++){
 	     if (rf_set_element_equal(s1->elements[i], s2->elements[j])){
-		elements[elemCount] = rf_set_element_copy(s1->elements[i]);
+		elements[elemCount] = rf_set_element_clone(s1->elements[i]);
 		elemCount++;
 	     }
 	  }
@@ -222,7 +222,7 @@ rf_set_element_new_set(rf_Set *value) {
 }
 
 rf_SetElement *
-rf_set_element_copy(const rf_SetElement *e) {
+rf_set_element_clone(const rf_SetElement *e) {
 	assert(e != NULL);
 
 	rf_SetElement *c;
@@ -233,7 +233,7 @@ rf_set_element_copy(const rf_SetElement *e) {
 		break;
 	}
 	case RF_SET_ELEMENT_TYPE_SET: {
-		rf_Set *set = rf_set_copy(e->value.set);
+		rf_Set *set = rf_set_clone(e->value.set);
 		c = rf_set_element_new_set(set);
 		break;
 	}

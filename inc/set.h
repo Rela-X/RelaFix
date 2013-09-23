@@ -46,7 +46,7 @@ struct _rf_set_element {
 
 
 rf_Set *        rf_set_new(int n, rf_SetElement **elements);
-rf_Set *        rf_set_copy(const rf_Set *set);
+rf_Set *        rf_set_clone(const rf_Set *set);
 
 bool            rf_set_equal(const rf_Set *a, const rf_Set *b);
 /*! Checks if subset is a strict subset of superset */
@@ -67,7 +67,7 @@ void            rf_set_free(rf_Set *set);
 #endif
 rf_SetElement * rf_set_element_new_string(char *value);
 rf_SetElement * rf_set_element_new_set(rf_Set *value);
-rf_SetElement * rf_set_element_copy(const rf_SetElement *element);
+rf_SetElement * rf_set_element_clone(const rf_SetElement *element);
 
 bool            rf_set_element_equal(const rf_SetElement *a, const rf_SetElement *b);
 

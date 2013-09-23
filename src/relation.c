@@ -90,13 +90,13 @@ rf_relation_new(rf_Set *d1, rf_Set *d2, bool *table) {
 }
 
 rf_Relation *
-rf_relation_copy(const rf_Relation *r) {
+rf_relation_clone(const rf_Relation *r) {
 	assert(r != NULL);
 
 	rf_Set *d[N_DOMAINS];
 	size_t table_size = 1;
 	for(int i = N_DOMAINS-1; i >= 0; --i) {
-		d[i] = rf_set_copy(r->domains[i]);
+		d[i] = rf_set_clone(r->domains[i]);
 		table_size *= r->domains[i]->cardinality;
 	}
 	bool *table = calloc(table_size, sizeof(*table));
@@ -243,7 +243,7 @@ rf_Relation *
 rf_relation_new_complement(rf_Relation *r, rf_Error *error) {
 	assert(r != NULL);
 
-	rf_Relation *new = rf_relation_copy(r);
+	rf_Relation *new = rf_relation_clone(r);
 
 	const size_t table_size = new->domains[0]->cardinality * new->domains[1]->cardinality;
 	for(int i = table_size-1; i >= 0; --i) {
@@ -551,7 +551,7 @@ rf_relation_find_minimal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 			}
 		}
 		if (xRx & !zRx){
-			mins[returnSet->cardinality] = rf_set_element_copy(s->elements[x]);
+			mins[returnSet->cardinality] = rf_set_element_clone(s->elements[x]);
 			returnSet->cardinality++;
 		}
 	}
@@ -619,7 +619,7 @@ rf_relation_find_maximal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 			}
 		}
 		if (xRx & !zRx){
-			maxs[returnSet->cardinality] = rf_set_element_copy(s->elements[y]);
+			maxs[returnSet->cardinality] = rf_set_element_clone(s->elements[y]);
 			returnSet->cardinality++;
 		}
 	}
@@ -712,7 +712,7 @@ rf_relation_find_upperbound(const rf_Relation *r, const rf_Set *domain, rf_Error
 	    }
 	  }
 	  if (isUpperbound){
-	    tmp[goalPosition] = rf_set_element_copy(r->domains[0]->elements[x]);
+	    tmp[goalPosition] = rf_set_element_clone(r->domains[0]->elements[x]);
 	    goalPosition++;
 	  }
 	}
@@ -1060,7 +1060,7 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
 	return NULL;
 	}
 
-	rf_Relation *arbeitsrelation = rf_relation_copy(relation);
+	rf_Relation *arbeitsrelation = rf_relation_clone(relation);
 	rf_Relation *transitiveCore = NULL;
 
 	int *occurrences = malloc(sizeof(int)*arbeitsrelation->domains[0]->cardinality*arbeitsrelation->domains[0]->cardinality);
@@ -1090,7 +1090,7 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
 		    }
 		    //is it a possible core?
 		    if (rf_relation_is_transitive(arbeitsrelation) && currentCombi->cardinality < minCombi){
-		    	transitiveCore = rf_relation_copy(arbeitsrelation);
+		    	transitiveCore = rf_relation_clone(arbeitsrelation);
 				minCombi = currentCombi->cardinality;
 		    }
 		    //rollback
@@ -1317,7 +1317,7 @@ rf_relation_get_image(const rf_Relation *relation, rf_Set *subrelation){
       if (!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
     	  continue;
       if (relation->table[rf_table_idx(relation,x,y)]){
-    	  elems[elemCount] = rf_set_element_copy(relation->domains[1]->elements[y]);
+    	  elems[elemCount] = rf_set_element_clone(relation->domains[1]->elements[y]);
     	  elemCount++;
     	  break;
       }
@@ -1344,7 +1344,7 @@ rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation){
       if (!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
     	  continue;
       if (relation->table[rf_table_idx(relation,x,y)]){
-    	  elems[elemCount] = rf_set_element_copy(relation->domains[0]->elements[x]);
+    	  elems[elemCount] = rf_set_element_clone(relation->domains[0]->elements[x]);
     	  elemCount++;
     	  break;
       }

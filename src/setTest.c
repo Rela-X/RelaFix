@@ -61,7 +61,7 @@ void test_rf_set_new() {
 	
 }
 
-void test_rf_set_copy() {
+void test_rf_set_clone() {
 	char a = 'a';
 	char b = 'b';
 	char c = 'c';
@@ -72,7 +72,7 @@ void test_rf_set_copy() {
 	elems1[2] = rf_set_element_new_string(&c);
 	rf_Set *set1 = rf_set_new(3, elems1);
 	
-	rf_Set *result = rf_set_copy(set1);
+	rf_Set *result = rf_set_clone(set1);
 	
 	CU_ASSERT_PTR_NOT_EQUAL(set1, result);
 	for(int i=0; i<result->cardinality; i++){
@@ -324,11 +324,11 @@ void test_rf_set_element_new_set() {
 	CU_ASSERT_PTR_EQUAL(elem->value.set, subset);
 }
 
-void test_rf_set_element_copy() {
+void test_rf_set_element_clone() {
 	//case, element is a char
 	char a = 'a';
 	rf_SetElement *source = rf_set_element_new_string(&a);
-	rf_SetElement *dest = rf_set_element_copy(source);
+	rf_SetElement *dest = rf_set_element_clone(source);
 
 	CU_ASSERT_PTR_NOT_EQUAL(dest, source);
 	CU_ASSERT_EQUAL(*dest->value.string, *source->value.string);
@@ -346,7 +346,7 @@ void test_rf_set_element_copy() {
 	rf_Set *subset = rf_set_new(3, elems);
 
 	rf_SetElement *source2 = rf_set_element_new_set(subset);
-	rf_SetElement *dest2 = rf_set_element_copy(source2);
+	rf_SetElement *dest2 = rf_set_element_clone(source2);
 
 	//Must not work on same elements by copying pointers
 	CU_ASSERT_PTR_NOT_EQUAL(dest2, source2);
@@ -373,7 +373,7 @@ void test_rf_set_element_equal() {
 
 	CU_ASSERT_TRUE(rf_set_element_equal(elem_a, elem_a));
 
-	//Strcmp liefert hier einen Wert >0, kset_copyeine Ahnung wieso.
+	//Strcmp liefert hier einen Wert >0, keine Ahnung wieso.
 	CU_ASSERT_TRUE(rf_set_element_equal(elem_a, elem_a2));
 
 	CU_ASSERT_FALSE(rf_set_element_equal(elem_a, elem_b));
@@ -395,14 +395,14 @@ int add_suites(CU_pSuite *suite) {
 	CU_add_test(*suite, "rf_set_is_subset", test_rf_set_is_subset);
 	CU_add_test(*suite, "rf_set_generate_powerset", test_rf_set_generate_powerset);
 	CU_add_test(*suite, "rf_set_intersection", test_rf_set_intersection);
-	CU_add_test(*suite, "rf_set_copy", test_rf_set_copy);
+	CU_add_test(*suite, "rf_set_clone", test_rf_set_clone);
 	CU_add_test(*suite, "rf_bitcount", test_rf_bitcount);
 	
 	
 	//Maybe suite 2
 	CU_add_test(*suite, "rf_element_new_string", test_rf_set_element_new_string);
 	CU_add_test(*suite, "rf_set_element_new_set", test_rf_set_element_new_set);
-	CU_add_test(*suite, "rf_element_copy", test_rf_set_element_copy);
+	CU_add_test(*suite, "rf_element_clone", test_rf_set_element_clone);
 	CU_add_test(*suite, "rf_element_equal", test_rf_set_element_equal);
 
 	return 0;

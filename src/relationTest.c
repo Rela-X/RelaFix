@@ -129,14 +129,14 @@ void test_rf_relation_new(){
 	}
 }
 
-void test_rf_relation_copy(){
+void test_rf_relation_clone(){
 	size_t n = set->cardinality * set->cardinality;
     bool *table = calloc(n, sizeof(table));
 
 	table[0] = table[4] = table[8] = true;
 
 	rf_Relation *source = rf_relation_new(set, set, table);
-	rf_Relation *result = rf_relation_copy(source);
+	rf_Relation *result = rf_relation_clone(source);
 
 	CU_ASSERT_PTR_NOT_EQUAL(source, result);
 	CU_ASSERT_PTR_NOT_EQUAL(set, result->domains[0]);
@@ -1579,7 +1579,7 @@ void add_CreateMethods() {
     CU_add_test(createSuite, "rf_relation_new_empty", test_rf_relation_new_empty);
     CU_add_test(createSuite, "rf_relation_new_full", test_rf_relation_new_full);
     CU_add_test(createSuite, "rf_relation_new", test_rf_relation_new);
-	CU_add_test(createSuite, "rf_relation_copy", test_rf_relation_copy);
+	CU_add_test(createSuite, "rf_relation_clone", test_rf_relation_clone);
 	CU_add_test(createSuite, "rf_relation_new_id", test_rf_relation_new_id);
 	CU_add_test(createSuite, "rf_table_idx", test_rf_table_idx);
 	CU_add_test(createSuite, "rf_relation_calc", test_rf_relation_calc);

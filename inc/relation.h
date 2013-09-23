@@ -45,7 +45,7 @@ bool            rf_relation_calc(rf_Relation *relation, rf_SetElement *element1,
 
 
 rf_Relation *   rf_relation_new(rf_Set *domain1, rf_Set *domain2, bool *table);
-rf_Relation *   rf_relation_copy(const rf_Relation *relation);
+rf_Relation *   rf_relation_clone(const rf_Relation *relation);
 
 rf_Relation *   rf_relation_new_empty(rf_Set *domain1, rf_Set *domain2);
 rf_Relation *   rf_relation_new_full(rf_Set *domain1, rf_Set *domain2);
