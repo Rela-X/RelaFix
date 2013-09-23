@@ -5,7 +5,7 @@ vpath %.c src/
 
 INC += -I ./
 INC += -I inc/
-OBJ := error.o set.o relation.o
+OBJ := error.o set.o relation.o tools.o
 
 .PHONY : all doc clean
 

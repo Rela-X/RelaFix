@@ -20,10 +20,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 #include <assert.h>
 
 #include "relation.h"
-
+#include "tools.h"
 
 #define N_DOMAINS 2
 

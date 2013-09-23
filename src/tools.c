@@ -1,56 +1,31 @@
 /*
- * RelaFix       Tools
+ * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop
  *
- * Copyright (C) Peter Berger, 2011
+ * This file is part of RelaFix.
+ *
+ * RelaFix is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * RelaFix is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU Lesser Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser Public License
+ * along with RelaFix.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "tools.h"
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
 
-
-/*! Concatenates strings
- *
- * Concatenates all strings that are given as an argument. This function can take
- * a variable list of string pointers. Every source string will be copied into the final new string.
- * @param argc count of following string pointers
- * @param ... variable list of string pointers (char *)
- * @return pointer to the new string on the heap. Must be freed by user. If an error occures, 0 will be returned.
+/*
+ * Counts the number of bits in an int (32-bit value). Beware of voodoo.
+ * See http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
  */
-char * rf_string_combine(int argc, ...)
-{
-	char *tmp, *result = 0;
-	int i, part_1 = 0, part_2;
-
-	/* prepare for reading variable list */
-	va_list list;
-	va_start(list, argc);
-
-
-	/* read the variable list and create new string*/
-	for(i = 0; i < argc; i++)
-	{
-		tmp = va_arg(list, char *);
-		if(tmp && result)
-		{
-			part_2 = strlen(tmp);
-			result = realloc(result, part_1 + part_2 + 1);
-			strcpy(result + part_1, tmp);
-			result[part_1 + part_2] = 0;
-			part_1 += part_2;
-		}
-		else if(tmp)
-		{
-			part_1 = strlen(tmp);
-			result = realloc(result, part_1 + 1);
-			strcpy(result, tmp);
-			result[part_1] = 0;
-		}
-	}
-
-	return result;
+unsigned int
+rf_bitcount(unsigned int v) {
+	v = v - ((v >> 1) & 0x55555555);
+	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+	return (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
-
-
-

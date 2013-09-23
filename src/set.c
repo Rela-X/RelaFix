@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop, Sebastian Pospiech
  *
  * This file is part of RelaFix.
@@ -22,6 +22,7 @@
 #include <assert.h>
 
 #include "set.h"
+#include "tools.h"
 
 rf_Set *
 rf_set_new(int n, rf_SetElement *elements[n]) {
@@ -86,17 +87,6 @@ rf_set_is_subset(const rf_Set *subset, const rf_Set *superset) {
 	}
 
 	return true;
-}
-
-/*
- * Counts the number of bits in an int (32-bit value). Beware of voodoo.
- * See http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
- */
-static unsigned int
-rf_bitcount(unsigned int v) {
-	v = v - ((v >> 1) & 0x55555555); // reuse input as temporary
-	v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
-	return (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
 }
 
 rf_Set *
