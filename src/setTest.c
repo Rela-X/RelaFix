@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "CUnit/Basic.h"
 #include "set.c"
+#include "tools.h"
 
 /* Something like @beforeClass
  *
@@ -75,9 +76,9 @@ void test_rf_set_clone() {
 	rf_Set *result = rf_set_clone(set1);
 	
 	CU_ASSERT_PTR_NOT_EQUAL(set1, result);
-	for(int i=0; i<result->cardinality; i++){
-	  CU_ASSERT_PTR_NOT_EQUAL(set1->elements[i], result->elements[i]);
-	  CU_ASSERT_EQUAL(*set1->elements[i]->value.string, *result->elements[i]->value.string);
+	for(int i = 0; i < result->cardinality; i++) {
+		CU_ASSERT_PTR_NOT_EQUAL(set1->elements[i], result->elements[i]);
+		CU_ASSERT_EQUAL(*set1->elements[i]->value.string, *result->elements[i]->value.string);
 	}
 }
 
@@ -109,8 +110,7 @@ void test_rf_set_equal() {
 	CU_ASSERT_FALSE(rf_set_equal(set1, set3)) //false case
 }
 
-void test_rf_set_is_subset(){
-  
+void test_rf_set_is_subset() {
 	//watch out, in this testcase, rf_set_is_subset uses a stringcompare. That does not work with a single char
 	//need a char array here which is null-byte terminated.
 	char a[] = "a";
@@ -150,6 +150,7 @@ void test_rf_bitcount() {
 	unsigned int six = 6;
 	int result = rf_bitcount(six);
 	CU_ASSERT_EQUAL(result, 2);
+
 	unsigned int twentyseven = 27;
 	result = rf_bitcount(twentyseven);
 	CU_ASSERT_EQUAL(result, 4);
@@ -169,37 +170,36 @@ void test_rf_set_generate_powerset() {
 	elems[2] = rf_set_element_new_string(c);
 
 	rf_Set *set1 = rf_set_new(3, elems);
-	CU_ASSERT_TRUE(set1!=NULL);
+	CU_ASSERT_TRUE(set1 != NULL);
 	
 	rf_Set *powerset = rf_set_generate_powerset(set1);
 	CU_ASSERT_EQUAL(powerset->cardinality, 8);
 	
 	
-	for (int i=0; i<8; i++){
-	      for (int j = 0; j<3;j++){
-		  results[i][j] = 0;
-		
-	      }
+	for(int i = 0; i < 8; i++) {
+		for(int j = 0; j < 3; j++) {
+			results[i][j] = 0;
+		}
 	}
 	
-	for (int i=0; i<powerset->cardinality; i++){
-	  rf_SetElement *tmp = powerset->elements[i];
-	  for(int j=0; j<tmp->value.set->cardinality;j++){
-	    rf_SetElement *tmp2 = tmp->value.set->elements[j];
-	    if (tmp2 != NULL){
-	      results[i][j] = *tmp2->value.string;
-	    }
-	  }
+	for(int i = 0; i < powerset->cardinality; i++) {
+		rf_SetElement *tmp = powerset->elements[i];
+		for(int j = 0; j < tmp->value.set->cardinality; j++) {
+			rf_SetElement *tmp2 = tmp->value.set->elements[j];
+			if(tmp2 != NULL) {
+				results[i][j] = *tmp2->value.string;
+			}
+		}
 	}
 	
-	for (int i=0; i<8; i++){
-	      bool contains = false;
-	      for (int j = 0; j<8;j++){
-		 if (strcmp(results[i], expected[j]) == 0){
-		  contains = true; 
-		 } 
-	      }
-	      CU_ASSERT_TRUE(contains);
+	for(int i=0; i < 8; i++) {
+		bool contains = false;
+		for(int j = 0; j < 8; j++) {
+			if(strcmp(results[i], expected[j]) == 0) {
+				contains = true; 
+			} 
+		}
+		CU_ASSERT_TRUE(contains);
 	}
 }
 
@@ -216,14 +216,14 @@ void test_rf_set_contains_element() {
 
 	rf_Set *set1 = rf_set_new(3, elems);
 
-	for(int i=0;i<3;i++){
+	for(int i = 0; i < 3; i++) {
 		CU_ASSERT_TRUE(rf_set_contains_element(set1, elems[i]));
 	}
 	CU_ASSERT_FALSE(rf_set_contains_element(set1, rf_set_element_new_string(&d)));
 
 }
 
-void test_rf_set_intersection(){
+void test_rf_set_intersection() {
 	char *a = "a";
 	char *b = "b";
 	char *c = "c";
@@ -246,31 +246,30 @@ void test_rf_set_intersection(){
 	CU_ASSERT_EQUAL(result->cardinality, 2);
 	CU_ASSERT_TRUE(rf_set_contains_element(result, elems2[0]));
 	CU_ASSERT_TRUE(rf_set_contains_element(result, elems2[1]));
-  
 }
 
 void test_rf_set_get_element_index() {
-		char a[] = "a";
-		char b[] = "b";
-		char c[] = "c";
-		char d[] = "d";
-		char a2[] = "a";
+	char a[] = "a";
+	char b[] = "b";
+	char c[] = "c";
+	char d[] = "d";
+	char a2[] = "a";
 
-		rf_SetElement *elems[4];
-		elems[0] = rf_set_element_new_string(a);
-		elems[1] = rf_set_element_new_string(b);
-		elems[2] = rf_set_element_new_string(c);
-		rf_SetElement *test = rf_set_element_new_string(d);
-		rf_SetElement *test2 = rf_set_element_new_string(a2);
-		rf_Set *set1 = rf_set_new(3, elems);
+	rf_SetElement *elems[4];
+	elems[0] = rf_set_element_new_string(a);
+	elems[1] = rf_set_element_new_string(b);
+	elems[2] = rf_set_element_new_string(c);
+	rf_SetElement *test = rf_set_element_new_string(d);
+	rf_SetElement *test2 = rf_set_element_new_string(a2);
+	rf_Set *set1 = rf_set_new(3, elems);
 
-		for(int i=0;i<3;i++){
-			CU_ASSERT_EQUAL(rf_set_get_element_index(set1, elems[i]), i);
-		}
-		
-		CU_ASSERT_EQUAL(rf_set_get_element_index(set1, test2), 0);
+	for(int i = 0; i < 3; i++) {
+		CU_ASSERT_EQUAL(rf_set_get_element_index(set1, elems[i]), i);
+	}
 
-		CU_ASSERT_EQUAL(rf_set_get_element_index(set1, test), -1);
+	CU_ASSERT_EQUAL(rf_set_get_element_index(set1, test2), 0);
+
+	CU_ASSERT_EQUAL(rf_set_get_element_index(set1, test), -1);
 }
 
 
@@ -410,12 +409,12 @@ int add_suites(CU_pSuite *suite) {
 
 int main() {
 	/* initialize the CUnit test registry */
-	if (CUE_SUCCESS != CU_initialize_registry())
+	if(CUE_SUCCESS != CU_initialize_registry())
 		return CU_get_error();
 
 	/* add a suite to the registry */
 	CU_pSuite pSuite = CU_add_suite("Suite_1", init_suite1, clean_suite1);
-	if (NULL == pSuite) {
+	if(NULL == pSuite) {
 		CU_cleanup_registry();
 		return CU_get_error();
 	}
@@ -426,5 +425,6 @@ int main() {
 	CU_basic_set_mode(CU_BRM_VERBOSE);
 	CU_basic_run_tests();
 	CU_cleanup_registry();
+
 	return CU_get_error();
 }

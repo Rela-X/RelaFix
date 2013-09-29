@@ -31,8 +31,8 @@
 /*
  * table[x][y][z] = x * r->domains[0]->cardinality + y * r->domains[1]->cardinality + z
  */
-static
-size_t rf_table_idx(const rf_Relation *r, ...) {
+size_t
+rf_table_idx(const rf_Relation *r, ...) {
 	assert(r != NULL);
 
 	size_t idx = 0;
@@ -274,8 +274,8 @@ rf_relation_new_concatenation(rf_Relation *r1, rf_Relation *r2, rf_Error *error)
 				continue;
 
 			for(int z = r2->domains[1]->cardinality-1; z >= 0; --z) {
-				if (r2->table[rf_table_idx(r2, y,z)]){
-				    new->table[rf_table_idx(new,x,z)] = true;
+				if(r2->table[rf_table_idx(r2, y,z)]) {
+						new->table[rf_table_idx(new,x,z)] = true;
 				}
 			}
 		}
@@ -316,19 +316,19 @@ rf_relation_new_subsetleq(rf_Set *d, rf_Error *error) {
 	}
 
 	rf_Relation *subsetleq = rf_relation_new_empty(d, d);
-	for(int x=0;x<d->cardinality;x++){
-	    if (d->elements[x]->type == RF_SET_ELEMENT_TYPE_SET){
-	      for(int y=0;y<d->cardinality;y++){
-		if (x==y){
-		  subsetleq->table[rf_table_idx(subsetleq,x,y)] = true;
+	for(int x = 0; x < d->cardinality; x++) {
+			if(d->elements[x]->type == RF_SET_ELEMENT_TYPE_SET) {
+				for(int y = 0; y < d->cardinality; y++) {
+		if(x==y) {
+			subsetleq->table[rf_table_idx(subsetleq,x,y)] = true;
 		}
-		else if (d->elements[y]->type == RF_SET_ELEMENT_TYPE_SET){
-		  rf_Set *set1 = d->elements[y]->value.set;
-		  rf_Set *set2 = d->elements[x]->value.set;
-		  subsetleq->table[rf_table_idx(subsetleq,x,y)] = rf_set_is_subset(set1, set2) ? true : false;
+		else if(d->elements[y]->type == RF_SET_ELEMENT_TYPE_SET) {
+			rf_Set *set1 = d->elements[y]->value.set;
+			rf_Set *set2 = d->elements[x]->value.set;
+			subsetleq->table[rf_table_idx(subsetleq,x,y)] = rf_set_is_subset(set1, set2) ? true : false;
 		}
-	      }
-	    }
+				}
+			}
 
 	}
 
@@ -383,21 +383,21 @@ rf_relation_is_difunctional(const rf_Relation *r) {
 
 	const int dim = r->domains[0]->cardinality;
 
-	for(int y=0; y<dim;y++){
-	  for(int x=0;x<dim;x++){
-	      if (r->table[rf_table_idx(r,x,y)] == true){
-		for(int z=x+1;z<dim;z++){
-		  if (r->table[rf_table_idx(r,z,y)] == true){
-		    //here we have xRy & zRy, now we test for the images of x and z
-		    for(int i=0;i<dim;i++){
-		      if (r->table[rf_table_idx(r,z,i)] != r->table[rf_table_idx(r,x,i)]){
+	for(int y = 0; y < dim; y++) {
+		for(int x = 0; x < dim; x++) {
+				if(r->table[rf_table_idx(r,x,y)] == true) {
+		for(int z=x+1;z<dim;z++) {
+			if(r->table[rf_table_idx(r,z,y)] == true) {
+				//here we have xRy & zRy, now we test for the images of x and z
+				for(int i = 0;i<dim;i++) {
+					if(r->table[rf_table_idx(r,z,i)] != r->table[rf_table_idx(r,x,i)]) {
 			return false;
-		      }
-		    }
-		  }
+					}
+				}
+			}
 		}
-	      }
-	  }
+				}
+		}
 	}
 
 	return true;
@@ -468,15 +468,14 @@ rf_relation_is_symmetric(const rf_Relation *r) {
 
 	const int dim = r->domains[0]->cardinality;
 
-	for(int x=0;x<dim;x++){
-	  for(int y=x;y<dim;y++){ //don't need to check mirror elements twice
-	    if (x == y) //don't need to check elements related to themself
-	      continue;
-	    if(r->table[rf_table_idx(r,x,y)] && !r->table[rf_table_idx(r,y,x)])
-	      return false;
-	  }
+	for(int x = 0; x < dim; x++) {
+		for(int y = x; y < dim; y++) { //don't need to check mirror elements twice
+			if(x == y) //don't need to check elements related to themself
+				continue;
+			if(r->table[rf_table_idx(r,x,y)] && !r->table[rf_table_idx(r,y,x)])
+				return false;
+		}
 	}
-
 
 	return true;
 }
@@ -491,7 +490,7 @@ rf_relation_is_transitive(const rf_Relation *r) {
 
 	const int dim = r->domains[0]->cardinality;
 	for(int x = dim-1; x >= 0; --x) {
-		for(int y = dim-1; y >=0; --y) {
+		for(int y = dim-1; y >= 0; --y) {
 			if(x == y)
 				continue;
 			if(!r->table[rf_table_idx(r, x, y)])
@@ -534,24 +533,24 @@ rf_relation_find_minimal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 		return returnSet;
 	}
 
-	if (s->cardinality == 1)
-	  return s;
+	if(s->cardinality == 1)
+		return s;
 
 	const int dimS = s->cardinality;
-	for(int x=0;x<dimS;x++){
+	for(int x = 0; x < dimS; x++) {
 		bool xRx = false;
 		bool zRx = false;
-		for(int y=0;y<dimS;y++){
+		for(int y = 0; y < dimS; y++) {
 			int xr = rf_set_get_element_index(r->domains[0],s->elements[x]);
 			int yr = rf_set_get_element_index(r->domains[1],s->elements[y]);
-			if (r->table[rf_table_idx(r,xr,yr)]){
-				if (xr == yr)
+			if(r->table[rf_table_idx(r,xr,yr)]) {
+				if(xr == yr)
 					xRx = true;
-				if (xr !=yr)
+				if(xr !=yr)
 					zRx = true;
 			}
 		}
-		if (xRx & !zRx){
+		if(xRx & !zRx) {
 			mins[returnSet->cardinality] = rf_set_element_clone(s->elements[x]);
 			returnSet->cardinality++;
 		}
@@ -567,8 +566,8 @@ rf_relation_find_minimum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error
 
 	rf_Set *mins = rf_relation_find_minimal_elements(r, s, error);
 
-	if (mins->cardinality == 1)
-	  return mins->elements[0];
+	if(mins->cardinality == 1)
+		return mins->elements[0];
 
 	return NULL;
 }
@@ -601,25 +600,25 @@ rf_relation_find_maximal_elements(const rf_Relation *r, rf_Set *s, rf_Error *err
 		return returnSet;
 	}
 
-	if (s->cardinality == 1)
-	  return s;
+	if(s->cardinality == 1)
+		return s;
 
 	const int dimS = s->cardinality;
 
-	for(int y=0;y<dimS;y++){
+	for(int y = 0; y < dimS; y++) {
 		bool xRx = false;
 		bool zRx = false;
-		for(int x=0;x<dimS;x++){
+		for(int x = 0; x < dimS; x++) {
 			int xr = rf_set_get_element_index(r->domains[0],s->elements[x]);
 			int yr = rf_set_get_element_index(r->domains[1],s->elements[y]);
-			if (r->table[rf_table_idx(r,xr,yr)]){
-				if (xr == yr)
+			if(r->table[rf_table_idx(r,xr,yr)]) {
+				if(xr == yr)
 					xRx = true;
-				if (xr !=yr)
+				if(xr !=yr)
 					zRx = true;
 			}
 		}
-		if (xRx & !zRx){
+		if(xRx & !zRx) {
 			maxs[returnSet->cardinality] = rf_set_element_clone(s->elements[y]);
 			returnSet->cardinality++;
 		}
@@ -635,8 +634,8 @@ rf_relation_find_maximum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error
 
 	rf_Set *maxs = rf_relation_find_maximal_elements(r, s, error);
 
-	if (maxs->cardinality == 1)
-	  return maxs->elements[0];
+	if(maxs->cardinality == 1)
+		return maxs->elements[0];
 
 
 	return NULL;
@@ -647,7 +646,7 @@ rf_relation_find_maximum_within_subset(const rf_Relation *r, rf_Set *s, rf_Error
  */
 rf_SetElement *
 rf_relation_find_maximum(const rf_Relation *r, rf_Error *error) {
-  return rf_relation_find_maximum_within_subset(r,r->domains[0] ,error);
+	return rf_relation_find_maximum_within_subset(r,r->domains[0] ,error);
 }
 
 
@@ -655,8 +654,8 @@ rf_SetElement *
 rf_relation_find_supremum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
 	rf_Set *upperbound = rf_relation_find_upperbound(r, domain, error);
 
-	if (upperbound == NULL)
-	  return NULL;
+	if(upperbound == NULL)
+		return NULL;
 
 	return rf_relation_find_minimum_within_subset(r, upperbound, error);
 }
@@ -665,7 +664,7 @@ rf_SetElement *
 rf_relation_find_infimum(const rf_Relation *r, const rf_Set *domain, rf_Error *error) {
 	rf_Set *lowerbound = rf_relation_find_lowerbound(r, domain, error);
 
-	if (lowerbound == NULL){
+	if(lowerbound == NULL) {
 		return NULL;
 	}
 
@@ -704,18 +703,18 @@ rf_relation_find_upperbound(const rf_Relation *r, const rf_Set *domain, rf_Error
 
 	rf_SetElement **tmp = malloc(sizeof(tmp)*dim);
 
-	for(int x=0;x<dim;x++){
-	  bool isUpperbound = true;
-	  for(int y=0;y<dimSubset;y++){
-	    int index = rf_set_get_element_index(r->domains[0], domain->elements[y]);
-	    if (!r->table[rf_table_idx(r,x,index)]){
-	      isUpperbound = false;
-	    }
-	  }
-	  if (isUpperbound){
-	    tmp[goalPosition] = rf_set_element_clone(r->domains[0]->elements[x]);
-	    goalPosition++;
-	  }
+	for(int x = 0; x < dim; x++) {
+		bool isUpperbound = true;
+		for(int y = 0; y < dimSubset; y++) {
+			int index = rf_set_get_element_index(r->domains[0], domain->elements[y]);
+			if(!r->table[rf_table_idx(r,x,index)]) {
+				isUpperbound = false;
+			}
+		}
+		if(isUpperbound) {
+			tmp[goalPosition] = rf_set_element_clone(r->domains[0]->elements[x]);
+			goalPosition++;
+		}
 	}
 
 	return rf_set_new(goalPosition, tmp);
@@ -774,28 +773,27 @@ rf_relation_make_difunctional(rf_Relation *r, bool fill, rf_Error *error) {
 
 	const int dim = r->domains[0]->cardinality;
 
-	for(int y=0; y<dim;y++){
-	  for(int x=0;x<dim;x++){
-	      if (r->table[rf_table_idx(r,x,y)] == true){
-		for(int z=x+1;z<dim;z++){
-		  if (r->table[rf_table_idx(r,z,y)] == true){
-		    //here we have xRy & zRy, now we equalize the images of x and z
-		    if (!fill)
-		        r->table[rf_table_idx(r,z,y)] = false;
-		    else{
-			for(int i=0;i<dim;i++){
-			  if (r->table[rf_table_idx(r,z,i)] == true){
-			    r->table[rf_table_idx(r,x,i)] = true;
-			  }
-			  else if (r->table[rf_table_idx(r,x,i)] == true){
-			    r->table[rf_table_idx(r,z,i)] = true;
-			  }
+	for(int y = 0; y < dim; y++) {
+		for(int x = 0; x < dim; x++) {
+			if(r->table[rf_table_idx(r, x, y)] == true) {
+				for(int z = x+1; z < dim; z++) {
+					if(r->table[rf_table_idx(r,z,y)] == true) {
+						//here we have xRy & zRy, now we equalize the images of x and z
+						if(!fill) {
+							r->table[rf_table_idx(r,z,y)] = false;
+						} else {
+							for(int i = 0; i < dim; i++) {
+								if(r->table[rf_table_idx(r, z, i)] == true) {
+									r->table[rf_table_idx(r, x, i)] = true;
+								} else if(r->table[rf_table_idx(r, x, i)] == true) {
+									r->table[rf_table_idx(r, z, i)] = true;
+								}
+							}
+						}
+					}
+				}
 			}
-		    }
-		  }
 		}
-	      }
-	  }
 	}
 
 	return true;
@@ -832,7 +830,7 @@ rf_relation_make_irreflexive(rf_Relation *r, rf_Error *error) {
 }
 
 /*
- * Bezeichnung irreführend. Ist im falle fill = false ein "try_make_partial_order"
+ * Bezeichnung irreführend. Ist im Falle fill = false ein "try_make_partial_order"
  */
 bool
 rf_relation_make_partial_order(rf_Relation *r, bool fill, rf_Error *error) {
@@ -844,7 +842,7 @@ rf_relation_make_partial_order(rf_Relation *r, bool fill, rf_Error *error) {
 }
 
 /*
- * Bezeichnung irreführend. Ist im falle fill = false ein "try_make_preorder"
+ * Bezeichnung irreführend. Ist im Falle fill = false ein "try_make_preorder"
  */
 bool
 rf_relation_make_preorder(rf_Relation *r, bool fill, rf_Error *error) {
@@ -909,12 +907,12 @@ rf_relation_make_transitive(rf_Relation *r, bool fill, rf_Error *error) {
 		return false;
 	}
 
-	if (rf_relation_is_transitive(r))
-	  return true;
+	if(rf_relation_is_transitive(r))
+		return true;
 
 	const int dim = r->domains[0]->cardinality;
 	for(int x = dim-1; x >= 0; --x) {
-		for(int y = dim-1; y >=0; --y) {
+		for(int y = dim-1; y >= 0; --y) {
 			if(x == y)
 				continue;
 			if(!r->table[rf_table_idx(r, x, y)])
@@ -926,10 +924,10 @@ rf_relation_make_transitive(rf_Relation *r, bool fill, rf_Error *error) {
 					continue;
 				// yRz exists
 				assert(r->table[rf_table_idx(r, y, z)]);
-				if (fill){
-				    r->table[rf_table_idx(r, x, z)] = true;
+				if(fill) {
+					r->table[rf_table_idx(r, x, z)] = true;
 				} else{
-				    r->table[rf_table_idx(r, y, z)] = false;
+					r->table[rf_table_idx(r, y, z)] = false;
 				}
 			}
 		}
@@ -939,14 +937,14 @@ rf_relation_make_transitive(rf_Relation *r, bool fill, rf_Error *error) {
 }
 
 int
-rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps, rf_Error *error){
+rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps, rf_Error *error) {
 	assert(r != NULL);
 	assert(occurrences!=NULL);
 
 	if(!rf_relation_is_homogeneous(r)) {
 		if(error != NULL)
 			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
-	return -1;
+		return -1;
 	}
 	const int dim = r->domains[0]->cardinality;
 	rf_SetElement **elems = malloc(sizeof(elems)*dim*dim*2);
@@ -955,7 +953,7 @@ rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps,
 	int elemCount = 0;
 
 	for(int x = dim-1; x >= 0; --x) {
-		for(int y = dim-1; y >=0; --y) {
+		for(int y = dim-1; y >= 0; --y) {
 			if(x == y)
 				continue;
 			if(!r->table[rf_table_idx(r, x, y)])
@@ -967,40 +965,40 @@ rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps,
 					continue;
 				// yRz exists
 				assert(r->table[rf_table_idx(r, y, z)]);
-				if (!r->table[rf_table_idx(r, x, z)]){
-				   //transitive gap
-				    occurrences[rf_table_idx(r,x,y)]++;
-				    occurrences[rf_table_idx(r,y,z)]++;
-				    //printf("transitive gap: %i, %i\n", x,z);
-				    if (occurrences[rf_table_idx(r,x,y)] == 1){
-					rf_SetElement **tupel = malloc(sizeof(tupel)*2);
-					tupel[0] = r->domains[0]->elements[x];
-					tupel[1] = r->domains[0]->elements[y];
-					elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
-					elemCount++;
-				    }
-				    if (occurrences[rf_table_idx(r,y,z)] == 1){
-					rf_SetElement **tupel = malloc(sizeof(tupel)*2);
-					tupel[0] = r->domains[0]->elements[y];
-					tupel[1] = r->domains[0]->elements[z];
-					elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
-					elemCount++;
-				    }
-				  numOfGaps++;
+				if(!r->table[rf_table_idx(r, x, z)]) {
+					//transitive gap
+					occurrences[rf_table_idx(r, x, y)]++;
+					occurrences[rf_table_idx(r, y, z)]++;
+					//printf("transitive gap: %i, %i\n", x,z);
+					if(occurrences[rf_table_idx(r, x, y)] == 1) {
+						rf_SetElement **tupel = malloc(sizeof(tupel)*2);
+						tupel[0] = r->domains[0]->elements[x];
+						tupel[1] = r->domains[0]->elements[y];
+						elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
+						elemCount++;
+					}
+					if(occurrences[rf_table_idx(r, y, z)] == 1) {
+						rf_SetElement **tupel = malloc(sizeof(tupel)*2);
+						tupel[0] = r->domains[0]->elements[y];
+						tupel[1] = r->domains[0]->elements[z];
+						elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
+						elemCount++;
+					}
+					numOfGaps++;
 				}
 			}
 		}
 	}
-	if (gaps != NULL){
-	  gaps->cardinality = elemCount;
-	  gaps->elements = elems;
+	if(gaps != NULL) {
+		gaps->cardinality = elemCount;
+		gaps->elements = elems;
 	}
 
 	return numOfGaps;
 }
 
 bool
-rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error){
+rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error) {
 	assert(r!=NULL);
 
 	if(!rf_relation_is_homogeneous(r)) {
@@ -1015,31 +1013,31 @@ rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error){
 
 	int numOfGaps =rf_relation_find_transitive_gaps(r, occurrences, NULL, error);
 
-	while (numOfGaps>0){
-	  int biggestOccurrenceIndex = 0;
-	  for(int i=1;i<r->domains[0]->cardinality*r->domains[0]->cardinality;i++){
-	    if (occurrences[i] > occurrences[biggestOccurrenceIndex]){
-	      biggestOccurrenceIndex = i;
+	while (numOfGaps>0) {
+		int biggestOccurrenceIndex = 0;
+		for(int i=1;i<r->domains[0]->cardinality*r->domains[0]->cardinality;i++) {
+			if(occurrences[i] > occurrences[biggestOccurrenceIndex]) {
+				biggestOccurrenceIndex = i;
 
-	    }
-	  }
-	  r->table[biggestOccurrenceIndex] = 0;
-	  numOfGaps = numOfGaps - occurrences[biggestOccurrenceIndex];
-	  occurrences[biggestOccurrenceIndex] = -1;
+			}
+		}
+		r->table[biggestOccurrenceIndex] = 0;
+		numOfGaps = numOfGaps - occurrences[biggestOccurrenceIndex];
+		occurrences[biggestOccurrenceIndex] = -1;
 	}
-	if (rf_relation_is_transitive(r)  && numOfGaps <= 0){
-	   return true;
+	if(rf_relation_is_transitive(r)	&& numOfGaps <= 0) {
+		 return true;
 	}
 
-	while(!rf_relation_is_transitive(r)){
-	  int biggestOccurrenceIndex = 0;
-	  for(int i=1;i<r->domains[0]->cardinality*r->domains[0]->cardinality;i++){
-	    if (occurrences[i] > occurrences[biggestOccurrenceIndex]){
-	      biggestOccurrenceIndex = i;
-	    }
-	  }
-	  r->table[biggestOccurrenceIndex] = 0;
-	  occurrences[biggestOccurrenceIndex] = -1;
+	while(!rf_relation_is_transitive(r)) {
+		int biggestOccurrenceIndex = 0;
+		for(int i=1;i<r->domains[0]->cardinality*r->domains[0]->cardinality;i++) {
+			if(occurrences[i] > occurrences[biggestOccurrenceIndex]) {
+				biggestOccurrenceIndex = i;
+			}
+		}
+		r->table[biggestOccurrenceIndex] = 0;
+		occurrences[biggestOccurrenceIndex] = -1;
 	}
 
 	return false;
@@ -1052,13 +1050,13 @@ rf_relation_guess_transitive_core(rf_Relation *r, rf_Error *error){
  *
  */
 rf_Relation *
-rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
+rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error) {
 	assert(relation != NULL);
 
 	if(!rf_relation_is_homogeneous(relation)) {
 		if(error != NULL)
 			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
-	return NULL;
+		return NULL;
 	}
 
 	rf_Relation *arbeitsrelation = rf_relation_clone(relation);
@@ -1070,37 +1068,37 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error){
 
 	int minCombi = 1 << gaps->cardinality;
 	for(int i = (1 << gaps->cardinality)-1; i >= 0; --i) {
-			size_t ps_elem_n = rf_bitcount(i);
-			rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
-			int b = gaps->cardinality-1;
-			//generate current combination
-			for(int j = ps_elem_n -1 ; j >= 0; --b) {
-				assert(b >= 0);
-				if(i & (1 << b)) {
-					ps_elem_elems[j] = gaps->elements[b];
-					j--;
-				}
+		size_t ps_elem_n = rf_bitcount(i);
+		rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
+		int b = gaps->cardinality-1;
+		//generate current combination
+		for(int j = ps_elem_n -1 ; j >= 0; --b) {
+			assert(b >= 0);
+			if(i & (1 << b)) {
+				ps_elem_elems[j] = gaps->elements[b];
+				j--;
 			}
-		    rf_Set *currentCombi = rf_set_new(ps_elem_n, ps_elem_elems);
-		    //try current combination
-		    for(int j=0;j<currentCombi->cardinality;j++){
-		    	rf_SetElement *tmp = currentCombi->elements[j];
-		    	int x = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[0]);
-		    	int y = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[1]);
-		    	arbeitsrelation->table[rf_table_idx(arbeitsrelation, x,y)] = false;
-		    }
-		    //is it a possible core?
-		    if (rf_relation_is_transitive(arbeitsrelation) && currentCombi->cardinality < minCombi){
-		    	transitiveCore = rf_relation_clone(arbeitsrelation);
-				minCombi = currentCombi->cardinality;
-		    }
-		    //rollback
-		    for(int j=0;j<currentCombi->cardinality;j++){
-		    		    	rf_SetElement *tmp = currentCombi->elements[j];
-		    		    	int x = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[0]);
-		    		    	int y = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[1]);
-		    		    	arbeitsrelation->table[rf_table_idx(arbeitsrelation, x,y)] = true;
-		    }
+		}
+		rf_Set *currentCombi = rf_set_new(ps_elem_n, ps_elem_elems);
+		//try current combination
+		for(int j = 0; j < currentCombi->cardinality; j++) {
+			rf_SetElement *tmp = currentCombi->elements[j];
+			int x = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[0]);
+			int y = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[1]);
+			arbeitsrelation->table[rf_table_idx(arbeitsrelation, x, y)] = false;
+		}
+		//is it a possible core?
+		if(rf_relation_is_transitive(arbeitsrelation) && currentCombi->cardinality < minCombi) {
+			transitiveCore = rf_relation_clone(arbeitsrelation);
+			minCombi = currentCombi->cardinality;
+		}
+		//rollback
+		for(int j = 0; j < currentCombi->cardinality; j++) {
+			rf_SetElement *tmp = currentCombi->elements[j];
+			int x = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[0]);
+			int y = rf_set_get_element_index(arbeitsrelation->domains[0], tmp->value.set->elements[1]);
+			arbeitsrelation->table[rf_table_idx(arbeitsrelation, x, y)] = true;
+		}
 	}
 
 	return transitiveCore;
@@ -1118,238 +1116,239 @@ rf_relation_free(rf_Relation *r) {
 }
 
 bool
-rf_relation_is_lefttotal(const rf_Relation *relation){
+rf_relation_is_lefttotal(const rf_Relation *relation) {
+	assert(relation != NULL);
+
+	//each x has at least one y
+
+	for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+		bool foundAPartner = false;
+		for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+			if(relation->table[rf_table_idx(relation, x, y)]) {
+				foundAPartner = true;
+				break;
+			}
+		}
+		if(!foundAPartner) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool
+rf_relation_is_functional(const rf_Relation *relation) {
+	assert(relation !=NULL);
+
+	for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+		int partnerCount = 0;
+		for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+			if(relation->table[rf_table_idx(relation, x, y)]) {
+				partnerCount++;
+			}
+		}
+		if(partnerCount > 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool
+rf_relation_is_function(const rf_Relation *relation) {
+	assert(relation !=NULL);
+
+	for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+		int partnerCount = 0;
+		for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+			if(relation->table[rf_table_idx(relation, x, y)]) {
+				partnerCount++;
+			}
+		}
+		if(partnerCount != 1) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool
+rf_relation_is_surjective(const rf_Relation *relation) {
+
 	assert(relation !=NULL);
 
 	//each x has at least one y
 
-	for(int x=0;x<relation->domains[0]->cardinality;x++){
-	  bool foundAPartner = false;
-	  for(int y=0;y<relation->domains[1]->cardinality;y++){
-	    if (relation->table[rf_table_idx(relation,x,y)]){
-	      foundAPartner = true;
-	      break;
-	    }
-	  }
-	  if (!foundAPartner){
-	    return false;
-	  }
-	}
-	return true;
-}
-
-bool
-rf_relation_is_functional(const rf_Relation *relation){
-	assert(relation !=NULL);
-
-	for(int x=0;x<relation->domains[0]->cardinality;x++){
-	  int partnerCount = 0;
-	  for(int y=0;y<relation->domains[1]->cardinality;y++){
-	    if (relation->table[rf_table_idx(relation,x,y)]){
-	      partnerCount++;
-	    }
-	  }
-	  if (partnerCount>1){
-	    return false;
-	  }
+	for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+		int partnerCount = 0;
+		for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+			if(relation->table[rf_table_idx(relation, x, y)]) {
+				partnerCount++;
+			}
+		}
+		if(partnerCount == 0) {
+			return false;
+		}
 	}
 
 	return true;
 }
 
 bool
-rf_relation_is_function(const rf_Relation *relation){
-	assert(relation !=NULL);
-
-	for(int x=0;x<relation->domains[0]->cardinality;x++){
-	  int partnerCount = 0;
-	  for(int y=0;y<relation->domains[1]->cardinality;y++){
-	    if (relation->table[rf_table_idx(relation,x,y)]){
-	      partnerCount++;
-	    }
-	  }
-	  if (partnerCount!=1){
-	    return false;
-	  }
-	}
-
-	return true;
-}
-
-bool
-rf_relation_is_surjective(const rf_Relation *relation){
-
-	assert(relation !=NULL);
-
-	//each x has at least one y
-
-	for(int y=0;y<relation->domains[1]->cardinality;y++){
-	  int partnerCount = 0;
-	  for(int x=0;x<relation->domains[0]->cardinality;x++){
-	    if (relation->table[rf_table_idx(relation,x,y)]){
-	      partnerCount++;
-	    }
-	  }
-	  if (partnerCount == 0){
-	    return false;
-	  }
-	}
-
-	return true;
-}
-
-bool
-rf_relation_is_injective(const rf_Relation *relation){
+rf_relation_is_injective(const rf_Relation *relation) {
 	assert(relation !=NULL);
 
 	//each y has not more then one x
 
-	for(int y=0;y<relation->domains[1]->cardinality;y++){
-	  int partnerCount = 0;
-	  for(int x=0;x<relation->domains[0]->cardinality;x++){
-	    if (relation->table[rf_table_idx(relation,x,y)]){
-	      partnerCount++;
-	    }
-	  }
-	  if (partnerCount > 1){
-	    return false;
-	  }
+	for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+		int partnerCount = 0;
+		for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+			if(relation->table[rf_table_idx(relation,x,y)]) {
+				partnerCount++;
+			}
+		}
+		if(partnerCount > 1) {
+			return false;
+		}
 	}
 
 	return true;
 }
 
 bool
-rf_relation_is_bijective(const rf_Relation *relation){
-
-  return rf_relation_is_injective(relation) && rf_relation_is_surjective(relation);
+rf_relation_is_bijective(const rf_Relation *relation) {
+	return rf_relation_is_injective(relation) && rf_relation_is_surjective(relation);
 }
 
 /**
  * Checks, whether the relation is a lattice or not
  */
 bool
-rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error){
-  //ex. supremum and infimum for all a,b with a,b element of domain
+rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error) {
+	//ex. supremum and infimum for all a,b with a,b element of domain
 
-  assert(relation != NULL);
-  if(!rf_relation_is_homogeneous(relation)) {
-	if(error != NULL) {
-		rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
-	}
-	return false;
-	}
-
-  if(!rf_relation_is_partial_order(relation)) {
-	if(error != NULL) {
-		rf_error_set(error, RF_E_REL_NOT_ORDERED, "");
-	}
-	return false;
+	assert(relation != NULL);
+	if(!rf_relation_is_homogeneous(relation)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_HOMOGENEOUS, "");
+		}
+		return false;
 	}
 
-  int dim = relation->domains[0]->cardinality;
+	if(!rf_relation_is_partial_order(relation)) {
+		if(error != NULL) {
+			rf_error_set(error, RF_E_REL_NOT_ORDERED, "");
+		}
+		return false;
+	}
 
-  for(int x = 0; x<dim;x++){
-    for(int y = x+1;y<dim;y++){
-      //check for supremum and infimum
+	int dim = relation->domains[0]->cardinality;
 
-      rf_SetElement **elems = malloc(sizeof(elems)*2);
-      elems[0] = relation->domains[0]->elements[x];
-      elems[1] = relation->domains[0]->elements[y];
-      rf_Set *subset = rf_set_new(2, elems);
+	for(int x = 0; x < dim; x++) {
+		for(int y = x + 1; y < dim; y++) {
+			//check for supremum and infimum
 
-      rf_SetElement *sup = rf_relation_find_supremum(relation, subset, error);
-      rf_SetElement *inf = rf_relation_find_infimum(relation, subset, error);
+			rf_SetElement **elems = malloc(sizeof(elems)*2);
+			elems[0] = relation->domains[0]->elements[x];
+			elems[1] = relation->domains[0]->elements[y];
+			rf_Set *subset = rf_set_new(2, elems);
 
-      if (sup == NULL || inf == NULL)
-    	  return false;
-      free(elems);
-    }
-  }
-  return true;
+			rf_SetElement *sup = rf_relation_find_supremum(relation, subset, error);
+			rf_SetElement *inf = rf_relation_find_infimum(relation, subset, error);
+
+			if(sup == NULL || inf == NULL)
+				return false;
+			free(elems);
+		}
+	}
+
+	return true;
 }
 
 bool
-rf_relation_is_sublattice(rf_Relation *superlattice, rf_Relation *sublattice, rf_Error *error){
-  assert(superlattice != NULL);
-  assert(sublattice != NULL);
+rf_relation_is_sublattice(rf_Relation *superlattice, rf_Relation *sublattice, rf_Error *error) {
+	assert(superlattice != NULL);
+	assert(sublattice != NULL);
 
-  if (!rf_relation_is_lattice(superlattice, error))
-      return false;
+	if(!rf_relation_is_lattice(superlattice, error))
+		return false;
 
-  if (!rf_relation_is_lattice(sublattice, error))
-      return false;
+	if(!rf_relation_is_lattice(sublattice, error))
+		return false;
 
-  if (!rf_set_is_subset(superlattice->domains[0], sublattice->domains[0])){
-      return false;
-  }
+	if(!rf_set_is_subset(superlattice->domains[0], sublattice->domains[0]))
+		return false;
 
+	int dimSub = sublattice->domains[0]->cardinality;
 
-  int dimSub = sublattice->domains[0]->cardinality;
+	for(int x = 0; x < dimSub; x++) {
+		for(int y = 0; y < dimSub; y++) {
+			int xSuper = rf_set_get_element_index(superlattice->domains[0], sublattice->domains[0]->elements[x]);
+			int ySuper = rf_set_get_element_index(superlattice->domains[1], sublattice->domains[1]->elements[y]);
+			if(sublattice->table[rf_table_idx(sublattice, x, y)] != superlattice->table[rf_table_idx(superlattice, xSuper, ySuper)]) {
+				return false;
+			}
+		}
+	}
 
-  for(int x = 0; x < dimSub; x++){
-    for(int y = 0;y < dimSub; y++){
-      int xSuper = rf_set_get_element_index(superlattice->domains[0], sublattice->domains[0]->elements[x]);
-      int ySuper = rf_set_get_element_index(superlattice->domains[1], sublattice->domains[1]->elements[y]);
-      if (sublattice->table[rf_table_idx(sublattice,x,y)] != superlattice->table[rf_table_idx(superlattice,xSuper,ySuper)]){
-    	  return false;
-      }
-    }
-  }
-
-  return true;
+	return true;
 }
 
 /**
  * The image is a subset of the second domain, containing elements that are referenced by some x.
  */
 rf_Set *
-rf_relation_get_image(const rf_Relation *relation, rf_Set *subrelation){
-  assert(relation != NULL);
-  assert(subrelation != NULL);
+rf_relation_get_image(const rf_Relation *relation, rf_Set *subrelation) {
+	assert(relation != NULL);
+	assert(subrelation != NULL);
 
-  rf_SetElement **elems = malloc(sizeof(elems)*relation->domains[0]->cardinality);
+	rf_SetElement **elems = malloc(sizeof(elems)*relation->domains[0]->cardinality);
 
-  int elemCount = 0;
-  for(int y=0;y<relation->domains[1]->cardinality;y++){
-    if (!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
-      continue;
-    for(int x=0;x<relation->domains[0]->cardinality;x++){
-      if (!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
-    	  continue;
-      if (relation->table[rf_table_idx(relation,x,y)]){
-    	  elems[elemCount] = rf_set_element_clone(relation->domains[1]->elements[y]);
-    	  elemCount++;
-    	  break;
-      }
-    }
-  }
-  return rf_set_new(elemCount, elems);
+	int elemCount = 0;
+	for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+		if(!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
+			continue;
+		for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+			if(!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
+				continue;
+			if(relation->table[rf_table_idx(relation,x,y)]) {
+				elems[elemCount] = rf_set_element_clone(relation->domains[1]->elements[y]);
+				elemCount++;
+				break;
+			}
+		}
+	}
+
+	return rf_set_new(elemCount, elems);
 }
 
 /**
  *The preimage is a set of elements, that have at least one partner in the relation
  */
 rf_Set *
-rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation){
-  assert(relation != NULL);
-  assert(subrelation != NULL);
+rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation) {
+	assert(relation != NULL);
+	assert(subrelation != NULL);
 
-  rf_SetElement **elems = malloc(sizeof(elems)*relation->domains[0]->cardinality);
+	rf_SetElement **elems = malloc(sizeof(elems)*relation->domains[0]->cardinality);
 
-  int elemCount = 0;
-  for(int x=0;x<relation->domains[0]->cardinality;x++){
-    if (!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
+	int elemCount = 0;
+	for(int x = 0; x < relation->domains[0]->cardinality; x++) {
+		if(!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
 	continue;
-    for(int y=0;y<relation->domains[1]->cardinality;y++){
-      if (!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
-    	  continue;
-      if (relation->table[rf_table_idx(relation,x,y)]){
-    	  elems[elemCount] = rf_set_element_clone(relation->domains[0]->elements[x]);
-    	  elemCount++;
-    	  break;
-      }
-    }
-  }
-  return rf_set_new(elemCount, elems);
+		for(int y = 0; y < relation->domains[1]->cardinality; y++) {
+			if(!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
+				continue;
+			if(relation->table[rf_table_idx(relation,x,y)]) {
+				elems[elemCount] = rf_set_element_clone(relation->domains[0]->elements[x]);
+				elemCount++;
+				break;
+			}
+		}
+	}
+
+	return rf_set_new(elemCount, elems);
 }

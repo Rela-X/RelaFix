@@ -29,10 +29,10 @@ rf_set_new(int n, rf_SetElement *elements[n]) {
 	assert(n >= 0);
 	assert(elements != NULL);
 	
-	for(int i=0;i<n;i++){
-	  for(int j=i+1;j<n;j++){
-	    assert(elements[i] != elements[j]);
-	  }
+	for(int i = 0; i < n; i++) {
+		for(int j = i + 1; j < n; j++) {
+			assert(elements[i] != elements[j]);
+		}
 	}
 
 	rf_Set *s = malloc(sizeof(*s));
@@ -126,22 +126,21 @@ rf_set_generate_powerset(const rf_Set *s) {
 }
 
 rf_Set *
-rf_set_intersection(const rf_Set *s1, const rf_Set *s2){
+rf_set_intersection(const rf_Set *s1, const rf_Set *s2) {
 	assert(s1 != NULL);
 	assert(s2 != NULL);
 	
-	
-	int maxElements = s1->cardinality < s2->cardinality ? s1->cardinality : s2->cardinality; 
+	int maxElements = (s1->cardinality < s2->cardinality) ? s1->cardinality : s2->cardinality; 
 	rf_SetElement **elements = malloc(sizeof(elements)*maxElements);
 
 	int elemCount = 0;
-	for(int i=0;i<s1->cardinality;i++){
-	  for(int j=0;j<s2->cardinality;j++){
-	     if (rf_set_element_equal(s1->elements[i], s2->elements[j])){
-		elements[elemCount] = rf_set_element_clone(s1->elements[i]);
-		elemCount++;
-	     }
-	  }
+	for(int i = 0; i < s1->cardinality; i++) {
+		for(int j = 0; j < s2->cardinality; j++) {
+			if(rf_set_element_equal(s1->elements[i], s2->elements[j])) {
+				elements[elemCount] = rf_set_element_clone(s1->elements[i]);
+				elemCount++;
+			}
+		}
 	}
 	
 	return rf_set_new(elemCount, elements);
@@ -246,7 +245,7 @@ rf_set_element_equal(const rf_SetElement *a, const rf_SetElement *b) {
 	switch(a->type) {
 	case RF_SET_ELEMENT_TYPE_STRING:
 	{
-	  return strcmp(a->value.string, b->value.string) == 0;
+		return strcmp(a->value.string, b->value.string) == 0;
 	}
 		
 	case RF_SET_ELEMENT_TYPE_SET:
