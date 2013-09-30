@@ -2,14 +2,23 @@ include config.mk
 
 vpath %.h inc/
 vpath %.c src/
+vpath %.c test/
 
 INC += -I ./
 INC += -I inc/
 OBJ := error.o set.o relation.o tools.o
 
-.PHONY : all doc clean
+TEST_OBJ := cu_main.o test_set.o test_relation.o test_tools.o
+
+.PHONY : all clean
+.PHONY : test
+.PHONY : doc
 
 TARGET = librelafix
+
+TEST_TARGET = cu_test_$(TARGET)
+
+.SUFFIXES:
 
 all : shared static
 
@@ -19,12 +28,21 @@ shared : $(OBJ)
 static : $(OBJ)
 	ar rcs $(TARGET).a $^
 
-clean :
-	rm -f $(OBJ) $(TARGET).so.* $(TARGET).a
-	rm -rf doc
-
 %.o : %.c %.h
 	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
 
 doc :
 	$(DOXYGEN)
+
+test : $(TEST_OBJ) $(OBJ)
+	$(CC) $(CFLAGS) -o $(TEST_TARGET) $^ $(LIBPATH) -lcunit
+
+$(TEST_OBJ) : %.o : %.c
+	$(CC) $(CFLAGS) -c $(INC) -o $@ $<
+
+clean :
+	rm -f $(OBJ)
+	rm -f $(TEST_OBJ)
+	rm -f $(TARGET).so.* $(TARGET).a
+	rm -f $(TEST_TARGET)
+	rm -rf doc

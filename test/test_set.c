@@ -18,25 +18,10 @@
  */
 
 #include <stdlib.h>
-#include "CUnit/Basic.h"
-#include "set.c"
-#include "tools.h"
 
-/* Something like @beforeClass
- *
- * @return 0 on success, -1 otherwise
- */
-int init_suite1(void) {
-	return 0;
-}
+#include <CUnit/CUnit.h>
 
-/* ... and afterClass
- */
-int clean_suite1(void) {
-	return 0;
-}
-
-//Here follow all test cases
+#include "set.h"
 
 void test_rf_set_new() {
 	char a = 'a';
@@ -56,10 +41,10 @@ void test_rf_set_new() {
 
 	//check for double elements
 	//uncommented cause assert fails here
-	
+
 	//elems[2] = elems[0];
 	//subset = rf_set_new(3, elems);
-	
+
 }
 
 void test_rf_set_clone() {
@@ -72,9 +57,9 @@ void test_rf_set_clone() {
 	elems1[1] = rf_set_element_new_string(&b);
 	elems1[2] = rf_set_element_new_string(&c);
 	rf_Set *set1 = rf_set_new(3, elems1);
-	
+
 	rf_Set *result = rf_set_clone(set1);
-	
+
 	CU_ASSERT_PTR_NOT_EQUAL(set1, result);
 	for(int i = 0; i < result->cardinality; i++) {
 		CU_ASSERT_PTR_NOT_EQUAL(set1->elements[i], result->elements[i]);
@@ -146,21 +131,11 @@ void test_rf_set_is_subset() {
 	CU_ASSERT_FALSE(rf_set_is_subset(set1, set3));
 }
 
-void test_rf_bitcount() {
-	unsigned int six = 6;
-	int result = rf_bitcount(six);
-	CU_ASSERT_EQUAL(result, 2);
-
-	unsigned int twentyseven = 27;
-	result = rf_bitcount(twentyseven);
-	CU_ASSERT_EQUAL(result, 4);
-}
-
 void test_rf_set_generate_powerset() {
 	char a[] = "a";
 	char b[] = "b";
 	char c[] = "c";
-	
+
 	char results[8][4];
 	const char *expected[] = {"a", "b", "c", "ab", "ac", "bc", "abc", "\0"};
 
@@ -171,17 +146,17 @@ void test_rf_set_generate_powerset() {
 
 	rf_Set *set1 = rf_set_new(3, elems);
 	CU_ASSERT_TRUE(set1 != NULL);
-	
+
 	rf_Set *powerset = rf_set_generate_powerset(set1);
 	CU_ASSERT_EQUAL(powerset->cardinality, 8);
-	
-	
+
+
 	for(int i = 0; i < 8; i++) {
 		for(int j = 0; j < 3; j++) {
 			results[i][j] = 0;
 		}
 	}
-	
+
 	for(int i = 0; i < powerset->cardinality; i++) {
 		rf_SetElement *tmp = powerset->elements[i];
 		for(int j = 0; j < tmp->value.set->cardinality; j++) {
@@ -191,13 +166,13 @@ void test_rf_set_generate_powerset() {
 			}
 		}
 	}
-	
+
 	for(int i=0; i < 8; i++) {
 		bool contains = false;
 		for(int j = 0; j < 8; j++) {
 			if(strcmp(results[i], expected[j]) == 0) {
-				contains = true; 
-			} 
+				contains = true;
+			}
 		}
 		CU_ASSERT_TRUE(contains);
 	}
@@ -227,22 +202,22 @@ void test_rf_set_intersection() {
 	char *a = "a";
 	char *b = "b";
 	char *c = "c";
-	
+
 	rf_SetElement **elems = malloc(sizeof(elems)*3);
 	rf_SetElement **elems2 = malloc(sizeof(elems2)*3);
 
 	elems[0] = rf_set_element_new_string(a);
 	elems[1] = rf_set_element_new_string(b);
 	elems[2] = rf_set_element_new_string(c);
-	
+
 	elems2[0] = rf_set_element_new_string(b);
 	elems2[1] = rf_set_element_new_string(c);
 
 	rf_Set *set1 = rf_set_new(3, elems);
 	rf_Set *set2 = rf_set_new(2, elems2);
-	
+
 	rf_Set *result = rf_set_intersection(set1, set2);
-	
+
 	CU_ASSERT_EQUAL(result->cardinality, 2);
 	CU_ASSERT_TRUE(rf_set_contains_element(result, elems2[0]));
 	CU_ASSERT_TRUE(rf_set_contains_element(result, elems2[1]));
@@ -384,47 +359,38 @@ void test_rf_set_element_free() {
 	// How to test this? Test for null?
 }
 
-int add_suites(CU_pSuite *suite) {
+CU_pSuite
+add_suite_set() {
+	CU_pSuite pSuite;
 
-	//Maybe suite 1
-	CU_add_test(*suite, "rf_set_new", test_rf_set_new);
-	CU_add_test(*suite, "rf_set_equal", test_rf_set_equal);
-	CU_add_test(*suite, "rf_set_contains_element", test_rf_set_contains_element);
-	CU_add_test(*suite, "rf_get_element_index", test_rf_set_get_element_index);
-	CU_add_test(*suite, "rf_set_is_subset", test_rf_set_is_subset);
-	CU_add_test(*suite, "rf_set_generate_powerset", test_rf_set_generate_powerset);
-	CU_add_test(*suite, "rf_set_intersection", test_rf_set_intersection);
-	CU_add_test(*suite, "rf_set_clone", test_rf_set_clone);
-	CU_add_test(*suite, "rf_bitcount", test_rf_bitcount);
-	
-	
-	//Maybe suite 2
-	CU_add_test(*suite, "rf_element_new_string", test_rf_set_element_new_string);
-	CU_add_test(*suite, "rf_set_element_new_set", test_rf_set_element_new_set);
-	CU_add_test(*suite, "rf_element_clone", test_rf_set_element_clone);
-	CU_add_test(*suite, "rf_element_equal", test_rf_set_element_equal);
+	pSuite = CU_add_suite("rf_Set", NULL, NULL);
+	if(pSuite == NULL)
+		return NULL;
 
-	return 0;
+	if(CU_add_test(pSuite, "rf_set_new", test_rf_set_new) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_equal", test_rf_set_equal) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_contains_element", test_rf_set_contains_element) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_get_element_index", test_rf_set_get_element_index) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_is_subset", test_rf_set_is_subset) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_generate_powerset", test_rf_set_generate_powerset) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_intersection", test_rf_set_intersection) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_clone", test_rf_set_clone) == NULL) return NULL;
+
+	return pSuite;
 }
 
-int main() {
-	/* initialize the CUnit test registry */
-	if(CUE_SUCCESS != CU_initialize_registry())
-		return CU_get_error();
+CU_pSuite
+add_suite_set_element() {
+	CU_pSuite pSuite;
 
-	/* add a suite to the registry */
-	CU_pSuite pSuite = CU_add_suite("Suite_1", init_suite1, clean_suite1);
-	if(NULL == pSuite) {
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
+	pSuite = CU_add_suite("rf_SetElement", NULL, NULL);
+	if(pSuite == NULL)
+		return NULL;
 
-	add_suites(&pSuite);
+	if(CU_add_test(pSuite, "rf_set_element_new_string", test_rf_set_element_new_string) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_element_new_set", test_rf_set_element_new_set) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_element_clone", test_rf_set_element_clone) == NULL) return NULL;
+	if(CU_add_test(pSuite, "rf_set_element_equal", test_rf_set_element_equal) == NULL) return NULL;
 
-	/* Run all tests using the CUnit Basic interface */
-	CU_basic_set_mode(CU_BRM_VERBOSE);
-	CU_basic_run_tests();
-	CU_cleanup_registry();
-
-	return CU_get_error();
+	return pSuite;
 }
