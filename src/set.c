@@ -27,7 +27,7 @@
 rf_Set *
 rf_set_new(int n, rf_SetElement *elements[n]) {
 	assert(n >= 0);
-	assert(elements != NULL);
+	assert(elements != NULL || n == 0);
 	
 	for(int i = 0; i < n; i++) {
 		for(int j = i + 1; j < n; j++) {

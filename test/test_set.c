@@ -108,71 +108,63 @@ void test_rf_set_equal() {
 }
 
 void test_rf_set_is_subset() {
-	//watch out, in this testcase, rf_set_is_subset uses a stringcompare. That does not work with a single char
-	//need a char array here which is null-byte terminated.
-	char a1[] = "a";
-	char b1[] = "b";
-	char c1[] = "c";
-	char d1[] = "d";
+	rf_Set *emptyset = rf_set_new(0, NULL);
 
-	rf_SetElement *elems[] = {
-		rf_set_element_new_string(a1),
-		rf_set_element_new_string(b1),
-		rf_set_element_new_string(c1),
+	rf_SetElement *elems1[] = {
+		rf_set_element_new_string("a"),
+		rf_set_element_new_string("b"),
+		rf_set_element_new_string("c"),
 	};
-
-	char a2[] = "a";
-	char b2[] = "b";
-	char c2[] = "c";
 
 	rf_SetElement *elems2[] = {
-		rf_set_element_new_string(a2),
-		rf_set_element_new_string(b2),
-		rf_set_element_new_string(c2),
+		rf_set_element_new_string("a"),
+		rf_set_element_new_string("b"),
+		rf_set_element_new_string("c"),
 	};
 
-	rf_Set *set1 = rf_set_new(3, elems);
+	rf_Set *set1 = rf_set_new(3, elems1);
 	rf_Set *set2 = rf_set_new(3, elems2);
 
+	CU_ASSERT_TRUE(rf_set_is_subset(emptyset, set1));
 	CU_ASSERT_TRUE(rf_set_is_subset(set1, set1));
 	CU_ASSERT_TRUE(rf_set_is_subset(set1, set2)); //sollte mMn gehen. //kann noch perversiert werden mit untersch. Sortierung.
 
 	rf_SetElement *elems3[] = {
-		rf_set_element_new_string(a1),
-		rf_set_element_new_string(d1),
+		rf_set_element_new_string("a"),
+		rf_set_element_new_string("d"),
 	};
 	rf_Set *set3 = rf_set_new(2, elems3);
 
 	CU_ASSERT_FALSE(rf_set_is_subset(set1, set3));
 
+	rf_set_free(emptyset);
 	rf_set_free(set1);
 	rf_set_free(set2);
 	rf_set_free(set3);
 }
 
 void test_rf_set_contains_element() {
-	char a[] = "a";
-	char b[] = "b";
-	char c[] = "c";
-	char d[] = "d";
+	rf_Set *emptyset = rf_set_new(0, NULL);
 
-	rf_SetElement *elems[] = {
-		rf_set_element_new_string(a),
-		rf_set_element_new_string(b),
-		rf_set_element_new_string(c),
+	rf_SetElement *elem_x = rf_set_element_new_string("x");
+
+	CU_ASSERT_FALSE(rf_set_contains_element(emptyset, elem_x));
+
+	rf_SetElement *elems1[] = {
+		rf_set_element_new_string("a"),
+		rf_set_element_new_string("b"),
+		rf_set_element_new_string("c"),
 	};
-
-	rf_Set *set1 = rf_set_new(3, elems);
-
-	rf_SetElement *d_elem = rf_set_element_new_string(d);
+	rf_Set *set1 = rf_set_new(3, elems1);
 
 	for(int i = 0; i < 3; i++) {
-		CU_ASSERT_TRUE(rf_set_contains_element(set1, elems[i]));
+		CU_ASSERT_TRUE(rf_set_contains_element(set1, elems1[i]));
 	}
-	CU_ASSERT_FALSE(rf_set_contains_element(set1, d_elem));
+	CU_ASSERT_FALSE(rf_set_contains_element(set1, elem_x));
 
+	rf_set_free(emptyset);
 	rf_set_free(set1);
-	rf_set_element_free(d_elem);
+	rf_set_element_free(elem_x);
 }
 
 void test_rf_set_get_element_index() {
