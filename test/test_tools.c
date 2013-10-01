@@ -35,13 +35,17 @@ test_rf_bitcount() {
 }
 
 
-CU_pSuite
-add_suite_tools() {
-	CU_pSuite pSuite = CU_add_suite("Tools", NULL, NULL);
-	if(pSuite == NULL)
-		return NULL;
+CU_ErrorCode
+register_suites_tools() {
+	CU_TestInfo tools_suite[] = {
+		{ "rf_bitcount", test_rf_bitcount },
+		CU_TEST_INFO_NULL,
+	};
 
-	if(CU_add_test(pSuite, "rf_bitcount", test_rf_bitcount) == NULL) return NULL;
+	CU_SuiteInfo suites[] = {
+		{ "Tools", NULL, NULL, tools_suite },
+		CU_SUITE_INFO_NULL,
+	};
 
-	return pSuite;
+	return CU_register_suites(suites);
 }

@@ -39,15 +39,17 @@ rf_Set *set;
 rf_Set *set2;
 
 void generateTestElements(int n, rf_SetElement *elements[n]){
-	for(int i=0;i<n;i++){
-		char *myString = malloc(sizeof(char));
-		myString[0] = 'a' + i;
-		myString[1] = '\0';
-		elements[i] = rf_set_element_new_string(myString);
+	char buf[] = "a";
+	for(int i = 0; i < n; i++) {
+		//char *myString = malloc(sizeof(char));
+		//myString[0] = 'a' + i;
+		//myString[1] = '\0';
+		buf[0] = 'a' + i;
+		elements[i] = rf_set_element_new_string(buf);
 	}
 }
 
-int init_suite1(void) {
+int init_suite(void) {
 	rf_SetElement *elems[3];
 	rf_SetElement *elems2[1];
 
@@ -62,7 +64,10 @@ int init_suite1(void) {
 }
 
 
-int clean_suite1(void) {
+int clean_suite(void) {
+	rf_set_free(set);
+	rf_set_free(set2);
+
 	return 0;
 }
 
@@ -213,7 +218,7 @@ void test_rf_relation_new_bottom(){
 
 void test_rf_relation_new_union(){
 	 //inits
-	rf_Error *error = rf_error_new();
+	rf_Error error;
 	rf_Relation *idR = rf_relation_new_id(set);
 	rf_Relation *r1 = rf_relation_new_empty(set, set);
 	rf_Relation *result;
@@ -223,33 +228,33 @@ void test_rf_relation_new_union(){
 	//TESTS
 
 	//Union between id-Relation and an empty relation
-	result = rf_relation_new_union(idR, r1, error);
+	result = rf_relation_new_union(idR, r1, &error);
 	int n = set->cardinality * set->cardinality;
 	for(int i=0;i<n;i++){
 		CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
 	}
 
 	//Union id-Relation with itself
-	result = rf_relation_new_union(idR, idR, error);
+	result = rf_relation_new_union(idR, idR, &error);
 	for(int i=0;i<n;i++){
 		CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
 	}
 
 	//Union between id-R and its complement
-	result = rf_relation_new_union(idR, rf_relation_new_complement(idR, error), error);
+	result = rf_relation_new_union(idR, rf_relation_new_complement(idR, &error), &error);
 
 	for(int i=0;i<n;i++){
 		CU_ASSERT_TRUE(result->table[i]);
 	}
 
 	//Union between two relations that have different domains
-	result = rf_relation_new_union(idR, idRSet2, error);
+	result = rf_relation_new_union(idR, idRSet2, &error);
 	CU_ASSERT_TRUE(result == NULL);
 }
 
-	void test_rf_relation_new_intersection(){
+void test_rf_relation_new_intersection(){
 	//inits
-	rf_Error *error = rf_error_new();
+	rf_Error error;
 	rf_Relation *idR = rf_relation_new_id(set);
 	rf_Relation *r1 = rf_relation_new_empty(set, set);
 	rf_Relation *r2 = rf_relation_new_empty(set, set);
@@ -259,60 +264,57 @@ void test_rf_relation_new_union(){
 	rf_Relation *idRSet2 = rf_relation_new_id(set2);
 
 	//Intersection between id-Relation and an empty relation
-	result = rf_relation_new_intersection(idR, r1, error);
+	result = rf_relation_new_intersection(idR, r1, &error);
 	int n = set->cardinality * set->cardinality;
 	for(int i=0;i<n;i++){
-	CU_ASSERT_FALSE(result->table[i]);
+		CU_ASSERT_FALSE(result->table[i]);
 	}
 
 	//Intersection id-Relation with itself
-	result = rf_relation_new_intersection(idR, idR, error);
+	result = rf_relation_new_intersection(idR, idR, &error);
 	for(int i=0;i<n;i++){
-	CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
+		CU_ASSERT_EQUAL(idR->table[i], result->table[i]);
 	}
 
 	//Intersection id-Relation with a relation having one intersection element
-	result = rf_relation_new_intersection(idR, r2, error);
+	result = rf_relation_new_intersection(idR, r2, &error);
 	for(int i=0;i<n;i++){
-	if(i == rf_table_idx(result, 1,1)){
-	CU_ASSERT_TRUE(result->table[i])
-	}
-	else{
-	CU_ASSERT_FALSE(result->table[i]);
-	}
+		if(i == rf_table_idx(result, 1,1)){
+			CU_ASSERT_TRUE(result->table[i])
+		} else{
+			CU_ASSERT_FALSE(result->table[i]);
+		}
 	}
 
 	//Intersection between two relations that have different domains
-	result = rf_relation_new_intersection(idR, idRSet2, error);
+	result = rf_relation_new_intersection(idR, idRSet2, &error);
 	CU_ASSERT_TRUE(result == NULL);
-	}
+}
 
-	void test_rf_relation_new_complement(){
-
-	rf_Error *error = NULL;
+void test_rf_relation_new_complement(){
+	rf_Error error;
 	rf_Relation *idR = rf_relation_new_id(set);
 
 	//The error function is never used in this method...consider refactoring
-	rf_Relation *result = rf_relation_new_complement(idR, error);
+	rf_Relation *result = rf_relation_new_complement(idR, &error);
 
 	int n = set->cardinality * set->cardinality;
 	for(int i=0;i<n;i++){
-	CU_ASSERT_NOT_EQUAL(idR->table[i], result->table[i]);
+		CU_ASSERT_NOT_EQUAL(idR->table[i], result->table[i]);
 	}
+}
 
-	}
-
-	void test_rf_relation_new_concatenation(){
+void test_rf_relation_new_concatenation(){
 	//often also called composition, which is I think the more correct terminus
 
-	rf_Error *error = rf_error_new();
+	rf_Error error;
 	rf_Relation *r1 = rf_relation_new_empty(set, set);
 	rf_Relation *r2 = rf_relation_new_empty(set, set);
 
 	r1->table[rf_table_idx(r1,0,1)] = r1->table[rf_table_idx(r1,1,1)] = r1->table[rf_table_idx(r1,2,1)] = true;
 	r2->table[rf_table_idx(r2,1,0)] = r2->table[rf_table_idx(r2,1,1)] = r2->table[rf_table_idx(r2,1,2)] = true;
 
-	rf_Relation *result = rf_relation_new_concatenation(r1, r2, error);
+	rf_Relation *result = rf_relation_new_concatenation(r1, r2, &error);
 
 	//should be the full relation in this example
 	int n = set->cardinality * set->cardinality;
@@ -325,25 +327,24 @@ void test_rf_relation_new_union(){
 
 	}
 
-	void test_rf_relation_new_converse(){
-	rf_Error *error = rf_error_new();
+void test_rf_relation_new_converse(){
+	rf_Error error;
 	rf_Relation *r1 = rf_relation_new_empty(set, set);
 	r1->table[rf_table_idx(r1,0,2)] = true;
 	r1->table[rf_table_idx(r1,1,1)] = true;
 
-	rf_Relation *result = rf_relation_new_converse(r1, error);
+	rf_Relation *result = rf_relation_new_converse(r1, &error);
 	CU_ASSERT_TRUE(result->table[rf_table_idx(result,2,0)]);
 	CU_ASSERT_TRUE(result->table[rf_table_idx(result,1,1)]);
+}
 
-	}
-
-	void test_rf_relation_new_subsetleq(){
+void test_rf_relation_new_subsetleq(){
 	//trivial case
 	int n = set->cardinality * set->cardinality;
 	rf_Relation *empty = rf_relation_new_subsetleq(set, NULL);
 
 	for(int i=0;i<n;i++){
-	CU_ASSERT_FALSE(empty->table[i]);
+		CU_ASSERT_FALSE(empty->table[i]);
 	}
 
 	/*
@@ -397,7 +398,7 @@ void test_rf_relation_new_union(){
 	}
 	}
 
-	void test_rf_relation_is_homogeneous(){
+void test_rf_relation_is_homogeneous(){
 	rf_Relation *homogeneous = rf_relation_new_empty(set, set);
 	rf_Relation *heterogeneous = rf_relation_new_empty(set, set2);
 
@@ -405,7 +406,7 @@ void test_rf_relation_new_union(){
 	CU_ASSERT_FALSE(rf_relation_is_homogeneous(heterogeneous));
 	}
 
-	void test_rf_relation_is_antisymmetric(){
+void test_rf_relation_is_antisymmetric(){
 	// R schnitt RT <= I
 
 	rf_Relation *r1 = rf_relation_new_id(set);
@@ -418,7 +419,7 @@ void test_rf_relation_new_union(){
 	CU_ASSERT_FALSE(rf_relation_is_antisymmetric(r1));
 	}
 
-	void test_rf_relation_is_asymmetric(){
+void test_rf_relation_is_asymmetric(){
 	// R schnitt RT <= I
 
 	rf_Relation *r1 = rf_relation_new_id(set);
@@ -1555,97 +1556,91 @@ void test_rf_relation_make_symmetric(){
 	CU_ASSERT_TRUE(rf_relation_is_symmetric(test));
 }
 
+CU_ErrorCode
+register_suites_relation() {
+	CU_TestInfo create_suite[] = {
+		{ "rf_relation_new_empty", test_rf_relation_new_empty },
+		{ "rf_relation_new_full", test_rf_relation_new_full },
+		{ "rf_relation_new", test_rf_relation_new },
+		{ "rf_relation_clone", test_rf_relation_clone },
+		{ "rf_relation_new_id", test_rf_relation_new_id },
+		{ "rf_table_idx", test_rf_table_idx },
+		{ "rf_relation_calc", test_rf_relation_calc },
+		{ "rf_relation_new_top", test_rf_relation_new_top },
+		{ "rf_relation_new_bottom", test_rf_relation_new_bottom },
+		{ "rf_relation_new_union", test_rf_relation_new_union },
+		{ "rf_relation_new_intersection", test_rf_relation_new_intersection },
+		{ "rf_relation_new_complement", test_rf_relation_new_complement },
+		{ "rf_relation_new_concatenation", test_rf_relation_new_concatenation },
+		{ "rf_relation_new_converse", test_rf_relation_new_converse },
+		{ "rf_relation_new_subsetleq", test_rf_relation_new_subsetleq },
+		CU_TEST_INFO_NULL
+	};
 
-CU_pSuite
-add_suite_relation_create() {
-	CU_pSuite pSuite = CU_add_suite("rf_Relation: create-procedures", NULL, NULL);
-	if(pSuite == NULL)
-		return NULL;
+	CU_TestInfo search_suite[] = {
+		{ "rf_relation_find_maximal_elements", test_rf_relation_find_maximal_elements },
+		{ "rf_relation_find_minimal_elements", test_rf_relation_find_minimal_elements },
+		{ "rf_relation_find_maximum", test_rf_relation_find_maximum },
+		{ "rf_relation_find_minimum", test_rf_relation_find_minimum },
+		{ "rf_relation_find_maximum_within_subset", test_rf_relation_find_maximum_within_subset },
+		{ "rf_relation_find_upperbound", test_rf_relation_find_upperbound },
+		{ "rf_relation_find_supremum", test_rf_relation_find_supremum },
+		{ "rf_relation_find_lowerbound", test_rf_relation_find_lowerbound },
+		{ "rf_relation_find_infimum", test_rf_relation_find_infimum },
+		{ "rf_relation_find_transitive_gaps", test_rf_relation_find_transitive_gaps },
+		{ "rf_relation_guess_transitive_core", test_rf_relation_guess_transitive_core },
+		{ "rf_relation_find_transitive_hard_core", test_rf_relation_find_transitive_hard_core },
 
-	if(CU_add_test(pSuite, "rf_relation_new_empty", test_rf_relation_new_empty) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_full", test_rf_relation_new_full) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new", test_rf_relation_new) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_clone", test_rf_relation_clone) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_id", test_rf_relation_new_id) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_table_idx", test_rf_table_idx) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_calc", test_rf_relation_calc) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_top", test_rf_relation_new_top) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_bottom", test_rf_relation_new_bottom) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_union", test_rf_relation_new_union) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_intersection", test_rf_relation_new_intersection) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_complement", test_rf_relation_new_complement) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_concatenation", test_rf_relation_new_concatenation) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_converse", test_rf_relation_new_converse) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_new_subsetleq", test_rf_relation_new_subsetleq) == NULL) return NULL;
+		{ "rf_relation_get_image", test_rf_relation_get_image },
+		{ "rf_relation_get_preimage", test_rf_relation_get_preimage },
+		CU_TEST_INFO_NULL
+	};
 
-	return pSuite;
-}
+	CU_TestInfo test_suite[] = {
+		//homogeneous
+		{ "rf_relation_is_homogeneous", test_rf_relation_is_homogeneous },
+		{ "rf_relation_is_antisymmetric", test_rf_relation_is_antisymmetric },
+		{ "rf_relation_is_asymmetric", test_rf_relation_is_asymmetric },
+		{ "rf_relation_is_difcuntional", test_rf_relation_is_difunctional },
+		{ "rf_relation_is_equivalent", test_rf_relation_is_equivalent },
+		{ "rf_relation_is_symmetric", test_rf_relation_is_symmetric },
+		{ "rf_relation_is_irreflexive", test_rf_relation_is_irreflexive },
+		{ "rf_relation_is_reflexive", test_rf_relation_is_reflexive },
+		{ "rf_relation_is_partial_order", test_rf_relation_is_partial_order },
+		{ "rf_relation_is_transitive", test_rf_relation_is_transitive },
+		{ "rf_relation_is_lattice", test_rf_relation_is_lattice },
 
-CU_pSuite
-add_suite_relation_search() {
-	CU_pSuite pSuite = CU_add_suite("rf_Relation: search-procedures", NULL, NULL);
+		//heterogeneous
+		{ "rf_relation_is_lefttotal", test_rf_relation_is_lefttotal },
+		{ "rf_relation_is_functional", test_rf_relation_is_functional },
+		{ "rf_relation_is_function", test_rf_relation_is_function },
+		{ "rf_relation_is_surjective", test_rf_relation_is_surjective },
+		{ "rf_relation_is_injective", test_rf_relation_is_injective },
+		{ "rf_relation_is_bijective", test_rf_relation_is_bijective },
+		CU_TEST_INFO_NULL
+	};
 
-	if(CU_add_test(pSuite, "rf_relation_find_maximal_elements", test_rf_relation_find_maximal_elements) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_minimal_elements", test_rf_relation_find_minimal_elements) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_maximum", test_rf_relation_find_maximum) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_minimum", test_rf_relation_find_minimum) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_maximum_within_subset", test_rf_relation_find_maximum_within_subset) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_upperbound", test_rf_relation_find_upperbound) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_supremum", test_rf_relation_find_supremum) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_lowerbound", test_rf_relation_find_lowerbound) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_infimum", test_rf_relation_find_infimum) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_transitive_gaps", test_rf_relation_find_transitive_gaps) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_guess_transitive_core", test_rf_relation_guess_transitive_core) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_find_transitive_hard_core", test_rf_relation_find_transitive_hard_core) == NULL) return NULL;
+	CU_TestInfo modification_suite[] = {
+		{ "rf_relation_make_antisymmetric", test_rf_relation_make_antisymmetric },
+		{ "rf_relation_make_asymmetric", test_rf_relation_make_asymmetric },
+		{ "rf_relation_make_difunctional", test_rf_relation_make_difunctional },
+		{ "rf_relation_make_equivalent", test_rf_relation_make_equivalent },
+		{ "rf_relation_make_irreflexive", test_rf_relation_make_irreflexive },
+		{ "rf_relation_make_partial_order", test_rf_relation_make_partial_order },
+		{ "rf_relation_make_preorder", test_rf_relation_make_preorder },
+		{ "rf_relation_make_reflexive", test_rf_relation_make_reflexive },
+		{ "rf_relation_make_symmetric", test_rf_relation_make_symmetric },
+		{ "rf_relation_make_transitive", test_rf_relation_make_transitive },
+		CU_TEST_INFO_NULL
+	};
 
-	if(CU_add_test(pSuite, "rf_relation_get_image", test_rf_relation_get_image) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_get_preimage", test_rf_relation_get_preimage) == NULL) return NULL;
+	CU_SuiteInfo suites[] = {
+		{ "rf_Relation: create-procedures", init_suite, clean_suite, create_suite },
+		{ "rf_Relation: search-procedures", init_suite, clean_suite, search_suite },
+		{ "rf_Relation: test-procedures", init_suite, clean_suite, test_suite },
+		{ "rf_Relation: modificaiton-procedures", init_suite, clean_suite, modification_suite },
+		CU_SUITE_INFO_NULL
+	};
 
-	return pSuite;
-}
-
-CU_pSuite
-add_suite_relation_test() {
-	CU_pSuite pSuite = CU_add_suite("rf_Relation: test-procedures", NULL, NULL);
-
-	//homogeneous
-	if(CU_add_test(pSuite, "rf_relation_is_homogeneous", test_rf_relation_is_homogeneous) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_antisymmetric", test_rf_relation_is_antisymmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_asymmetric", test_rf_relation_is_asymmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_difcuntional", test_rf_relation_is_difunctional) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_equivalent", test_rf_relation_is_equivalent) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_symmetric", test_rf_relation_is_symmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_irreflexive", test_rf_relation_is_irreflexive) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_reflexive", test_rf_relation_is_reflexive) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_partial_order", test_rf_relation_is_partial_order) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_transitive", test_rf_relation_is_transitive) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_lattice", test_rf_relation_is_lattice) == NULL) return NULL;
-
-	//heterogeneous
-	if(CU_add_test(pSuite, "rf_relation_is_lefttotal", test_rf_relation_is_lefttotal) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_functional", test_rf_relation_is_functional) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_function", test_rf_relation_is_function) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_surjective", test_rf_relation_is_surjective) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_injective", test_rf_relation_is_injective) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_is_bijective", test_rf_relation_is_bijective) == NULL) return NULL;
-
-	return pSuite;
-}
-
-CU_pSuite
-add_suite_relation_modification() {
-	CU_pSuite pSuite = CU_add_suite("rf_Relation: modificaiton-procedures", NULL, NULL);
-
-	if(CU_add_test(pSuite, "rf_relation_make_antisymmetric", test_rf_relation_make_antisymmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_asymmetric", test_rf_relation_make_asymmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_difunctional", test_rf_relation_make_difunctional) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_equivalent", test_rf_relation_make_equivalent) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_irreflexive", test_rf_relation_make_irreflexive) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_partial_order", test_rf_relation_make_partial_order) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_preorder", test_rf_relation_make_preorder) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_reflexive", test_rf_relation_make_reflexive) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_symmetric", test_rf_relation_make_symmetric) == NULL) return NULL;
-	if(CU_add_test(pSuite, "rf_relation_make_transitive", test_rf_relation_make_transitive) == NULL) return NULL;
-
-	return pSuite;
+	return CU_register_suites(suites);
 }
