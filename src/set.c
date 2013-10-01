@@ -37,7 +37,10 @@ rf_set_new(int n, rf_SetElement *elements[n]) {
 
 	rf_Set *s = malloc(sizeof(*s));
 	s->cardinality = n;
-	s->elements = elements;
+	s->elements = calloc(n, sizeof(*s->elements));
+	for(int i = n-1; i >= 0; --i) {
+		s->elements[i] = elements[i];
+	}
 	
 	return s;
 }
@@ -47,7 +50,7 @@ rf_set_clone(const rf_Set *s) {
 	assert(s != NULL);
 
 	int n = s->cardinality;
-	rf_SetElement **elements = calloc(n, sizeof(*elements));
+	rf_SetElement *elements[n];
 	for(int i = n-1; i >= 0; --i) {
 		elements[i] = rf_set_element_clone(s->elements[i]);
 	}
@@ -131,7 +134,7 @@ rf_set_intersection(const rf_Set *s1, const rf_Set *s2) {
 	assert(s2 != NULL);
 	
 	int maxElements = (s1->cardinality < s2->cardinality) ? s1->cardinality : s2->cardinality; 
-	rf_SetElement **elements = malloc(sizeof(elements)*maxElements);
+	rf_SetElement *elements[maxElements];
 
 	int elemCount = 0;
 	for(int i = 0; i < s1->cardinality; i++) {
@@ -151,12 +154,7 @@ rf_set_contains_element(const rf_Set *s, const rf_SetElement *e) {
 	assert(s != NULL);
 	assert(e != NULL);
 
-	for(int i = s->cardinality-1; i >= 0; --i) {
-		if(rf_set_element_equal(s->elements[i], e))
-			return true;
-	}
-
-	return false;
+	return rf_set_get_element_index(s, e) != -1;
 }
 
 int
@@ -180,6 +178,7 @@ rf_set_free(rf_Set *s) {
 	for(int i = s->cardinality-1; i >= 0; --i) {
 		rf_set_element_free(s->elements[i]);
 	}
+	free(s->elements);
 	free(s);
 }
 
@@ -194,7 +193,7 @@ rf_set_element_new_string(char *value) {
 
 	rf_SetElement *e = malloc(sizeof(*e));
 	e->type = RF_SET_ELEMENT_TYPE_STRING;
-	e->value.string = value;
+	e->value.string = strdup(value);
 
 	return e;
 }
@@ -205,7 +204,7 @@ rf_set_element_new_set(rf_Set *value) {
 
 	rf_SetElement *e = malloc(sizeof(*e));
 	e->type = RF_SET_ELEMENT_TYPE_SET;
-	e->value.set = value;
+	e->value.set = rf_set_clone(value);
 
 	return e;
 }
@@ -216,16 +215,12 @@ rf_set_element_clone(const rf_SetElement *e) {
 
 	rf_SetElement *c;
 	switch(e->type) {
-	case RF_SET_ELEMENT_TYPE_STRING: {
-		char *str = strdup(e->value.string);
-		c = rf_set_element_new_string(str);
+	case RF_SET_ELEMENT_TYPE_STRING:
+		c = rf_set_element_new_string(e->value.string);
 		break;
-	}
-	case RF_SET_ELEMENT_TYPE_SET: {
-		rf_Set *set = rf_set_clone(e->value.set);
-		c = rf_set_element_new_set(set);
+	case RF_SET_ELEMENT_TYPE_SET:
+		c = rf_set_element_new_set(e->value.set);
 		break;
-	}
 	default:
 		assert(false); // all cases must be handled
 	}
