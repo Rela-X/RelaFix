@@ -28,7 +28,7 @@ rf_Set *
 rf_set_new(int n, rf_SetElement *elements[n]) {
 	assert(n >= 0);
 	assert(elements != NULL || n == 0);
-	
+
 	for(int i = 0; i < n; i++) {
 		for(int j = i + 1; j < n; j++) {
 			assert(elements[i] != elements[j]);
@@ -41,7 +41,7 @@ rf_set_new(int n, rf_SetElement *elements[n]) {
 	for(int i = n-1; i >= 0; --i) {
 		s->elements[i] = elements[i];
 	}
-	
+
 	return s;
 }
 
@@ -56,6 +56,63 @@ rf_set_clone(const rf_Set *s) {
 	}
 
 	return rf_set_new(n, elements);
+}
+
+rf_Set *
+rf_set_new_intersection(const rf_Set *s1, const rf_Set *s2) {
+	assert(s1 != NULL);
+	assert(s2 != NULL);
+
+	int maxElements = (s1->cardinality < s2->cardinality) ? s1->cardinality : s2->cardinality;
+	rf_SetElement *elements[maxElements];
+
+	int elemCount = 0;
+	for(int i = 0; i < s1->cardinality; i++) {
+		for(int j = 0; j < s2->cardinality; j++) {
+			if(rf_set_element_equal(s1->elements[i], s2->elements[j])) {
+				elements[elemCount] = rf_set_element_clone(s1->elements[i]);
+				elemCount++;
+			}
+		}
+	}
+
+	return rf_set_new(elemCount, elements);
+}
+
+rf_Set *
+rf_set_new_powerset(const rf_Set *s) {
+	assert(s != NULL);
+//	assert(SIZE_MAX >> s->cardinality > 0); // size_t has enough bits
+
+	size_t ps_n = 1 << s->cardinality; // powerset has 2^n members
+	rf_SetElement **ps_elems = calloc(ps_n, sizeof(**ps_elems));
+
+	for(int i = ps_n-1; i >= 0; --i) {
+		// i's bits are interpreted as an array of boolean values
+		// that indicare whether the element should become part
+		// of the powerset element.
+		// So if i is 6 (little-endian: 0101) the elements at
+		// index 1 and 3 will form the new powerset element.
+
+		// The bitcount of i is the cardinality of that element.
+		size_t ps_elem_n = rf_bitcount(i);
+		rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
+		int b = s->cardinality-1;
+		for(int j = ps_elem_n -1 ; j >= 0; --b) {
+			assert(b >= 0);
+			// bit b is 1
+			if(i & (1 << b)) {
+				ps_elem_elems[j] = rf_set_element_clone(s->elements[b]);
+				j--;
+			}
+		}
+		rf_Set *ps_elem = rf_set_new(ps_elem_n, ps_elem_elems);
+		ps_elems[i] = rf_set_element_new_set(ps_elem);
+	}
+
+	rf_Set *powerset = rf_set_new(ps_n, ps_elems);
+
+	return powerset;
 }
 
 
@@ -90,63 +147,6 @@ rf_set_is_subset(const rf_Set *subset, const rf_Set *superset) {
 	}
 
 	return true;
-}
-
-rf_Set *
-rf_set_generate_powerset(const rf_Set *s) {
-	assert(s != NULL);
-//	assert(SIZE_MAX >> s->cardinality > 0); // size_t has enough bits
-
-	size_t ps_n = 1 << s->cardinality; // powerset has 2^n members
-	rf_SetElement **ps_elems = calloc(ps_n, sizeof(**ps_elems));
-
-	for(int i = ps_n-1; i >= 0; --i) {
-		// i's bits are interpreted as an array of boolean values
-		// that indicare whether the element should become part
-		// of the powerset element.
-		// So if i is 6 (little-endian: 0101) the elements at
-		// index 1 and 3 will form the new powerset element.
-
-		// The bitcount of i is the cardinality of that element.
-		size_t ps_elem_n = rf_bitcount(i);
-		rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
-		int b = s->cardinality-1;
-		for(int j = ps_elem_n -1 ; j >= 0; --b) {
-			assert(b >= 0);
-			// bit b is 1
-			if(i & (1 << b)) {
-				ps_elem_elems[j] = rf_set_element_clone(s->elements[b]);
-				j--;
-			} 	
-		}
-		rf_Set *ps_elem = rf_set_new(ps_elem_n, ps_elem_elems);
-		ps_elems[i] = rf_set_element_new_set(ps_elem);
-	}
-
-	rf_Set *powerset = rf_set_new(ps_n, ps_elems);
-
-	return powerset;
-}
-
-rf_Set *
-rf_set_intersection(const rf_Set *s1, const rf_Set *s2) {
-	assert(s1 != NULL);
-	assert(s2 != NULL);
-	
-	int maxElements = (s1->cardinality < s2->cardinality) ? s1->cardinality : s2->cardinality; 
-	rf_SetElement *elements[maxElements];
-
-	int elemCount = 0;
-	for(int i = 0; i < s1->cardinality; i++) {
-		for(int j = 0; j < s2->cardinality; j++) {
-			if(rf_set_element_equal(s1->elements[i], s2->elements[j])) {
-				elements[elemCount] = rf_set_element_clone(s1->elements[i]);
-				elemCount++;
-			}
-		}
-	}
-	
-	return rf_set_new(elemCount, elements);
 }
 
 bool
@@ -242,7 +242,7 @@ rf_set_element_equal(const rf_SetElement *a, const rf_SetElement *b) {
 	{
 		return strcmp(a->value.string, b->value.string) == 0;
 	}
-		
+
 	case RF_SET_ELEMENT_TYPE_SET:
 		return rf_set_equal(a->value.set, b->value.set);
 	default:

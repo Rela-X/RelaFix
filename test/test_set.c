@@ -197,7 +197,7 @@ void test_rf_set_get_element_index() {
 	rf_set_element_free(test2);
 }
 
-void test_rf_set_generate_powerset() {
+void test_rf_set_new_powerset() {
 CU_FAIL_FATAL("not implemented");
 	char a[] = "a";
 	char b[] = "b";
@@ -226,7 +226,7 @@ CU_FAIL_FATAL("not implemented");
 	rf_Set *set1 = rf_set_new(3, elems);
 	CU_ASSERT_TRUE(set1 != NULL);
 
-	rf_Set *powerset = rf_set_generate_powerset(set1);
+	rf_Set *powerset = rf_set_new_powerset(set1);
 	CU_ASSERT_EQUAL(powerset->cardinality, 8);
 
 /*
@@ -263,7 +263,7 @@ CU_FAIL_FATAL("not implemented");
 	rf_set_free(powerset);
 }
 
-void test_rf_set_intersection() {
+void test_rf_set_new_intersection() {
 	char *a = "a";
 	char *b = "b";
 	char *c = "c";
@@ -282,7 +282,7 @@ void test_rf_set_intersection() {
 	rf_Set *set1 = rf_set_new(3, elems1);
 	rf_Set *set2 = rf_set_new(2, elems2);
 
-	rf_Set *result = rf_set_intersection(set1, set2);
+	rf_Set *result = rf_set_new_intersection(set1, set2);
 
 	CU_ASSERT_EQUAL(result->cardinality, 2);
 	CU_ASSERT_TRUE(rf_set_contains_element(result, elems2[0]));
@@ -397,12 +397,12 @@ register_suites_set() {
 	CU_TestInfo suite_set[] = {
 		{ "rf_set_new", test_rf_set_new },
 		{ "rf_set_clone", test_rf_set_clone },
+		{ "rf_set_new_intersection", test_rf_set_new_intersection },
+		{ "rf_set_new_powerset", test_rf_set_new_powerset },
 		{ "rf_set_equal", test_rf_set_equal },
 		{ "rf_set_contains_element", test_rf_set_contains_element },
 		{ "rf_get_element_index", test_rf_set_get_element_index },
 		{ "rf_set_is_subset", test_rf_set_is_subset },
-		{ "rf_set_generate_powerset", test_rf_set_generate_powerset },
-		{ "rf_set_intersection", test_rf_set_intersection },
 		CU_TEST_INFO_NULL
 	};
 
