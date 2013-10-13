@@ -83,8 +83,8 @@ rf_relation_new(rf_Set *d1, rf_Set *d2, bool *table) {
 
 	rf_Relation *r = malloc(sizeof(*r));
 	r->domains = calloc(N_DOMAINS, sizeof(*r->domains));
-	r->domains[0] = d1;
-	r->domains[1] = d2;
+	r->domains[0] = rf_set_clone(d1);
+	r->domains[1] = rf_set_clone(d2);
 	r->table = table;
 
 	return r;
@@ -94,15 +94,13 @@ rf_Relation *
 rf_relation_clone(const rf_Relation *r) {
 	assert(r != NULL);
 
-	rf_Set *d[N_DOMAINS];
 	size_t table_size = 1;
 	for(int i = N_DOMAINS-1; i >= 0; --i) {
-		d[i] = rf_set_clone(r->domains[i]);
 		table_size *= r->domains[i]->cardinality;
 	}
 	bool *table = calloc(table_size, sizeof(*table));
 
-	rf_Relation *new = rf_relation_new(d[0], d[1], table);
+	rf_Relation *new = rf_relation_new(r->domains[0], r->domains[1], table);
 	memcpy(new->table, r->table, table_size);
 
 	return new;
@@ -206,7 +204,7 @@ rf_relation_new_union(rf_Relation *r1, rf_Relation *r2, rf_Error *error) {
 
 	const int dim = new->domains[0]->cardinality;
 	for(int x = dim-1; x >= 0; --x) {
-		for(int y = dim-1	; y >= 0; --y) {
+		for(int y = dim-1; y >= 0; --y) {
 			new->table[rf_table_idx(new, x, y)] = r1->table[rf_table_idx(r1, x, y)] || r2->table[rf_table_idx(r2, x, y)];
 		}
 	}
@@ -894,6 +892,7 @@ rf_relation_make_symmetric(rf_Relation *r, bool fill, rf_Error *error) {
 
 	return true;
 }
+
 /*
  * if fill is true, rf_relation_make_transitive computes the transitive closure according to marshall-algorithm
  */
@@ -926,7 +925,7 @@ rf_relation_make_transitive(rf_Relation *r, bool fill, rf_Error *error) {
 				assert(r->table[rf_table_idx(r, y, z)]);
 				if(fill) {
 					r->table[rf_table_idx(r, x, z)] = true;
-				} else{
+				} else {
 					r->table[rf_table_idx(r, y, z)] = false;
 				}
 			}
@@ -965,27 +964,33 @@ rf_relation_find_transitive_gaps(rf_Relation *r, int *occurrences, rf_Set *gaps,
 					continue;
 				// yRz exists
 				assert(r->table[rf_table_idx(r, y, z)]);
-				if(!r->table[rf_table_idx(r, x, z)]) {
-					//transitive gap
-					occurrences[rf_table_idx(r, x, y)]++;
-					occurrences[rf_table_idx(r, y, z)]++;
-					//printf("transitive gap: %i, %i\n", x,z);
-					if(occurrences[rf_table_idx(r, x, y)] == 1) {
-						rf_SetElement **tupel = malloc(sizeof(tupel)*2);
-						tupel[0] = r->domains[0]->elements[x];
-						tupel[1] = r->domains[0]->elements[y];
-						elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
-						elemCount++;
-					}
-					if(occurrences[rf_table_idx(r, y, z)] == 1) {
-						rf_SetElement **tupel = malloc(sizeof(tupel)*2);
-						tupel[0] = r->domains[0]->elements[y];
-						tupel[1] = r->domains[0]->elements[z];
-						elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
-						elemCount++;
-					}
-					numOfGaps++;
+
+				if(r->table[rf_table_idx(r, x, z)])
+					continue;
+				// xRz does not exist
+				assert(!r->table[rf_table_idx(r, x, z)]);
+
+				//transitive gap
+				occurrences[rf_table_idx(r, x, y)]++;
+				occurrences[rf_table_idx(r, y, z)]++;
+				//printf("transitive gap: %i, %i\n", x,z);
+				if(occurrences[rf_table_idx(r, x, y)] == 1) {
+					rf_SetElement *tupel[] = {
+						r->domains[0]->elements[x],
+						r->domains[0]->elements[y],
+					};
+					elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
+					elemCount++;
 				}
+				if(occurrences[rf_table_idx(r, y, z)] == 1) {
+					rf_SetElement *tupel[] = {
+						r->domains[0]->elements[y],
+						r->domains[0]->elements[z],
+					};
+					elems[elemCount] = rf_set_element_new_set(rf_set_new(2, tupel));
+					elemCount++;
+				}
+				numOfGaps++;
 			}
 		}
 	}
@@ -1102,17 +1107,6 @@ rf_relation_find_transitive_hard_core(rf_Relation *relation, rf_Error *error) {
 	}
 
 	return transitiveCore;
-}
-
-void
-rf_relation_free(rf_Relation *r) {
-	assert(r != NULL);
-
-	for(int i = N_DOMAINS-1; i >= 0; --i)
-		rf_set_free(r->domains[i]);
-	free(r->domains);
-	free(r->table);
-	free(r);
 }
 
 bool
@@ -1251,9 +1245,10 @@ rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error) {
 		for(int y = x + 1; y < dim; y++) {
 			//check for supremum and infimum
 
-			rf_SetElement **elems = malloc(sizeof(elems)*2);
-			elems[0] = relation->domains[0]->elements[x];
-			elems[1] = relation->domains[0]->elements[y];
+			rf_SetElement *elems[] = {
+				relation->domains[0]->elements[x],
+				relation->domains[0]->elements[y],
+			};
 			rf_Set *subset = rf_set_new(2, elems);
 
 			rf_SetElement *sup = rf_relation_find_supremum(relation, subset, error);
@@ -1261,7 +1256,6 @@ rf_relation_is_lattice(const rf_Relation *relation, rf_Error *error) {
 
 			if(sup == NULL || inf == NULL)
 				return false;
-			free(elems);
 		}
 	}
 
@@ -1338,7 +1332,7 @@ rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation) {
 	int elemCount = 0;
 	for(int x = 0; x < relation->domains[0]->cardinality; x++) {
 		if(!rf_set_contains_element(subrelation, relation->domains[0]->elements[x]))
-	continue;
+			continue;
 		for(int y = 0; y < relation->domains[1]->cardinality; y++) {
 			if(!rf_set_contains_element(subrelation, relation->domains[1]->elements[y]))
 				continue;
@@ -1351,4 +1345,15 @@ rf_relation_get_preImage(const rf_Relation *relation, rf_Set *subrelation) {
 	}
 
 	return rf_set_new(elemCount, elems);
+}
+
+void
+rf_relation_free(rf_Relation *r) {
+	assert(r != NULL);
+
+	for(int i = N_DOMAINS-1; i >= 0; --i)
+		rf_set_free(r->domains[i]);
+	free(r->domains);
+	free(r->table);
+	free(r);
 }

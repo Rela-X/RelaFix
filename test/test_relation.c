@@ -41,9 +41,6 @@ rf_Set *set2;
 void generateTestElements(int n, rf_SetElement *elements[n]){
 	char buf[] = "a";
 	for(int i = 0; i < n; i++) {
-		//char *myString = malloc(sizeof(char));
-		//myString[0] = 'a' + i;
-		//myString[1] = '\0';
 		buf[0] = 'a' + i;
 		elements[i] = rf_set_element_new_string(buf);
 	}
