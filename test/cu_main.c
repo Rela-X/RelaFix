@@ -4,6 +4,7 @@
 extern CU_ErrorCode register_suites_set(void);
 extern CU_ErrorCode register_suites_relation(void);
 extern CU_ErrorCode register_suites_tools(void);
+extern CU_ErrorCode register_suites_text_io(void);
 
 int
 main() {
@@ -15,6 +16,7 @@ main() {
 	if(register_suites_set() != CUE_SUCCESS) goto cleanup;
 //	if(register_suites_relation() != CUE_SUCCESS) goto cleanup;
 	if(register_suites_tools() != CUE_SUCCESS) goto cleanup;
+	if(register_suites_text_io() != CUE_SUCCESS) goto cleanup;
 
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);

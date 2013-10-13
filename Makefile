@@ -6,9 +6,9 @@ vpath %.c test/
 
 INC += -I ./
 INC += -I inc/
-OBJ := error.o set.o relation.o tools.o
+OBJ := error.o set.o relation.o tools.o text_io.o
 
-TEST_OBJ := cu_main.o test_set.o test_relation.o test_tools.o
+TEST_OBJ := cu_main.o test_set.o test_relation.o test_tools.o test_text_io.o
 
 .PHONY : all clean
 .PHONY : test
