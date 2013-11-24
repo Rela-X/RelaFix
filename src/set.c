@@ -85,7 +85,7 @@ rf_set_new_powerset(const rf_Set *s) {
 //	assert(SIZE_MAX >> s->cardinality > 0); // size_t has enough bits
 
 	size_t ps_n = 1 << s->cardinality; // powerset has 2^n members
-	rf_SetElement **ps_elems = calloc(ps_n, sizeof(**ps_elems));
+	rf_SetElement *ps_elems[ps_n];
 
 	for(int i = ps_n-1; i >= 0; --i) {
 		// i's bits are interpreted as an array of boolean values
@@ -96,18 +96,21 @@ rf_set_new_powerset(const rf_Set *s) {
 
 		// The bitcount of i is the cardinality of that element.
 		size_t ps_elem_n = rf_bitcount(i);
-		rf_SetElement **ps_elem_elems = calloc(ps_elem_n, sizeof(*ps_elem_elems));
+		rf_SetElement *ps_elem_elems[ps_elem_n];
 		int b = s->cardinality-1;
-		for(int j = ps_elem_n -1 ; j >= 0; --b) {
+		for(int j = ps_elem_n-1; j >= 0; --b) {
 			assert(b >= 0);
 			// bit b is 1
 			if(i & (1 << b)) {
-				ps_elem_elems[j] = rf_set_element_clone(s->elements[b]);
+				ps_elem_elems[j] = s->elements[b];
 				j--;
 			}
 		}
-		rf_Set *ps_elem = rf_set_new(ps_elem_n, ps_elem_elems);
-		ps_elems[i] = rf_set_element_new_set(ps_elem);
+		rf_Set ps_elem = {
+			.cardinality = ps_elem_n,
+			.elements = ps_elem_elems,
+		};
+		ps_elems[i] = rf_set_element_new_set(&ps_elem);
 	}
 
 	rf_Set *powerset = rf_set_new(ps_n, ps_elems);
