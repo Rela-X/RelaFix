@@ -383,18 +383,18 @@ rf_relation_is_difunctional(const rf_Relation *r) {
 
 	for(int y = 0; y < dim; y++) {
 		for(int x = 0; x < dim; x++) {
-				if(r->table[rf_table_idx(r,x,y)] == true) {
-		for(int z=x+1;z<dim;z++) {
-			if(r->table[rf_table_idx(r,z,y)] == true) {
-				//here we have xRy & zRy, now we test for the images of x and z
-				for(int i = 0;i<dim;i++) {
-					if(r->table[rf_table_idx(r,z,i)] != r->table[rf_table_idx(r,x,i)]) {
-			return false;
+			if(r->table[rf_table_idx(r,x,y)]) {
+				for(int z=x+1;z<dim;z++) {
+					if(r->table[rf_table_idx(r,z,y)]) {
+						//here we have xRy & zRy, now we test for the images of x and z
+						for(int i = 0;i<dim;i++) {
+							if(r->table[rf_table_idx(r,z,i)] != r->table[rf_table_idx(r,x,i)]) {
+								return false;
+							}
+						}
 					}
 				}
 			}
-		}
-				}
 		}
 	}
 
