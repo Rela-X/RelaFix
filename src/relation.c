@@ -315,19 +315,17 @@ rf_relation_new_subsetleq(rf_Set *d, rf_Error *error) {
 
 	rf_Relation *subsetleq = rf_relation_new_empty(d, d);
 	for(int x = 0; x < d->cardinality; x++) {
-			if(d->elements[x]->type == RF_SET_ELEMENT_TYPE_SET) {
-				for(int y = 0; y < d->cardinality; y++) {
-		if(x==y) {
-			subsetleq->table[rf_table_idx(subsetleq,x,y)] = true;
-		}
-		else if(d->elements[y]->type == RF_SET_ELEMENT_TYPE_SET) {
-			rf_Set *set1 = d->elements[y]->value.set;
-			rf_Set *set2 = d->elements[x]->value.set;
-			subsetleq->table[rf_table_idx(subsetleq,x,y)] = rf_set_is_subset(set1, set2) ? true : false;
-		}
+		if(d->elements[x]->type == RF_SET_ELEMENT_TYPE_SET) {
+			for(int y = 0; y < d->cardinality; y++) {
+				if(x == y) {
+					subsetleq->table[rf_table_idx(subsetleq,x,y)] = true;
+				} else if(d->elements[y]->type == RF_SET_ELEMENT_TYPE_SET) {
+					rf_Set *set1 = d->elements[y]->value.set;
+					rf_Set *set2 = d->elements[x]->value.set;
+					subsetleq->table[rf_table_idx(subsetleq,x,y)] = rf_set_is_subset(set1, set2);
 				}
 			}
-
+		}
 	}
 
 	return subsetleq;
