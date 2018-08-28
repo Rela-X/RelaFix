@@ -119,6 +119,11 @@ rf_set_new_powerset(const rf_Set *s) {
 }
 
 
+int
+rf_set_get_cardinality(const rf_Set *s) {
+	return s->cardinality;
+}
+
 bool
 rf_set_equal(const rf_Set *a, const rf_Set *b) {
 	assert(a != NULL);

@@ -51,6 +51,7 @@ rf_Set *        rf_set_clone(const rf_Set *set);
 rf_Set *        rf_set_new_intersection(const rf_Set *, const rf_Set *);
 rf_Set *        rf_set_new_powerset(const rf_Set *set);
 
+int             rf_set_get_cardinality(const rf_Set *);
 bool            rf_set_equal(const rf_Set *a, const rf_Set *b);
 /*! Checks if subset is a strict subset of superset */
 bool            rf_set_is_subset(const rf_Set *subset, const rf_Set *superset);
