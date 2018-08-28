@@ -203,20 +203,6 @@ CU_FAIL_FATAL("not implemented");
 	char b[] = "b";
 	char c[] = "c";
 
-	char *results[] = {
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		"   ",
-		'\0'
-	};
-	char *expected[] = {
-		"a", "b", "c", "ab", "ac", "bc", "abc", '\0'
-	};
-
 	rf_SetElement *elems[] = {
 		rf_set_element_new_string(a),
 		rf_set_element_new_string(b),
@@ -229,13 +215,51 @@ CU_FAIL_FATAL("not implemented");
 	rf_Set *powerset = rf_set_new_powerset(set1);
 	CU_ASSERT_EQUAL(powerset->cardinality, 8);
 
+	rf_SetElement pset_elems1[] = {
+		elems[0],
+	};
+	rf_SetElement pset_elems2[] = {
+		elems[1],
+	};
+	rf_SetElement pset_elems3[] = {
+		elems[2],
+	};
+	rf_SetElement pset_elems4[] = {
+		elems[0],
+		elems[1],
+	};
+	rf_SetElement pset_elems5[] = {
+		elems[0],
+		elems[2],
+	};
+	rf_SetElement pset_elems6[] = {
+		elems[1],
+		elems[2],
+	};
+	rf_SetElement pset_elems7[] = {
+		elems[0],
+		elems[1],
+		elems[2],
+	};
+	rf_SetElement pset_elems[] = {
+		rf_set_new(0, NULL),
+		rf_set_new(1, pset_elems1),
+		rf_set_new(1, pset_elems2),
+		rf_set_new(1, pset_elems3),
+		rf_set_new(2, pset_elems4),
+		rf_set_new(2, pset_elems5),
+		rf_set_new(2, pset_elems6),
+		rf_set_new(3, pset_elems7),
+	};
+
+	rf_Set *expected = rf_set_new(8, pset_elems);
+
 /*
 	for(int i = 0; i < 8; i++) {
 		for(int j = 0; j < 3; j++) {
 			results[i][j] = 0;
 		}
 	}
-*/
 
 	for(int i = 0; i < powerset->cardinality; i++) {
 		rf_SetElement *tmp1 = powerset->elements[i];
@@ -258,6 +282,7 @@ CU_FAIL_FATAL("not implemented");
 		}
 		CU_ASSERT_TRUE(contains);
 	}
+*/
 
 	rf_set_free(set1);
 	rf_set_free(powerset);
@@ -267,20 +292,22 @@ void test_rf_set_new_intersection() {
 	char *a = "a";
 	char *b = "b";
 	char *c = "c";
+	char *d = "d";
 
-	rf_SetElement *elems1[3] = {
+	rf_SetElement *elems1[] = {
 		rf_set_element_new_string(a),
 		rf_set_element_new_string(b),
 		rf_set_element_new_string(c),
 	};
 
-	rf_SetElement *elems2[2] = {
+	rf_SetElement *elems2[] = {
 		rf_set_element_new_string(b),
 		rf_set_element_new_string(c),
+		rf_set_element_new_string(d),
 	};
 
 	rf_Set *set1 = rf_set_new(3, elems1);
-	rf_Set *set2 = rf_set_new(2, elems2);
+	rf_Set *set2 = rf_set_new(3, elems2);
 
 	rf_Set *result = rf_set_new_intersection(set1, set2);
 

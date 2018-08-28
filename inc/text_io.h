@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2011,2013 Peter Berger, Wilke Schwiedop
  *

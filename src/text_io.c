@@ -5,6 +5,8 @@
 
 #include "text_io.h"
 
+extern size_t rf_table_idx(rf_Relation *, ...);
+
 struct strbuf {
 	size_t  size;
 	size_t  cur;

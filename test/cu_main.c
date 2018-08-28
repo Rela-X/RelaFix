@@ -13,10 +13,10 @@ main() {
 		return CU_get_error();
 
 	/* add a suites to the registry */
-	if(register_suites_set() != CUE_SUCCESS) goto cleanup;
-//	if(register_suites_relation() != CUE_SUCCESS) goto cleanup;
-	if(register_suites_tools() != CUE_SUCCESS) goto cleanup;
-	if(register_suites_text_io() != CUE_SUCCESS) goto cleanup;
+	if(CUE_SUCCESS != register_suites_set()) goto cleanup;
+//	if(CUE_SUCCESS != register_suites_relation()) goto cleanup;
+	if(CUE_SUCCESS != register_suites_tools()) goto cleanup;
+	if(CUE_SUCCESS != register_suites_text_io()) goto cleanup;
 
 	/* Run all tests using the CUnit Basic interface */
 	CU_basic_set_mode(CU_BRM_VERBOSE);
