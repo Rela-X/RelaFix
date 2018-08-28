@@ -230,7 +230,7 @@ rf_relation_new_intersection(rf_Relation *r1, rf_Relation *r2, rf_Error *error) 
 
 	const int dim = new->domains[0]->cardinality;
 	for(int x = dim-1; x >= 0; --x) {
-		for(int y = x; y >= 0; --y) {
+		for(int y = dim-1; y >= 0; --y) {
 			new->table[rf_table_idx(new, x, y)] = r1->table[rf_table_idx(r1, x, y)] && r2->table[rf_table_idx(r2, x, y)];
 		}
 	}
@@ -306,12 +306,7 @@ rf_relation_new_converse(const rf_Relation *r, rf_Error *error) {
 
 rf_Relation *
 rf_relation_new_subsetleq(rf_Set *d, rf_Error *error) {
-
-	if(d == NULL) {
-		if(error != NULL)
-			rf_error_set(error, RF_E_NULL_ARG, "Can't create a relation without a set");
-		return NULL;
-	}
+	assert(d != NULL);
 
 	rf_Relation *subsetleq = rf_relation_new_empty(d, d);
 	for(int x = 0; x < d->cardinality; x++) {
