@@ -108,3 +108,8 @@ rf_Relation *
 rf_relation_from_string(const char *s) {
 	assert(false && "not implemented");
 }
+
+void
+rf_string_free(const char *m) {
+	free(m);
+}

@@ -23,9 +23,14 @@
 #include "set.h"
 #include "relation.h"
 
+/*
+ * Strings allocated by these functions must be passed to rf_string_free
+ */
 rf_Set *        rf_set_from_string(const char *);
 char *          rf_set_to_string(rf_Set *);
 rf_Relation *   rf_relation_from_string(const char *);
 char *          rf_relation_to_string(rf_Relation *);
+
+void            rf_string_free(const char *);
 
 #endif
