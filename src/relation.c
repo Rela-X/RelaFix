@@ -85,7 +85,9 @@ rf_relation_new(rf_Set *d1, rf_Set *d2, bool *table) {
 	r->domains = calloc(N_DOMAINS, sizeof(*r->domains));
 	r->domains[0] = rf_set_clone(d1);
 	r->domains[1] = rf_set_clone(d2);
-	r->table = table;
+	size_t table_size = d1->cardinality * d2->cardinality;
+	r->table = calloc(table_size, sizeof(*r->table));
+	memcpy(r->table, table, table_size);
 
 	return r;
 }
@@ -94,14 +96,7 @@ rf_Relation *
 rf_relation_clone(const rf_Relation *r) {
 	assert(r != NULL);
 
-	size_t table_size = 1;
-	for(int i = N_DOMAINS-1; i >= 0; --i) {
-		table_size *= r->domains[i]->cardinality;
-	}
-	bool *table = calloc(table_size, sizeof(*table));
-
-	rf_Relation *new = rf_relation_new(r->domains[0], r->domains[1], table);
-	memcpy(new->table, r->table, table_size);
+	rf_Relation *new = rf_relation_new(r->domains[0], r->domains[1], r->table);
 
 	return new;
 }
@@ -113,7 +108,7 @@ rf_relation_new_empty(rf_Set *d1, rf_Set *d2) {
 	assert(d2 != NULL);
 
 	size_t table_size = d1->cardinality * d2->cardinality;
-	bool *table = calloc(table_size, sizeof(*table));
+	bool table[table_size];
 
 	rf_Relation *new = rf_relation_new(d1, d2, table);
 	memset(new->table, false, table_size);
@@ -127,7 +122,7 @@ rf_relation_new_full(rf_Set *d1, rf_Set *d2) {
 	assert(d2 != NULL);
 
 	size_t table_size = d1->cardinality * d2->cardinality;
-	bool *table = calloc(table_size, sizeof(*table));
+	bool table[table_size];
 
 	rf_Relation *new = rf_relation_new(d1, d2, table);
 	memset(new->table, true, table_size);
@@ -140,7 +135,7 @@ rf_relation_new_id(rf_Set *d) {
 	assert(d != NULL);
 
 	size_t table_size = d->cardinality * d->cardinality;
-	bool *table = calloc(table_size, sizeof(*table));
+	bool table[table_size];
 
 	rf_Relation *new = rf_relation_new_empty(d, d);
 
